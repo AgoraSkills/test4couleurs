@@ -1,223 +1,139 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Test analyse comportementale couleurs</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f5f5f5;
-  }
-  h1, h2, h3 {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #003366;
-  }
-  .container {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-  .section {
-    margin-bottom: 20px;
-  }
-  .section h2 {
-    border-bottom: 2px solid #003366;
-    padding-bottom: 10px;
-  }
-  .section p {
-    text-align: justify;
-    line-height: 1.6;
-  }
-  #scoreChart {
-    display: block;
-    margin: 0 auto;
-  }
-  button {
-    font-size: 1.2em;
-    padding: 10px 20px;
-    background-color: #003366;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  #printReport {
-    font-size: 1.2em;
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  .half-width {
-    display: flex;
-    justify-content: space-between;
-  }
-  .half-width .left,
-  .half-width .right {
-    width: 48%;
-  }
-  .bold {
-    font-weight: bold;
-  }
-  .page-break {
-    page-break-before: always;
-  }
-  .progress-container {
-    width: 100%;
-    background-color: #f3f3f3;
-    border-radius: 25px;
-    margin-bottom: 20px;
-    overflow: hidden;
-  }
-  .progress-bar {
-    height: 20px;
-    background-color: #003366;
-    width: 0;
-  }
-  #progressText {
-    text-align: center;
-    margin-top: 10px;
-  }
-  @media print {
-    body {
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      margin: 0;
-      padding: 20px;
-      box-shadow: none;
-      background-color: #fff;
-    }
-    body * {
-      visibility: hidden;
-    }
-    #reportContainer, #reportContainer * {
-      visibility: visible;
-    }
-    #reportContainer {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-    .half-width {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-    }
-    .half-width .left,
-    .half-width .right {
-      width: 48%;
-    }
-    .page-break {
-      page-break-before: always;
-    }
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test analyse comportementale couleurs</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Styles pour les conteneurs de question et de réponse */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        h1, h2, h3 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #003366;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            border-bottom: 2px solid #003366;
+            padding-bottom: 10px;
+        }
+        .section p {
+            text-align: justify;
+            line-height: 1.6;
+        }
+        #question {
+            font-weight: bold;
+            background-color: #f0f8ff;
+            font-size: 1.5em;
+            text-align: center;
+            border: 8px solid #003366;
+            border-radius: 16px;
+            padding: 10px;
+            word-wrap: break-word;
+            margin: 0 auto;
+        }
+        #answers {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 0;
+        }
+        #answers li {
+            list-style-type: none;
+            text-align: center;
+            width: calc(100vw / 3 - 20px); /* ajustement pour tenir compte de l'espace */
+            border: 3px solid #1e90ff; /* couleur outremer */
+            border-radius: 10px;
+            background-color: #f5faff;
+            padding: 10px;
+            margin: 10px 0; /* marge pour créer une ligne au-dessus et en dessous */
+            word-wrap: break-word;
+            position: relative;
+        }
+        #answers li:before,
+        #answers li:after {
+            content: "";
+            display: block;
+            height: 1px;
+            background-color: #1e90ff; /* couleur outremer */
+            position: absolute;
+            left: 0;
+            right: 0;
+        }
+        #answers li:before {
+            top: -10px; /* positionner la ligne au-dessus */
+        }
+        #answers li:after {
+            bottom: -10px; /* positionner la ligne en dessous */
+        }
+        canvas {
+            transform: scale(0.7);
+            transform-origin: top left;
+        }
+        button {
+            font-size: 1.2em;
+            padding: 10px 20px;
+            background-color: #003366;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #002244;
+        }
+    </style>
 </head>
 <body>
-<h1>Test Analyse comportementale couleurs</h1>
-<!-- Ajouter un formulaire pour saisir les informations de l'utilisateur -->
-<form id="userForm" class="container">
-  <div class="section">
-    <label for="firstName">Prénom:</label>
-    <input type="text" id="firstName" name="firstName" required>
-  </div>
-  <div class="section">
-    <label for="lastName">Nom:</label>
-    <input type="text" id="lastName" name="lastName" required>
-  </div>
-  <div class="section">
-    <label for="email">Adresse e-mail:</label>
-    <input type="email" id="email" name="email" required>
-  </div>
-  <button type="submit">Commencer le test</button>
-</form>
-<!-- Div pour afficher les informations de l'utilisateur -->
-<div id="userInfo" class="container" style="display:none;">
-  <div class="section">
-    <h2>Informations Utilisateur</h2>
-    <p id="displayFirstName"></p>
-    <p id="displayLastName"></p>
-    <p id="displayEmail"></p>
-  </div>
-</div>
-<!-- Ajouter une barre de progression -->
-<div class="container" id="progressContainer" style="display:none;">
-  <div class="progress-container">
-    <div class="progress-bar" id="progressBar"></div>
-  </div>
-  <p id="progressText"></p>
-</div>
-<!-- Ajouter une section pour afficher la question -->
-<div id="question" class="container" style="width: calc(100vw / 3);"></div>
-<!-- Ajouter une liste pour afficher les réponses -->
-<ul id="answers" class="container" style="display: flex; flex-wrap: wrap; gap: 10px;">
-  <!-- Les réponses seront ajoutées dynamiquement ici -->
-</ul>
-<!-- Ajouter une section pour afficher le résultat -->
-<div id="result" class="container"></div>
-<!-- Ajouter un élément canvas pour le diagramme circulaire -->
-<canvas id="scoreChart" width="400" height="400"></canvas>
-
-<!-- Rapport généré automatiquement -->
-<div class="container" style="display:none;" id="reportContainer">
-  <img src="logo.jpg" alt="Logo">
-  <div class="section">
-    <h1>Rapport d'Analyse Comportementale</h1>
-  </div>
-  <div class="section half-width">
-    <div class="left">
-      <h2>Informations Utilisateur</h2>
-      <p><span class="bold">Prénom:</span> <span id="reportFirstName"></span></p>
-      <p><span class="bold">Nom:</span> <span id="reportLastName"></span></p>
-      <p><span class="bold">Email:</span> <span id="reportEmail"></span></p>
+    <h1>Test Analyse comportementale couleurs</h1>
+    <form id="userForm" class="container">
+        <!-- Formulaire pour les détails de l'utilisateur -->
+        <div class="section">
+            <label for="firstName">Prénom:</label>
+            <input type="text" id="firstName" name="firstName" required>
+        </div>
+        <div class="section">
+            <label for="lastName">Nom:</label>
+            <input type="text" id="lastName" name="lastName" required>
+        </div>
+        <div class="section">
+            <label for="email">Adresse e-mail:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <button type="submit">Commencer le test</button>
+    </form>
+    <div id="userInfo" style="display:none;" class="container">
+        <!-- Affichage des informations de l'utilisateur -->
+        <h2>Informations Utilisateur</h2>
+        <p id="displayFirstName"></p>
+        <p id="displayLastName"></p>
+        <p id="displayEmail"></p>
     </div>
-    <div class="right">
-      <canvas id="reportScoreChart"></canvas>
-    </div>
-  </div>
-  <div class="section">
-    <h2>Résultat et Couleur Dominante</h2>
-    <p><span class="bold">Votre résultat final est :</span> <span id="finalScore"></span></p>
-    <p><span class="bold">Votre couleur dominante est :</span> <span id="dominantColor"></span></p>
-  </div>
-  <div class="section">
-    <div id="introductionContent"></div>
-  </div>
-  <div class="section page-break">
-    <h2>Rappel du Résultat Final et Dominante</h2>
-    <p><span class="bold">Votre résultat final est :</span> <span id="finalScoreReminder"></span></p>
-    <p><span class="bold">Votre couleur dominante est :</span> <span id="dominantColorReminder"></span></p>
-  </div>
-  <div class="section">
-    <h2>Description du Profil Dominant</h2>
-    <div id="dominantDescription"></div>
-  </div>
-  <div class="section">
-    <h2>Recommandations</h2>
-    <p>Pour améliorer vos interactions et votre performance, voici un lien pour pouvoir suivre notre formation complète sur la méthode 4 couleurs.</p>
-  </div>
-</div>
-
-<!-- Bouton pour imprimer le rapport en PDF -->
-<button id="printReport" style="display:none;">Imprimer ou sauver le Rapport</button>
-
-<script>
- // Tableau contenant toutes les questions et réponses
+    <div id="question" class="container"></div>
+    <ul id="answers">
+        <!-- Les réponses dynamiques vont ici -->
+    </ul>
+    <div id="result" class="container"></div>
+    <canvas id="scoreChart" width="400" height="400"></canvas>
+    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.js"></script>
+    <script>
+        // JavaScript pour gérer le test et la génération du PDF
+// Tableau contenant toutes les questions et réponses
 const questions = [
     {
         question: "Lorsque vous rencontrez quelqu'un pour la première fois, quelle est votre première réaction ?",
@@ -250,19 +166,19 @@ const questions = [
    {
         question: "Comment vous définissez vous dans la vie de tous les jours",
         answers: [
-            { text: "J'aime relever des défis, il me faut de l'action pour me sentir bien.", score: 1000000 },
+            { text: "J'aime relever des défis, il me faut de l'action.", score: 1000000 },
             { text: "Avec moi les gens ne s'ennuient jamais, j'aime divertir les autres.", score: 10000 },
             { text: "Je suis plutôt comprehensif, je n'aime pas blesser les autres.", score: 100 },
             { text: "Je suis prudent, je ne donne pas ma confiance facilement.", score: 1 }
         ]
     },
 {
-    question: "Lorsque vous devez résoudre un désaccord avec un proche, comment réagissez-vous ?",
+    question: "Quand vous êtes submergé par une émotion intense, comment retrouvez vous votre calme ?",
     answers: [
-        { text: "Vous exprimez fermement votre point de vue pour trouver une solution.", score: 1000000 },
-        { text: "Vous cherchez à comprendre les perspectives de chacun et à trouver un compromis.", score: 10000 },
-        { text: "Vous restez patient et vous essayez d'apaiser la situation.", score: 100 },
-        { text: "Vous analysez calmement les différents aspects du problème.", score: 1 }
+        { text: "Vous allez directement dans une salle de sport pour libérer la tension.", score: 1000000 },
+        { text: "Vous vous plongez dans des activités qui vous passionnent avec des amis ou planifiez un événement fun.", score: 10000 },
+        { text: "Vous prenez un moment pour vous dans un environnement tranquille, comme en lisant un bon livre ou en méditant.", score: 100 },
+        { text: "Vous commencez par décomposer la situation en éléments plus petits et plus compréhensibles pour maintenir une approche rationelle et retrouver votre calme.", score: 1 }
         ]
     },
 {
@@ -349,10 +265,10 @@ const questions = [
 {
     question: "Vous êtes invité à une soirée entre amis, comment vous comportez-vous idéalement ?",
     answers: [
-        { text: "Vous prenez les devants pour organiser les activités et vous assurez que tout se passe bien.", score: 1000000 },
-        { text: "Vous êtes la vie de la fête, vous animez les discussions et vous créez une ambiance chaleureuse.", score: 10000 },
+        { text: "Vous gérez les imprévus, en trouvant des solutions pour que la soirée soit agréable pour tout le monde.", score: 1000000 },
+        { text: "Vous arrivez avec un grand sourire, vous animez les discussions et vous créez une ambiance chaleureuse.", score: 10000 },
         { text: "Vous vous fondez dans le groupe, vous écoutez attentivement et vous apportez votre soutien.", score: 100 },
-        { text: "Vous vous concentrez sur les détails de l'organisation, vous vous assurez que les règles sont respectées.", score: 1 }
+        { text: "Vous observez d’abord, vous vous assurez de comprendre le groupe et vous participez de manière réfléchie.", score: 1 }
     ]
 },
 {
@@ -401,12 +317,12 @@ const questions = [
     ]
 },
 {
-    question: "Vous devez organiser une soirée jeux de société entre amis, comment vous y prenez-vous ?",
+    question: "Vous devez faire du ménage chez vous. Comment organisez-vous cette tâche ? ",
     answers: [
-        { text: "Vous choisissez des jeux stimulants qui vont pousser les participants à se surpasser.", score: 1000000 },
-        { text: "Vous sélectionnez des jeux conviviaux qui vont favoriser les interactions et les rires.", score: 10000 },
-        { text: "Vous optez pour des jeux classiques et familiers qui vont créer une ambiance chaleureuse.", score: 100 },
-        { text: "Vous vous assurez que les règles et les procédures de chaque jeu soient bien comprises.", score: 1 }
+        { text: "Vous planifiez tous les objectifs, puis vous les exécutez rapidement pour en finir au plus vite.", score: 1000000 },
+        { text: "Vous mettez de la musique, vous organisez des mini défis amusants pour rendre le ménage plus agréable.", score: 10000 },
+        { text: "Vous faites le ménage de manière organisée et tranquille, en prenant le temps nécessaire pour chaque tâche.", score: 100 },
+        { text: "Vous préparez un planning minutieux pour le ménage, en faisant des listes et en vérifiant chaque tâche.", score: 1 }
     ]
 },
 {
@@ -422,9 +338,9 @@ const questions = [
     question: "Vous devez choisir une activité de loisir à faire en famille, comment procédez-vous ?",
     answers: [
         { text: "Vous proposez une activité stimulante et compétitive qui va dynamiser tout le monde.", score: 1000000 },
-        { text: "Vous choisissez une activité amusante et interactive qui va favoriser les moments de partage.", score: 10000 },
-        { text: "Vous optez pour une activité familière et rassurante qui va permettre à chacun de se sentir à l'aise.", score: 100 },
-        { text: "Vous sélectionnez une activité qui vous permettra d'approfondir vos connaissances et vos compétences.", score: 1 }
+        { text: "Vous rassemblez vos amis pour réfléchir sur les idées les plus fun et créez une ambiance festive avec des jeux et de la musique !", score: 10000 },
+        { text: "Vous préparez un programme équilibré, en prévoyant des pauses et des moments pour discuter et se détendre.", score: 100 },
+        { text: "Vous faites un planning détaillé avec des étapes claires et vous vous assurez que chaque aspect de l'activité soit bien organisé.", score: 1 }
     ]
 },
 {
@@ -457,10 +373,10 @@ const questions = [
 {
     question: "Vous devez organiser une soirée jeux de rôle entre amis, comment vous y prenez-vous ?",
     answers: [
-        { text: "Vous choisissez des jeux qui vont permettre à chacun de se surpasser et de se démarquer.", score: 1000000 },
-        { text: "Vous sélectionnez des jeux qui vont favoriser l'interaction, la créativité et l'amusement.", score: 10000 },
+        { text: "Vous fixez les objectifs de la soirée, choisissez le thème, et répartissez les rôles pour que tout soit dynamique et amusant.", score: 1000000 },
+        { text: "Vous proposez des idées amusantes et engagez vos amis pour vous assurer que la soirée soit vivante et agréable !", score: 10000 },
         { text: "Vous optez pour des jeux classiques et familiers qui vont créer une ambiance chaleureuse.", score: 100 },
-        { text: "Vous vous assurez que les règles et les procédures de chaque jeu soient bien comprises.", score: 1 }
+        { text: "Vous vous assurez que les règles et les procédures du jeu soient bien comprises.", score: 1 }
     ]
 },
 {
@@ -500,278 +416,220 @@ const questions = [
     ]
 }
 ];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedAnswer = null;
 
-  let currentQuestionIndex = 0;
-  let score = 0;
-  let selectedAnswer = null; // Réponse sélectionnée par l'utilisateur
-
-  // Fonction pour mélanger les questions
-  function shuffleQuestions() {
-    questions.sort(() => Math.random() - 0.5);
-  }
-
-  // Fonction pour afficher la question suivante
-  function showNextQuestion() {
-    const questionElement = document.getElementById('question');
-    const answersElement = document.getElementById('answers');
-    const progressBar = document.getElementById('progressBar');
-    const progressText = document.getElementById('progressText');
-
-    // Vérifier s'il reste des questions
-    if (currentQuestionIndex >= questions.length) {
-      showResult();
-      return;
-    }
-
-    const currentQuestion = questions[currentQuestionIndex];
-    // Vider les éléments HTML
-    questionElement.innerHTML = '';
-    answersElement.innerHTML = '';
-
-    // Mettre à jour la barre de progression et le texte
-    const progressPercentage = ((currentQuestionIndex + 1) / questions.length) * 100;
-    progressBar.style.width = progressPercentage + '%';
-    progressText.textContent = `Question ${currentQuestionIndex + 1} / ${questions.length}`;
-
-    // Ajouter le texte de la question
-    questionElement.textContent = currentQuestion.question;
-
-    // Afficher les réponses
-    currentQuestion.answers.forEach(answer => {
-      const li = document.createElement('li');
-      li.textContent = answer.text;
-      // Ajouter un événement de clic pour sélectionner la réponse
-      li.addEventListener('click', () => selectAnswer(answer));
-      // Si cette réponse est la réponse sélectionnée, la mettre en gras et italique
-      if (selectedAnswer === answer) {
-        li.style.fontWeight = 'bold';
-        li.style.fontStyle = 'italic';
-      }
-      answersElement.appendChild(li);
-    });
-
-    // Ajouter un bouton de validation si une réponse est sélectionnée
-    if (selectedAnswer) {
-      const validationButton = document.createElement('button');
-      validationButton.textContent = 'Valider';
-      validationButton.style.fontSize = '1.2em'; // Agrandir le bouton de validation
-      validationButton.addEventListener('click', () => {
-        score += selectedAnswer.score;
-        selectedAnswer = null; // Réinitialiser la réponse sélectionnée
-        currentQuestionIndex++; // Passer à la question suivante
-        showNextQuestion(); // Afficher la prochaine question
-      });
-      answersElement.appendChild(validationButton);
-    }
-  }
-
-  // Fonction pour sélectionner une réponse
-  function selectAnswer(answer) {
-    // Réinitialiser tous les styles
-    const answers = document.querySelectorAll('#answers li');
-    answers.forEach(li => {
-      li.style.fontWeight = 'normal';
-      li.style.fontStyle = 'normal';
-    });
-    // Mettre en gras et italique la réponse sélectionnée
-    selectedAnswer = answer;
-    showNextQuestion(); // Réafficher les réponses avec la nouvelle sélection
-  }
-
-  // Fonction pour afficher le résultat final
-  function showResult() {
-    const questionElement = document.getElementById('question');
-    const answersElement = document.getElementById('answers');
-    const resultElement = document.getElementById('result');
-    const reportContainer = document.getElementById('reportContainer');
-    const printButton = document.getElementById('printReport');
-
-    // Cacher les containers de question et de réponses
-    questionElement.style.display = 'none';
-    answersElement.style.display = 'none';
-    document.getElementById('progressContainer').style.display = 'none';
-
-    // Formatage du score final
-    const formattedScore = formatScore(score);
-
-    // Calculer les scores après que toutes les questions ont été répondues
-    const scores = calculateScores(score);
-    const dominant = calculateDominant(scores); // Calculer la dominante
-
-    // Afficher le rapport
-    displayReport(formattedScore, scores, dominant);
-
-    // Afficher le graphique et les scores
-    showScoreChart(scores);
-
-    // Afficher le bouton d'impression
-    printButton.style.display = 'block';
-  }
-
-  // Fonction pour formater le score
-  function formatScore(score) {
-    const formattedScore = score.toString().padStart(8, '0'); // Ajoute des zéros devant si nécessaire
-    return formattedScore.replace(/(\d{2})(?=\d{2}|$)/g, '$1 '); // Ajoute des espaces tous les deux chiffres
-  }
-
-  // Fonction pour calculer les scores rouge, jaune, vert et bleu
-  function calculateScores(score) {
-    const rouge = Math.floor(score / 1000000);
-    const jaune = Math.floor(score / 10000) - 100 * rouge;
-    const vert = Math.floor(score / 100) - 10000 * rouge - 100 * jaune;
-    const bleu = score - 1000000 * rouge - 10000 * jaune - 100 * vert;
-    return [rouge, jaune, vert, bleu];
-  }
-
-  // Fonction pour calculer la dominante
-  function calculateDominant(scores) {
-    const maxScore = Math.max(...scores);
-    const dominantIndex = scores.indexOf(maxScore);
-    const dominants = ['Rouge', 'Jaune', 'Vert', 'Bleu'];
-    return dominants[dominantIndex];
-  }
-
-  // Fonction pour afficher le graphique circulaire avec les proportions de chaque score
-  function showScoreChart(scores) {
-    const labels = ['Rouge', 'Jaune', 'Vert', 'Bleu'];
-    const colors = ['red', 'yellow', 'green', 'blue'];
-    const ctx = document.getElementById('reportScoreChart').getContext('2d');
-    const myChart = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: labels,
-        datasets: [{
-          data: scores,
-          backgroundColor: colors
-        }]
-      },
-      options: {
-        responsive: false,
-        legend: {
-          display: false
+        function shuffleQuestions() {
+            questions.sort(() => Math.random() - 0.5);
         }
-      }
-    });
-  }
 
-  // Fonction pour afficher le rapport complet
-  function displayReport(formattedScore, scores, dominant) {
-    const reportContainer = document.getElementById('reportContainer');
-    const firstName = document.getElementById('firstName').value;
-    const lastName = document.getElementById('lastName').value;
-    const email = document.getElementById('email').value;
+        function showNextQuestion() {
+            const questionElement = document.getElementById('question');
+            const answersElement = document.getElementById('answers');
 
-    document.getElementById('reportFirstName').textContent = firstName;
-    document.getElementById('reportLastName').textContent = lastName;
-    document.getElementById('reportEmail').textContent = email;
-    document.getElementById('finalScore').textContent = formattedScore;
-    document.getElementById('dominantColor').textContent = dominant;
-    document.getElementById('finalScoreReminder').textContent = formattedScore;
-    document.getElementById('dominantColorReminder').textContent = dominant;
+            if (currentQuestionIndex >= questions.length) {
+                showResult();
+                return;
+            }
 
-    fetchDescription(dominant);
+            const currentQuestion = questions[currentQuestionIndex];
+            questionElement.innerHTML = '';
+            answersElement.innerHTML = '';
 
-    reportContainer.style.display = 'block'; // Afficher le rapport
+            questionElement.textContent = currentQuestion.question;
 
-    // Cacher tous les éléments sauf le rapport
-    const bodyChildren = document.body.children;
-    for (let i = 0; i < bodyChildren.length; i++) {
-      if (bodyChildren[i].id !== 'reportContainer' && bodyChildren[i].id !== 'printReport') {
-        bodyChildren[i].style.display = 'none';
-      }
-    }
-  }
+            currentQuestion.answers.forEach(answer => {
+                const li = document.createElement('li');
+                li.textContent = answer.text;
+                li.addEventListener('click', () => selectAnswer(answer));
 
-  // Fonction pour récupérer la description du profil dominant à partir des fichiers texte locaux
-  function fetchDescription(color) {
-    const descriptions = {
-      'Rouge': 'drouge.txt',
-      'Jaune': 'djaune.txt',
-      'Vert': 'dvert.txt',
-      'Bleu': 'dbleu.txt'
-    };
-    const descriptionFile = descriptions[color];
+                if (selectedAnswer === answer) {
+                    li.style.fontWeight = 'bold';
+                    li.style.fontStyle = 'italic';
+                }
+                answersElement.appendChild(li);
+            });
 
-    fetch(descriptionFile)
-      .then(response => response.text())
-      .then(data => {
-        document.getElementById('dominantDescription').innerHTML = marked.parse(data);
-      })
-      .catch(error => {
-        console.error('Erreur lors de la récupération de la description:', error);
-      });
-  }
+            if (selectedAnswer) {
+                const validationButton = document.createElement('button');
+                validationButton.textContent = 'Valider';
+                validationButton.addEventListener('click', () => {
+                    score += selectedAnswer.score;
+                    selectedAnswer = null;
+                    currentQuestionIndex++;
+                    showNextQuestion();
+                });
+                answersElement.appendChild(validationButton);
+            }
+        }
 
-  // Fonction pour afficher l'introduction formatée en Markdown
-  function fetchIntroduction() {
-    const introductionMarkdown = `
+        function selectAnswer(answer) {
+            const answers = document.querySelectorAll('#answers li');
+            answers.forEach(li => {
+                li.style.fontWeight = 'normal';
+                li.style.fontStyle = 'normal';
+            });
 
-<div class="page-break"></div>
+            selectedAnswer = answer;
+            showNextQuestion();
+        }
 
-## La Méthode des 4 Couleurs : Une Clé pour Déverrouiller le Potentiel Humain
+        function showResult() {
+            const questionElement = document.getElementById('question');
+            const answersElement = document.getElementById('answers');
+            const resultElement = document.getElementById('result');
 
-Dans le vaste monde des interactions humaines, la méthode des 4 couleurs se démarque comme un outil puissant et polyvalent. Bien au-delà d'une simple catégorisation, cette approche offre une compréhension profonde des comportements, des motivations et des préférences individuelles, ouvrant ainsi la voie à une communication plus efficace et à des relations plus harmonieuses.
+            questionElement.style.display = 'none';
+            answersElement.style.display = 'none';
 
-# Les Principes Fondamentaux
+            const formattedScore = formatScore(score);
+            resultElement.textContent = `Votre score final est : ${formattedScore}`;
 
-Au cœur de cette méthode se trouve la reconnaissance que chaque individu possède un ensemble unique de traits de personnalité, de valeurs et de styles de communication. En attribuant une couleur distinctive à chaque profil, la méthode des 4 couleurs crée un langage commun qui facilite la compréhension mutuelle et l'appréciation des différences.
+            const scores = calculateScores(score);
+            const dominant = calculateDominant(scores);
+            resultElement.innerHTML += `\nVotre dominante est : <span style="font-size: 2em; font-weight: bold;">${dominant}</span>`;
 
-Loin d'être une simple étiquette, chaque couleur représente un spectre riche de caractéristiques comportementales, offrant ainsi une perspective nuancée sur les forces, les défis et les préférences de chacun. Cette approche encourage l'empathie, la tolérance et la valorisation de la diversité, éléments essentiels pour construire des relations saines et productives.
+            showScoreChart(scores);
 
-# Des Applications Variées
+            // Collecter les données de l'utilisateur
+            const data = {
+                Nom: document.getElementById('lastName').value,
+                Prenom: document.getElementById('firstName').value,
+                Email: document.getElementById('email').value,
+                Dominante: dominant,
+                Rouge: scores[0],
+                Jaune: scores[1],
+                Vert: scores[2],
+                Bleu: scores[3]
+            };
 
-La beauté de la méthode des 4 couleurs réside dans sa polyvalence. Elle trouve son application dans divers domaines, allant du développement personnel à la gestion d'équipe, en passant par le coaching, la vente et même les relations interpersonnelles.
+            // Générer le PDF avec les données de l'utilisateur
+            generatePDF(data);
+        }
 
-Dans le milieu professionnel, cette méthode permet aux équipes de mieux comprendre les forces et les défis de chacun, favorisant ainsi une collaboration plus efficace et une synergie accrue. Les gestionnaires peuvent l'utiliser pour adapter leur style de leadership et maximiser le potentiel de leurs employés.
+        function formatScore(score) {
+            const formattedScore = score.toString().padStart(8, '0');
+            return formattedScore.replace(/(\d{2})(?=\d{2}|$)/g, '$1   ');
+        }
 
-Dans le domaine du développement personnel, la méthode des 4 couleurs offre un tremplin pour l'introspection et la croissance. En explorant leur profil unique, les individus peuvent acquérir une meilleure compréhension d'eux-mêmes, de leurs motivations et de leurs zones de confort, leur permettant ainsi de se développer de manière plus ciblée.
+        function calculateScores(score) {
+            const rouge = Math.floor(score / 1000000);
+            const jaune = Math.floor(score / 10000) - 100 * rouge;
+            const vert = Math.floor(score / 100) - 10000 * rouge - 100 * jaune;
+            const bleu = score - 1000000 * rouge - 10000 * jaune - 100 * vert;
+            return [rouge, jaune, vert, bleu];
+        }
 
-# Un Voyage Vers l'Harmonie
+        function calculateDominant(scores) {
+            const maxScore = Math.max(...scores);
+            const dominantIndex = scores.indexOf(maxScore);
+            const dominants = ['Rouge', 'Jaune', 'Vert', 'Bleu'];
+            return dominants[dominantIndex];
+        }
 
-Que vous soyez un professionnel cherchant à optimiser les performances de votre équipe, un coach désireux d'aider vos clients à atteindre leur plein potentiel, ou simplement quelqu'un qui souhaite approfondir sa compréhension des relations humaines, la méthode des 4 couleurs offre un cadre riche et accessible.
+        function showScoreChart(scores) {
+            const labels = ['Rouge', 'Jaune', 'Vert', 'Bleu'];
+            const colors = ['red', 'yellow', 'green', 'blue'];
+            const ctx = document.getElementById('scoreChart').getContext('2d');
+            const myChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: scores,
+                        backgroundColor: colors
+                    }]
+                },
+                options: {
+                    responsive: false
+                }
+            });
+        }
 
-En embrassant cette approche, vous ouvrez la porte à un monde de possibilités, où la communication devient plus fluide, les relations plus profondes et les objectifs plus facilement atteignables. C'est un voyage vers l'harmonie, où chaque couleur apporte sa propre nuance à la tapisserie vibrante de l'expérience humaine.
-`;
+        const userForm = document.getElementById('userForm');
+        userForm.addEventListener('submit', (event) => {
+            event.preventDefault();
 
-    document.getElementById('introductionContent').innerHTML = marked.parse(introductionMarkdown);
-  }
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
 
-  // Appel de la fonction fetchIntroduction pour charger l'introduction formatée en Markdown
-  fetchIntroduction();
+            const displayFirstName = document.getElementById('displayFirstName');
+            const displayLastName = document.getElementById('displayLastName');
+            const displayEmail = document.getElementById('displayEmail');
+            displayFirstName.textContent = `Prénom: ${firstName}`;
+            displayLastName.textContent = `Nom: ${lastName}`;
+            displayEmail.textContent = `Email: ${email}`;
 
-  // Fonction pour imprimer le rapport
-  function printReport() {
-    window.print();
-  }
+            document.getElementById('userInfo').style.display = 'block';
+            userForm.style.display = 'none';
 
-  // Ajouter un écouteur d'événement au bouton d'impression
-  document.getElementById('printReport').addEventListener('click', printReport);
+            shuffleQuestions();
+            showNextQuestion();
+        });
 
-  // Écouteur d'événement pour le formulaire utilisateur
-  const userForm = document.getElementById('userForm');
-  userForm.addEventListener('submit', (event) => {
-    event.preventDefault(); // Empêcher le formulaire de se soumettre
+        async function generatePDF(data) {
+            const pdfDoc = await PDFLib.PDFDocument.create();
 
-    // Récupérer les valeurs du formulaire
-    const firstName = document.getElementById('firstName').value;
-    const lastName = document.getElementById('lastName').value;
-    const email = document.getElementById('email').value;
+            const explicPdfBytes = await fetch('explicmethod.pdf').then(res => res.arrayBuffer());
+            const specificPdfBytes = await fetch(`D${data.Dominante}.pdf`).then(res => res.arrayBuffer());
 
-    // Afficher les informations de l'utilisateur
-    document.getElementById('displayFirstName').textContent = `Prénom: ${firstName}`;
-    document.getElementById('displayLastName').textContent = `Nom: ${lastName}`;
-    document.getElementById('displayEmail').textContent = `Email: ${email}`;
+            const explicPdf = await PDFLib.PDFDocument.load(explicPdfBytes);
+            const specificPdf = await PDFLib.PDFDocument.load(specificPdfBytes);
 
-    // Afficher les informations de l'utilisateur
-    document.getElementById('userInfo').style.display = 'block';
-    // Afficher la barre de progression
-    document.getElementById('progressContainer').style.display = 'block';
-    // Cacher le formulaire
-    userForm.style.display = 'none';
-    // Démarrer le quiz
-    shuffleQuestions(); // Mélanger les questions avant de commencer
-    showNextQuestion(); // Afficher la première question
-  });
-</script>
+            const explicPages = await pdfDoc.copyPages(explicPdf, explicPdf.getPageIndices());
+            explicPages.forEach(page => pdfDoc.addPage(page));
+
+            const specificPages = await pdfDoc.copyPages(specificPdf, specificPdf.getPageIndices());
+            specificPages.forEach(page => pdfDoc.addPage(page));
+
+            const page = pdfDoc.addPage([595, 842]);
+
+            const backgroundImageBytes = await fetch('Fond.jpg').then(res => res.arrayBuffer());
+            const backgroundImage = await pdfDoc.embedJpg(backgroundImageBytes);
+            page.drawImage(backgroundImage, {
+                x: 0,
+                y: 0,
+                width: 595,
+                height: 842
+            });
+
+            const headerImageBytes = await fetch('Header.jpg').then(res => res.arrayBuffer());
+            const headerImage = await pdfDoc.embedJpg(headerImageBytes);
+            page.drawImage(headerImage, {
+                x: 0,
+                y: 742,
+                width: 595,
+                height: 100
+            });
+
+            page.drawText(`Nom: ${data.Nom}`, { x: 100, y: 600, size: 12 });
+            page.drawText(`Prénom: ${data.Prenom}`, { x: 100, y: 580, size: 12 });
+            page.drawText(`Email: ${data.Email}`, { x: 100, y: 560, size: 12 });
+            page.drawText(`Date: ${getFormattedDate()}`, { x: 100, y: 540, size: 12 });
+
+            const pdfBytes = await pdfDoc.save();
+
+            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `Rapport4coul_${data.Nom}_${data.Prenom}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function getFormattedDate() {
+            const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+            const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+            const today = new Date();
+            const day = days[today.getDay()];
+            const date = today.getDate();
+            const month = months[today.getMonth()];
+            const year = today.getFullYear();
+            return `${day} ${date} ${month} ${year}`;
+        }
+    </script>
 </body>
 </html>
