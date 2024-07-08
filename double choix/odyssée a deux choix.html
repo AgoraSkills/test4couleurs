@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'Odyssée Chromatique : Un Voyage au Cœur des Tempéraments</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+        #main-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        #title {
+            font-size: 24px;
+            font-weight: bold;
+            padding: 20px 0;
+            text-align: center;
+            background-color: #ffffff;
+        }
+        #content-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        #comic-container {
+            width: 80%;
+            height: 100%;
+            overflow-y: auto;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .comic-strip {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            height: calc(73.33vh - 40px); /* Augmenter la hauteur de 10% */
+            margin-bottom: 20px;
+        }
+        .panel {
+            width: calc(50% - 10px);
+            height: calc(55% - 10px); /* Augmenter la hauteur de 10% */
+            position: relative;
+            overflow: hidden;
+            border: 1px solid black;
+            box-sizing: border-box;
+            background-color: white;
+            margin: 5px;
+        }
+        .panel:nth-child(2n) {
+            margin-right: 0;
+        }
+        .panel img.background {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Ajuster les images */
+        }
+        .panel img.character1 {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            max-width: 50%;
+            max-height: 50%;
+            object-fit: contain; /* Ajuster les images */
+        }
+        .panel img.character2 {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            max-width: 50%;
+            max-height: 50%;
+            object-fit: contain; /* Ajuster les images */
+        }
+        .text-block {
+            position: absolute;
+            background: white;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            max-width: 90%;
+            max-height: 40%;
+            overflow-y: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 5px;
+        }
+        .top-text {
+            top: 10px;
+            left: 10px;
+            font-weight: bold; /* Texte en gras pour le titre du défi */
+        }
+        .bottom-text {
+            bottom: 10px;
+            left: 10px;
+        }
+        .center-text {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        #character-selection {
+            width: 20%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #e0e0e0;
+        }
+        .character-select {
+            width: 60%;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .character-select:hover {
+            transform: scale(1.1);
+        }
+        /* Modifications pour ajuster la taille des cases 3 et 4 */
+        .panel.wide {
+            width: calc(65% - 10px); /* 30% plus large que les autres cases */
+        }
+        .panel.narrow {
+            width: calc(35% - 10px); /* 30% plus étroite que les autres cases */
+        }
+    </style>
+</head>
+<body>
+    <div id="main-container">
+        <div id="title">L'Odyssée Chromatique : Un Voyage au Cœur des Tempéraments</div>
+        <div id="content-container">
+            <div id="comic-container"></div>
+            <div id="character-selection">
+                <img src="rouge.png" alt="Rouge" class="character-select" onclick="selectCharacter('rouge')">
+                <img src="jaune.png" alt="Jaune" class="character-select" onclick="selectCharacter('jaune')">
+                <img src="vert.png" alt="Vert" class="character-select" onclick="selectCharacter('vert')">
+                <img src="bleu.png" alt="Bleu" class="character-select" onclick="selectCharacter('bleu')">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const challenges = [
+            {
+                initial: "Vous et votre équipage êtes piégés dans le labyrinthe de Dédale en Crète.",
+                defi: "Pour vous échapper, vous devez à la fois comprendre la structure complexe du labyrinthe et trouver un moyen créatif de marquer votre chemin sans alerter le Minotaure qui rôde dans les couloirs.",
+                correctPair: ['bleu', 'jaune'],
+                feedback: {
+                    correct: "Héraklios analyse méticuleusement la structure du labyrinthe, identifiant des motifs et des répétitions dans sa conception. Pendant ce temps, Philon trouve une solution créative en utilisant un mélange d'huile d'olive et d'herbes aromatiques pour marquer discrètement les murs. L'odeur, imperceptible pour le Minotaure, guide l'équipage vers la sortie. La combinaison de l'analyse précise de Héraklios et de la créativité de Pilon vous permet de vous échapper efficacement et en toute sécurité.",
+                    incorrect: {
+                        'rouge,jaune': "Votre approche combinant action rapide et créativité vous fait progresser, mais sans méthode analytique, vous vous retrouvez à tourner en rond. Le Minotaure se rapproche dangereusement.",
+                        'rouge,vert': "Votre courage et votre patience vous maintiennent calmes, mais vous manquez d'une stratégie claire pour comprendre et naviguer dans le labyrinthe. Vous risquez de vous épuiser avant de trouver la sortie.",
+                        'rouge,bleu': "Votre plan d'action est bien structuré, mais trop rigide. Sans une touche de créativité, vous ne trouvez pas de moyen efficace pour marquer votre chemin, risquant de repasser par les mêmes endroits.",
+                        'jaune,vert': "Vos idées créatives et votre approche harmonieuse créent une atmosphère positive, mais sans analyse approfondie du labyrinthe, vos efforts manquent de direction claire. Vous progressez lentement et risquez d'attirer l'attention du Minotaure.",
+                        'vert,bleu': "Votre analyse minutieuse et votre patience vous permettent de comprendre la structure du labyrinthe, mais vous hésitez trop à agir. Sans une solution créative pour marquer votre chemin, vous perdez un temps précieux à retracer vos pas.",
+                        'jaune,rouge': "Votre approche combinant action rapide et créativité vous fait progresser, mais sans méthode analytique, vous vous retrouvez à tourner en rond. Le Minotaure se rapproche dangereusement.",
+                        'vert,rouge': "Votre courage et votre patience vous maintiennent calmes, mais vous manquez d'une stratégie claire pour comprendre et naviguer dans le labyrinthe. Vous risquez de vous épuiser avant de trouver la sortie.",
+                        'bleu,rouge': "Votre plan d'action est bien structuré, mais trop rigide. Sans une touche de créativité, vous ne trouvez pas de moyen efficace pour marquer votre chemin, risquant de repasser par les mêmes endroits.",
+                        'vert,jaune': "Vos idées créatives et votre approche harmonieuse créent une atmosphère positive, mais sans analyse approfondie du labyrinthe, vos efforts manquent de direction claire. Vous progressez lentement et risquez d'attirer l'attention du Minotaure.",
+                        'bleu,vert': "Votre analyse minutieuse et votre patience vous permettent de comprendre la structure du labyrinthe, mais vous hésitez trop à agir. Sans une solution créative pour marquer votre chemin, vous perdez un temps précieux à retracer vos pas."
+                    }
+                }
+            },
+            {
+                initial: "Votre navire est bloqué par une tempête divine près du mont Olympe.",
+                defi: "Pour continuer votre voyage, vous devez négocier avec Zeus et Poséidon, qui sont en conflit. Vous devez à la fois apaiser leur colère et trouver un compromis acceptable pour les deux dieux sans offenser l'un ou l'autre.",
+                correctPair: ['vert', 'rouge'],
+                feedback: {
+                    correct: "Elara utilise son empathie et sa diplomatie pour comprendre les motivations profondes de chaque dieu, créant une atmosphère de dialogue ouvert. Althara, avec son leadership et sa capacité de décision, prend l'initiative de proposer des solutions audacieuses et guide la négociation vers une conclusion rapide. Ensemble, ils parviennent à trouver un accord qui satisfait les deux divinités, permettant à votre navire de reprendre sa route.",
+                    incorrect: {
+                        'rouge,jaune': "Votre approche dynamique et créative génère des idées intéressantes, mais manque de la sensibilité nécessaire pour gérer les egos divins. Zeus et Poséidon se sentent peu considérés et la tempête s'intensifie.",
+                        'rouge,bleu': "Votre stratégie est bien pensée et votre présentation est assurée, mais elle est trop rigide et manque de la flexibilité nécessaire pour s'adapter aux caprices des dieux. La négociation s'enlise dans des détails techniques.",
+                        'jaune,vert': "Votre créativité et votre empathie créent une ambiance positive, mais vous manquez d'assertivité pour guider la discussion vers une conclusion. Les dieux apprécient votre compagnie mais ne parviennent pas à un accord concret.",
+                        'jaune,bleu': "Vos idées innovantes sont bien structurées, mais vous ne parvenez pas à établir la connexion émotionnelle nécessaire avec les dieux. Vos propositions, bien que logiques, ne touchent pas le cœur du conflit divin.",
+                        'vert,bleu': "Votre approche diplomatique et votre analyse approfondie du conflit sont appréciées, mais vous manquez de l'énergie et de la force de conviction nécessaires pour pousser les dieux à l'action. La négociation progresse trop lentement face à l'urgence de la situation.",
+                        'jaune,rouge': "Votre approche dynamique et créative génère des idées intéressantes, mais manque de la sensibilité nécessaire pour gérer les egos divins. Zeus et Poséidon se sentent peu considérés et la tempête s'intensifie.",
+                        'bleu,rouge': "Votre stratégie est bien pensée et votre présentation est assurée, mais elle est trop rigide et manque de la flexibilité nécessaire pour s'adapter aux caprices des dieux. La négociation s'enlise dans des détails techniques.",
+                        'vert,jaune': "Votre créativité et votre empathie créent une ambiance positive, mais vous manquez d'assertivité pour guider la discussion vers une conclusion. Les dieux apprécient votre compagnie mais ne parviennent pas à un accord concret.",
+                        'bleu,jaune': "Vos idées innovantes sont bien structurées, mais vous ne parvenez pas à établir la connexion émotionnelle nécessaire avec les dieux. Vos propositions, bien que logiques, ne touchent pas le cœur du conflit divin.",
+                        'bleu,vert': "Votre approche diplomatique et votre analyse approfondie du conflit sont appréciées, mais vous manquez de l'énergie et de la force de conviction nécessaires pour pousser les dieux à l'action. La négociation progresse trop lentement face à l'urgence de la situation."
+                    }
+                }
+            },
+            {
+                initial: "Vous vous retrouvez dans la Forêt des Illusions d'Hécate, déesse de la magie.",
+                defi: "Pour en sortir, vous devez à la fois démêler le vrai du faux parmi les illusions trompeuses et maintenir l'harmonie au sein de l'équipage, car la forêt se nourrit des conflits et des peurs pour renforcer ses sortilèges.",
+                correctPair: ['vert', 'jaune'],
+                feedback: {
+                    correct: "Elara utilise son empathie et sa capacité d'harmonisation pour maintenir le calme et la cohésion au sein de l'équipe, empêchant les illusions de semer la discorde. Philone, avec sa créativité et son esprit ouvert, trouve des moyens innovants de percer à jour les illusions, en imaginant des solutions non conventionnelles pour chaque nouveau défi magique. Ensemble, ils créent une atmosphère de confiance et d'inventivité qui permet à l'équipe de naviguer sereinement à travers les tromperies de la forêt, déjouant les pièges d'Hécate par leur harmonie et leur ingéniosité combinées.",
+                    incorrect: {
+                        'rouge,bleu': "Votre approche directe et votre analyse logique vous aident à affronter certaines illusions, mais vous peinez à maintenir l'harmonie de l'équipe. Les conflits qui en résultent renforcent le pouvoir de la forêt.",
+                        'rouge,jaune': "Votre dynamisme et votre créativité génèrent de nombreuses idées pour contrer les illusions, mais votre manque de sensibilité aux besoins émotionnels de l'équipe crée des tensions qui alimentent la magie de la forêt.",
+                        'rouge,vert': "Votre leadership et votre empathie maintiennent une certaine cohésion, mais vous manquez de l'imagination nécessaire pour voir au-delà des illusions les plus subtiles d'Hécate.",
+                        'bleu,jaune': "Votre analyse et votre créativité vous permettent de décoder de nombreuses illusions, mais vous négligez l'aspect émotionnel, laissant l'équipe vulnérable aux manipulations psychologiques de la forêt.",
+                        'vert,bleu': "Votre approche harmonieuse et votre analyse méthodique maintiennent le calme, mais vous manquez de la créativité nécessaire pour trouver des solutions inattendues face aux illusions les plus complexes.",
+                        'bleu,rouge': "Votre approche directe et votre analyse logique vous aident à affronter certaines illusions, mais vous peinez à maintenir l'harmonie de l'équipe. Les conflits qui en résultent renforcent le pouvoir de la forêt.",
+                        'jaune,rouge': "Votre dynamisme et votre créativité génèrent de nombreuses idées pour contrer les illusions, mais votre manque de sensibilité aux besoins émotionnels de l'équipe crée des tensions qui alimentent la magie de la forêt.",
+                        'vert,rouge': "Votre leadership et votre empathie maintiennent une certaine cohésion, mais vous manquez de l'imagination nécessaire pour voir au-delà des illusions les plus subtiles d'Hécate.",
+                        'jaune,bleu': "Votre analyse et votre créativité vous permettent de décoder de nombreuses illusions, mais vous négligez l'aspect émotionnel, laissant l'équipe vulnérable aux manipulations psychologiques de la forêt.",
+                        'bleu,vert': "Votre approche harmonieuse et votre analyse méthodique maintiennent le calme, mais vous manquez de la créativité nécessaire pour trouver des solutions inattendues face aux illusions les plus complexes."
+                    }
+                }
+            },
+            {
+                initial: "Votre équipage se retrouve piégé dans les mines souterraines de Héphaïstos, dieu du feu et de la forge.",
+                defi: "Pour vous échapper, vous devez traverser un réseau complexe de tunnels en fusion et réparer un ancien mécanisme de porte qui bloque la sortie. Le temps presse car la chaleur augmente rapidement et les vapeurs toxiques s'accumulent.",
+                correctPair: ['rouge', 'bleu'],
+                feedback: {
+                    correct: "Althara, avec son courage et sa capacité de décision rapide, guide l'équipe à travers les tunnels dangereux, prenant des décisions cruciales pour éviter les coulées de lave et les effondrements. Héraklios analyse méticuleusement le mécanisme complexe de la porte, déchiffrant son fonctionnement et élaborant un plan précis pour le réparer. Ensemble, ils parviennent à naviguer efficacement dans les mines tout en résolvant le puzzle mécanique, permettant à l'équipe de s'échapper juste à temps.",
+                    incorrect: {
+                        'rouge,jaune': "Votre courage et votre créativité vous permettent de trouver des solutions innovantes pour traverser les tunnels, mais vous manquez de la précision analytique nécessaire pour comprendre et réparer le mécanisme complexe de la porte.",
+                        'rouge,vert': "Votre leadership et votre approche calme maintiennent le moral de l'équipe, mais vous peinez à naviguer efficacement dans le labyrinthe de tunnels et à résoudre le problème technique de la porte.",
+                        'jaune,vert': "Vos idées créatives et votre approche harmonieuse aident à garder l'équipe soudée, mais vous manquez de l'audace nécessaire pour prendre des décisions rapides dans les tunnels dangereux et de la rigueur pour réparer le mécanisme.",
+                        'jaune,bleu': "Votre créativité et votre analyse vous permettent de comprendre le mécanisme de la porte, mais vous hésitez trop dans la navigation des tunnels dangereux, perdant un temps précieux.",
+                        'vert,bleu': "Votre approche méthodique et votre calme sont utiles pour analyser la situation, mais vous manquez de l'initiative et de la rapidité de décision nécessaires pour guider l'équipe à travers les dangers immédiats des mines.",
+                        'jaune,rouge': "Votre courage et votre créativité vous permettent de trouver des solutions innovantes pour traverser les tunnels, mais vous manquez de la précision analytique nécessaire pour comprendre et réparer le mécanisme complexe de la porte.",
+                        'vert,rouge': "Votre leadership et votre approche calme maintiennent le moral de l'équipe, mais vous peinez à naviguer efficacement dans le labyrinthe de tunnels et à résoudre le problème technique de la porte.",
+                        'jaune,vert': "Vos idées créatives et votre approche harmonieuse aident à garder l'équipe soudée, mais vous manquez de l'audace nécessaire pour prendre des décisions rapides dans les tunnels dangereux et de la rigueur pour réparer le mécanisme.",
+                        'bleu,jaune': "Votre créativité et votre analyse vous permettent de comprendre le mécanisme de la porte, mais vous hésitez trop dans la navigation des tunnels dangereux, perdant un temps précieux.",
+                        'bleu,vert': "Votre approche méthodique et votre calme sont utiles pour analyser la situation, mais vous manquez de l'initiative et de la rapidité de décision nécessaires pour guider l'équipe à travers les dangers immédiats des mines."
+                    }
+                }
+            }
+        ];
+
+        let currentChallenge = 0;
+        let selectedCharacters = [];
+
+        function createComicStrip() {
+            const container = document.getElementById('comic-container');
+            container.innerHTML = '';
+            
+            const strip = document.createElement('div');
+            strip.className = 'comic-strip';
+            strip.id = `strip-${currentChallenge}`;
+            strip.innerHTML = `
+                <div class="panel">
+                    <img src="${currentChallenge + 1}-fondgen1.jpg" alt="Fond général 1" class="background">
+                    <div class="text-block top-text" id="initial-text-${currentChallenge}"></div>
+                </div>
+                <div class="panel">
+                    <img src="${currentChallenge + 1}-fondgen1.jpg" alt="Fond général 1" class="background">
+                    <div class="text-block bottom-text" id="defi-text-${currentChallenge}"></div>
+                </div>
+                <div class="panel wide" id="panel3-${currentChallenge}">
+                    <img src="${currentChallenge + 1}-fondgen2.jpg" alt="Fond général 2" class="background">
+                    <div class="text-block top-text" id="feedback-text-${currentChallenge}"></div>
+                </div>
+                <div class="panel narrow" id="panel4-${currentChallenge}">
+                    <img src="${currentChallenge + 1}-fondgen2.jpg" alt="Fond général 2" class="background">
+                    <div class="text-block center-text" id="result-text-${currentChallenge}"></div>
+                </div>
+            `;
+            container.appendChild(strip);
+            loadChallenge();
+        }
+
+        function loadChallenge() {
+            const challenge = challenges[currentChallenge];
+            document.getElementById(`initial-text-${currentChallenge}`).innerText = challenge.initial;
+            document.getElementById(`defi-text-${currentChallenge}`).innerText = challenge.defi;
+            selectedCharacters = [];
+        }
+
+        function selectCharacter(color) {
+            if (selectedCharacters.length < 2) {
+                selectedCharacters.push(color);
+                updatePanel3();
+                
+                if (selectedCharacters.length === 2) {
+                    checkAnswer();
+                }
+            }
+        }
+
+        function updatePanel3() {
+            const panel3 = document.getElementById(`panel3-${currentChallenge}`);
+            const existingBackground = panel3.querySelector('img.background');
+            const existingTextBlock = panel3.querySelector('.text-block');
+            
+            panel3.innerHTML = `
+                ${existingBackground.outerHTML}
+                ${existingTextBlock.outerHTML}
+                ${selectedCharacters.map((color, index) => `
+                    <img src="${color}.png" alt="${color}" class="character${index + 1}">
+                `).join('')}
+            `;
+        }
+
+        function checkAnswer() {
+            const challenge = challenges[currentChallenge];
+            const resultText = document.getElementById(`result-text-${currentChallenge}`);
+            const feedbackText = document.getElementById(`feedback-text-${currentChallenge}`);
+
+            if (arraysEqual(selectedCharacters.sort(), challenge.correctPair.sort())) {
+                feedbackText.innerText = challenge.feedback.correct;
+                resultText.innerText = "Correct ! Passons au défi suivant.";
+                setTimeout(() => {
+                    currentChallenge++;
+                    if (currentChallenge < challenges.length) {
+                        createComicStrip();
+                    } else {
+                        resultText.innerText = "Félicitations ! Vous avez terminé tous les défis !";
+                    }
+                }, 2000);
+            } else {
+                const key = selectedCharacters.sort().join(',');
+                feedbackText.innerText = challenge.feedback.incorrect[key] || "Ce n'est pas la meilleure approche. Essayez une autre combinaison.";
+                resultText.innerText = "";
+                selectedCharacters = [];
+                setTimeout(updatePanel3, 2000);
+            }
+        }
+
+        function arraysEqual(a, b) {
+            return JSON.stringify(a) === JSON.stringify(b);
+        }
+
+        createComicStrip();
+    </script>
+</body>
+</html>
