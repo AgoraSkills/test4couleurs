@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'Odyssée Chromatique : Un Voyage au Cœur des Tempéraments</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+        #main-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        #title {
+            font-size: 24px;
+            font-weight: bold;
+            padding: 20px 0;
+            text-align: center;
+            background-color: #ffffff;
+        }
+        #content-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        #comic-container {
+            width: 80%;
+            height: 100%;
+            overflow-y: auto;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .comic-strip {
+            display: flex;
+            width: 100%;
+            height: calc(33.33vh - 20px);
+            margin-bottom: 20px;
+        }
+        .panel {
+            width: calc(25% - 15px);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid black;
+            box-sizing: border-box;
+            background-color: white;
+            margin-right: 20px;
+        }
+        .panel:last-child {
+            margin-right: 0;
+        }
+        .panel img.background {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .panel img.character {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            max-width: 50%;
+            max-height: 50%;
+        }
+        .text-block {
+            position: absolute;
+            background: white;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            max-width: 90%;
+            max-height: 40%;
+            overflow-y: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 5px;
+        }
+        .top-text {
+            top: 10px;
+            left: 10px;
+        }
+        .bottom-text {
+            bottom: 10px;
+            left: 10px;
+        }
+        .center-text {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        #character-selection {
+            width: 20%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #e0e0e0;
+        }
+        .character-select {
+            width: 60%; /* Réduit de 80% à 60% */
+            margin: 10px 0;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .character-select:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div id="main-container">
+        <div id="title">L'Odyssée Chromatique : Un Voyage au Cœur des Tempéraments</div>
+        <div id="content-container">
+            <div id="comic-container"></div>
+            <div id="character-selection">
+                <img src="rouge.png" alt="Rouge" class="character-select" onclick="selectCharacter('rouge')">
+                <img src="jaune.png" alt="Jaune" class="character-select" onclick="selectCharacter('jaune')">
+                <img src="vert.png" alt="Vert" class="character-select" onclick="selectCharacter('vert')">
+                <img src="bleu.png" alt="Bleu" class="character-select" onclick="selectCharacter('bleu')">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const challenges = [
+            {
+                initial: "Le Cyclope Polyphème vous a piégé dans sa grotte !",
+                defi: "Vous devez agir rapidement avant qu'il ne vous enferme et ne dévore votre équipage !",
+                correctColor: 'rouge',
+                feedback: {
+                    rouge: "Athara prend l'initiative, élabore rapidement un plan audacieux et guide l'équipe pour aveugler le cyclope et s'échapper.",
+                    jaune: "Votre tentative de distraire le cyclope avec des histoires créatives prend trop de temps. Le cyclope devient impatient et menace l'équipage.",
+                    vert: "Votre approche empathique pour raisonner le cyclope échoue. Il est trop enragé pour écouter.",
+                    bleu: "Votre analyse détaillée de la situation prend trop de temps. Le cyclope commence à repérer l'équipage caché."
+                }
+            },
+            {
+                initial: "Votre navire approche d'une île où le chant envoûtant des Sirènes se fait entendre.",
+                defi: "Le chant des Sirènes menace de vous faire chavirer. Vous devez trouver un moyen créatif de résister à leur appel.",
+                correctColor: 'jaune',
+                feedback: {
+                    jaune: "Philon invente une mélodie entraînante et persuade l'équipage de chanter ensemble, couvrant le chant des Sirènes.",
+                    rouge: "Votre tentative de diriger l'équipage pour ignorer les sirènes par la force de volonté échoue. Certains marins sont toujours attirés par le chant.",
+                    vert: "Votre approche douce pour calmer l'équipage n'est pas assez puissante pour contrer l'attrait des sirènes.",
+                    bleu: "Votre analyse logique des fréquences du chant des sirènes ne suffit pas à neutraliser son effet envoûtant."
+                }
+            },
+            {
+                initial: "Vous accostez sur l'île de Circé l'Enchanteresse, mais une terrible surprise vous attend.",
+                defi: "Circé a transformé une partie de votre équipage en animaux. Vous devez négocier avec elle pour lever le sortilège.",
+                correctColor: 'vert',
+                feedback: {
+                    vert: "Elara approche Circé avec compassion, comprend ses motivations et négocie pacifiquement la libération de l'équipage.",
+                    rouge: "Votre approche directe et confrontationnelle irrite Circé davantage. Elle menace de transformer plus de membres d'équipage.",
+                    jaune: "Vos tentatives créatives pour divertir Circé l'amusent, mais ne la convainquent pas de lever le sortilège.",
+                    bleu: "Votre argumentation logique sur les inconvénients de transformer des hommes en animaux n'émeut pas Circé."
+                }
+            },
+            {
+                initial: "Votre navire s'approche d'un détroit dangereux, gardé par deux monstres marins.",
+                defi: "Votre navire est pris entre le tourbillon de Charybde et le monstre Scylla. Vous devez analyser la situation pour trouver la route la plus sûre.",
+                correctColor: 'bleu',
+                feedback: {
+                    bleu: "Heraklios étudie méticuleusement les courants et les mouvements de Scylla, calculant le moment précis pour passer en minimisant les risques.",
+                    rouge: "Votre décision rapide de foncer droit devant met le navire en danger immédiat face aux deux menaces.",
+                    jaune: "Votre idée créative de distraire Scylla avec un spectacle improvisé ne fonctionne pas et vous fait perdre un temps précieux.",
+                    vert: "Votre tentative d'apaiser les monstres marins par la communication échoue. Ils sont trop primitifs pour être raisonnés."
+                }
+            },
+            {
+                initial: "Après de nombreuses épreuves, vous apercevez enfin les côtes d'Ithaque.",
+                defi: "Vous arrivez à Ithaque, mais le palais est envahi par les prétendants. Vous devez élaborer un plan pour reprendre le contrôle.",
+                correctColor: 'bleu',
+                feedback: {
+                    bleu: "Heraklios conçoit un plan détaillé, prenant en compte tous les aspects de la situation pour reprendre le palais de manière méthodique et efficace.",
+                    rouge: "Votre plan d'attaque frontale contre les prétendants alerte les gardes et compromet l'élément de surprise.",
+                    jaune: "Votre idée de se déguiser et d'infiltrer le palais en tant qu'artistes ambulants est trop risquée et facilement déjouée.",
+                    vert: "Votre approche diplomatique pour négocier avec les prétendants échoue. Ils sont trop nombreux et trop confiants pour céder pacifiquement."
+                }
+            }
+        ];
+
+        let currentChallenge = 0;
+
+        function createComicStrip() {
+            const container = document.getElementById('comic-container');
+            // Supprime les anciennes bandes dessinées
+            container.innerHTML = '';
+            
+            const strip = document.createElement('div');
+            strip.className = 'comic-strip';
+            strip.id = `strip-${currentChallenge}`;
+            strip.innerHTML = `
+                <div class="panel">
+                    <img src="${currentChallenge + 1}-fondgen1.jpg" alt="Fond général 1" class="background">
+                    <div class="text-block top-text" id="initial-text-${currentChallenge}"></div>
+                </div>
+                <div class="panel">
+                    <img src="${currentChallenge + 1}-fondgen1.jpg" alt="Fond général 1" class="background">
+                    <div class="text-block bottom-text" id="defi-text-${currentChallenge}"></div>
+                </div>
+                <div class="panel" id="panel3-${currentChallenge}">
+                    <img src="${currentChallenge + 1}-fondgen2.jpg" alt="Fond général 2" class="background">
+                </div>
+                <div class="panel" id="panel4-${currentChallenge}">
+                    <img src="${currentChallenge + 1}-fondgen2.jpg" alt="Fond général 2" class="background">
+                </div>
+            `;
+            container.appendChild(strip);
+            loadChallenge();
+        }
+
+        function loadChallenge() {
+            const challenge = challenges[currentChallenge];
+            document.getElementById(`initial-text-${currentChallenge}`).innerText = challenge.initial;
+            document.getElementById(`defi-text-${currentChallenge}`).innerText = challenge.defi;
+        }
+
+        function selectCharacter(color) {
+            const challenge = challenges[currentChallenge];
+            const panel3 = document.getElementById(`panel3-${currentChallenge}`);
+            const panel4 = document.getElementById(`panel4-${currentChallenge}`);
+            
+            panel3.innerHTML = `
+                <img src="${currentChallenge + 1}-fondgen2.jpg" alt="Fond général 2" class="background">
+                <div class="text-block top-text" id="feedback-text-${currentChallenge}"></div>
+                <img src="${color}.png" alt="${color}" class="character">
+            `;
+
+            panel4.innerHTML = `
+                <img src="${currentChallenge + 1}-fondgen2.jpg" alt="Fond général 2" class="background">
+                <div class="text-block center-text" id="result-text-${currentChallenge}"></div>
+            `;
+
+            document.getElementById(`feedback-text-${currentChallenge}`).innerText = challenge.feedback[color];
+
+            if (color === challenge.correctColor) {
+                document.getElementById(`result-text-${currentChallenge}`).innerText = "Correct ! Passons au défi suivant.";
+                currentChallenge++;
+                if (currentChallenge < challenges.length) {
+                    setTimeout(() => {
+                        createComicStrip();
+                    }, 2000);
+                } else {
+                    document.getElementById(`result-text-${currentChallenge - 1}`).innerText = "Félicitations ! Vous avez terminé tous les défis !";
+                }
+            } else {
+                document.getElementById(`result-text-${currentChallenge}`).innerText = "Ce n'est pas la meilleure approche. Essayez à nouveau !";
+            }
+        }
+
+        createComicStrip();
+    </script>
+</body>
+</html>
