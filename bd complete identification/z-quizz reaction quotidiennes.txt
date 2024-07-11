@@ -1,0 +1,59 @@
+1. Vous préparez le dîner pour des amis :
+   - Vous choisissez un menu audacieux et prenez les commandes en cuisine. (Rouge)
+   - Vous suivez méticuleusement une recette testée et approuvée. (Bleu)
+   - Vous demandez les préférences de chacun et adaptez le menu en conséquence. (Vert)
+   - Vous improvisez un repas créatif avec ce que vous avez sous la main. (Jaune)
+
+2. Vous planifiez vos vacances :
+   - Vous choisissez une destination excitante et organisez un itinéraire rempli d'activités. (Rouge)
+   - Vous recherchez en détail les meilleures options et planifiez chaque journée. (Bleu)
+   - Vous optez pour une destination relaxante où tout le monde pourra profiter. (Vert)
+   - Vous choisissez une destination au hasard, prêt pour l'aventure. (Jaune)
+
+3. Vous faites du shopping pour un nouvel appareil électronique :
+   - Vous choisissez rapidement le modèle le plus performant. (Rouge)
+   - Vous comparez minutieusement les caractéristiques de chaque modèle. (Bleu)
+   - Vous demandez conseil aux vendeurs et à vos amis. (Vert)
+   - Vous êtes attiré par le design le plus original et innovant. (Jaune)
+
+4. Vous organisez une soirée jeux de société :
+   - Vous choisissez des jeux compétitifs et prenez le rôle de maître du jeu. (Rouge)
+   - Vous sélectionnez des jeux stratégiques et expliquez les règles en détail. (Bleu)
+   - Vous optez pour des jeux coopératifs où tout le monde peut participer. (Vert)
+   - Vous proposez des jeux d'ambiance et d'improvisation. (Jaune)
+
+5. Vous décorez votre salon :
+   - Vous optez pour un style audacieux avec des couleurs vives. (Rouge)
+   - Vous planifiez soigneusement chaque détail pour un résultat harmonieux. (Bleu)
+   - Vous choisissez un décor confortable et accueillant pour tous. (Vert)
+   - Vous mélangez les styles de façon originale et éclectique. (Jaune)
+
+6. Vous choisissez un film pour une soirée cinéma :
+   - Vous optez pour un film d'action ou d'aventure palpitant. (Rouge)
+   - Vous sélectionnez un documentaire ou un film historique instructif. (Bleu)
+   - Vous choisissez un film que tout le monde appréciera. (Vert)
+   - Vous proposez une comédie légère ou un film fantaisiste. (Jaune)
+
+7. Vous conduisez votre enfant à l'école.
+   - Vous vous lancez dans le trajet avec enthousiasme et détermination. Vous cherchez les itinéraires les plus rapides et efficaces, et vous ne laissez rien vous ralentir. (Rouge)
+   - Vous suivez attentivement chaque règle de circulation et chaque procédure de sécurité. Vous vérifiez que tout est en ordre avant de partir. (Bleu)
+   - Vous covoiturez pour emmener le maximum d'enfants dans votre voiture pour permettre que tous les parents s'entendent. (Vert)
+   - Vous rendez le trajet agréable et divertissant. Vous ajoutez votre touche personnelle en discutant, chantant ou jouant à des jeux pendant le trajet. (Jaune)
+
+8. Vous jardinez dans votre jardin ou sur votre balcon :
+   - Vous vous attaquez aux gros travaux d'aménagement avec énergie. (Rouge)
+   - Vous planifiez soigneusement vos plantations selon les saisons. (Bleu)
+   - Vous créez un espace accueillant pour la famille et les amis. (Vert)
+   - Vous expérimentez avec des plantes exotiques et des arrangements originaux. (Jaune)
+
+9. Vous prenez l'ascenceur :
+   - Vous appuyez immédiatement sur le bouton de l'étage souhaité et pourriez même appuyer sur le bouton de fermeture des portes pour accélérer les choses. (Rouge)
+   - Vous attendez patiemment votre tour, appuyez doucement sur le bouton et vous tenez calmement à votre place sans perturber les autres. (Bleu)
+   - Vous saluez poliment, demandez aux autres à quel étage ils vont et appuyez sur les boutons pour eux. (Vert)
+   - Vous engagez une conversation légère, faites une blague ou commentez quelque chose pour détendre l'atmosphère.(Jaune)
+
+10. Vous participez à un cours de danse :
+    - Vous vous lancez dans les mouvements les plus énergiques. (Rouge)
+    - Vous vous concentrez sur la technique et la précision des pas. (Bleu)
+    - Vous aidez les autres participants et créez une ambiance chaleureuse. (Vert)
+    - Vous ajoutez votre propre style et improvisez sur la musique. (Jaune)
