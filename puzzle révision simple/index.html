@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puzzle des Couleurs</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        #card-pile {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+        }
+        .card {
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            border: 1px solid black;
+            background-color: white;
+            cursor: move;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 5px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+            font-size: 12px;
+        }
+        #color-zones {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .color-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .drop-zone {
+            width: 270px;
+            height: 90px;
+            border: 2px solid black;
+            margin-bottom: 10px;
+        }
+        .color-zone {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            width: 270px;
+            height: 270px;
+            border: 2px solid black;
+        }
+        .color-zone div {
+            border: 1px solid black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 90px;
+            height: 90px;
+        }
+        #red-zone, #red-drop { background-color: #ffcccc; }
+        #yellow-zone, #yellow-drop { background-color: #ffffcc; }
+        #blue-zone, #blue-drop { background-color: #ccccff; }
+        #green-zone, #green-drop { background-color: #ccffcc; }
+        #place-image {
+            display: none;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #place-image:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div id="card-pile"></div>
+    <div id="color-zones">
+        <div class="color-group">
+            <div id="red-drop" class="drop-zone"></div>
+            <div id="red-zone" class="color-zone"></div>
+        </div>
+        <div class="color-group">
+            <div id="yellow-drop" class="drop-zone"></div>
+            <div id="yellow-zone" class="color-zone"></div>
+        </div>
+        <div class="color-group">
+            <div id="blue-drop" class="drop-zone"></div>
+            <div id="blue-zone" class="color-zone"></div>
+        </div>
+        <div class="color-group">
+            <div id="green-drop" class="drop-zone"></div>
+            <div id="green-zone" class="color-zone"></div>
+        </div>
+    </div>
+    <button id="place-image">Placer l'image</button>
+
+    <script>
+        const cardData = [
+            { pepite: "orienté vers l'action et les résultats.", color: "red", image: "r1-1.jpg", row: 1, col: 1 },
+            { pepite: "prendre des décisions rapidement et de manière décisive.", color: "red", image: "r1-2.jpg", row: 1, col: 2 },
+            { pepite: "assertif et compétitif", color: "red", image: "r1-3.jpg", row: 1, col: 3 },
+            { pepite: "aime les défis et ne craint pas les confrontations.", color: "red", image: "r2-1.jpg", row: 2, col: 1 },
+            { pepite: "impatient et direct dans sa communication.", color: "red", image: "r2-2.jpg", row: 2, col: 2 },
+            { pepite: "préfère le contrôle et l'autonomie dans leur travail.", color: "red", image: "r2-3.jpg", row: 2, col: 3 },
+            { pepite: "motivé par le pouvoir et le succès.", color: "red", image: "r3-1.jpg", row: 3, col: 1 },
+            { pepite: "leader naturel.", color: "red", image: "r3-2.jpg", row: 3, col: 2 },
+            { pepite: "autoritaire ou insensible aux émotions des autres.", color: "red", image: "r3-3.jpg", row: 3, col: 3 },
+            
+            { pepite: "sociable et enthousiaste.", color: "yellow", image: "j1-1.jpg", row: 1, col: 1 },
+            { pepite: "interagir avec les autres, charismatique.", color: "yellow", image: "j1-2.jpg", row: 1, col: 2 },
+            { pepite: "optimiste et attitude positive.", color: "yellow", image: "j1-3.jpg", row: 1, col: 3 },
+            { pepite: "aime être au centre de l'attention.", color: "yellow", image: "j2-1.jpg", row: 2, col: 1 },
+            { pepite: "créatif et aime explorer de nouvelles idées.", color: "yellow", image: "j2-2.jpg", row: 2, col: 2 },
+            { pepite: "motivé par la reconnaissance et l'approbation des autres.", color: "yellow", image: "j2-3.jpg", row: 2, col: 3 },
+            { pepite: "désorganisé et manque de suivi dans les détails.", color: "yellow", image: "j3-1.jpg", row: 3, col: 1 },
+            { pepite: "motivateur et des inspirateur.", color: "yellow", image: "j3-2.jpg", row: 3, col: 2 },
+            { pepite: "difficultés à gérer les conflits et à dire non.", color: "yellow", image: "j3-3.jpg", row: 3, col: 3 },
+            
+            { pepite: "calme et patient.", color: "green", image: "v1-1.jpg", row: 1, col: 1 },
+            { pepite: "loyal et fiable dans ses relations.", color: "green", image: "v1-2.jpg", row: 1, col: 2 },
+            { pepite: "environnement de travail stable et harmonieux.", color: "green", image: "v1-3.jpg", row: 1, col: 3 },
+            { pepite: "bon auditeur et empathique.", color: "green", image: "v2-1.jpg", row: 2, col: 1 },
+            { pepite: "diplomate et coopératif.", color: "green", image: "v2-2.jpg", row: 2, col: 2 },
+            { pepite: "n'aime pas les conflits et cherche à les éviter.", color: "green", image: "v2-3.jpg", row: 2, col: 3 },
+            { pepite: "la sécurité et la stabilité.", color: "green", image: "v3-1.jpg", row: 3, col: 1 },
+            { pepite: "membre d'équipe dévoué.", color: "green", image: "v3-2.jpg", row: 3, col: 2 },
+            { pepite: "résistant au changement et à la prise de risques.", color: "green", image: "v3-3.jpg", row: 3, col: 3 },
+            
+            { pepite: "méthodique et analytique.", color: "blue", image: "b1-1.jpg", row: 1, col: 1 },
+            { pepite: "aime les faits, les données et les preuves tangibles.", color: "blue", image: "b1-2.jpg", row: 1, col: 2 },
+            { pepite: "précis et attentif aux détails.", color: "blue", image: "b1-3.jpg", row: 1, col: 3 },
+            { pepite: "perfectionniste et rigoureux.", color: "blue", image: "b2-1.jpg", row: 2, col: 1 },
+            { pepite: "préfèrent travailler seul et de manière indépendante.", color: "blue", image: "b2-2.jpg", row: 2, col: 2 },
+            { pepite: "motivé par la qualité et l'exactitude.", color: "blue", image: "b2-3.jpg", row: 2, col: 3 },
+            { pepite: "distant ou réservé.", color: "blue", image: "b3-1.jpg", row: 3, col: 1 },
+            { pepite: "décisions basées sur une analyse approfondie.", color: "blue", image: "b3-2.jpg", row: 3, col: 2 },
+            { pepite: "peur de l'échec, trop critique envers lui-même et les autres.", color: "blue", image: "b3-3.jpg", row: 3, col: 3 }
+        ];
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        const shuffledCards = shuffleArray([...cardData]);
+        let currentCardIndex = 0;
+        let currentCard = null;
+        let currentDropZone = null;
+
+        function createCards() {
+            const cardPile = document.getElementById('card-pile');
+            cardPile.innerHTML = ''; // Clear previous card
+            if (currentCardIndex < shuffledCards.length) {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.textContent = shuffledCards[currentCardIndex].pepite;
+                card.dataset.color = shuffledCards[currentCardIndex].color;
+                card.dataset.image = shuffledCards[currentCardIndex].image;
+                card.dataset.row = shuffledCards[currentCardIndex].row;
+                card.dataset.col = shuffledCards[currentCardIndex].col;
+                card.draggable = true;
+                card.addEventListener('dragstart', dragStart);
+                card.style.backgroundSize = 'cover';
+                cardPile.appendChild(card);
+                currentCard = card;
+            } else {
+                alert("Félicitations ! Vous avez terminé le puzzle.");
+            }
+        }
+
+        function createColorZones() {
+            const colors = ['red', 'yellow', 'blue', 'green'];
+            colors.forEach(color => {
+                const zone = document.getElementById(`${color}-zone`);
+                const dropZone = document.getElementById(`${color}-drop`);
+                dropZone.addEventListener('dragover', dragOver);
+                dropZone.addEventListener('drop', dropInColorZone);
+                for (let i = 0; i < 9; i++) {
+                    const cell = document.createElement('div');
+                    cell.dataset.row = Math.floor(i / 3) + 1;
+                    cell.dataset.col = (i % 3) + 1;
+                    cell.addEventListener('dragover', dragOver);
+                    cell.addEventListener('drop', dropInCell);
+                    zone.appendChild(cell);
+                }
+            });
+        }
+
+        function dragStart(e) {
+            e.dataTransfer.setData('text/plain', JSON.stringify({
+                color: e.target.dataset.color,
+                image: e.target.dataset.image,
+                row: e.target.dataset.row,
+                col: e.target.dataset.col
+            }));
+        }
+
+        function dragOver(e) {
+            e.preventDefault();
+        }
+
+        function dropInColorZone(e) {
+            e.preventDefault();
+            const data = JSON.parse(e.dataTransfer.getData('text'));
+            if (e.target.id === `${data.color}-drop`) {
+                currentCard.textContent = '';
+                currentCard.style.backgroundImage = `url(${data.image})`;
+                currentCard.style.backgroundSize = 'cover';
+                e.target.appendChild(currentCard);
+                currentDropZone = e.target;
+                document.getElementById('place-image').style.display = 'block';
+            }
+        }
+
+        function dropInCell(e) {
+            e.preventDefault();
+            const data = JSON.parse(e.dataTransfer.getData('text'));
+            
+            if (e.target.parentElement.id === `${data.color}-zone` && 
+                e.target.dataset.row === data.row && 
+                e.target.dataset.col === data.col) {
+                e.target.style.backgroundImage = `url(${data.image})`;
+                e.target.style.backgroundSize = 'cover';
+                e.target.style.border = '3px solid white';
+                currentCard.remove();
+                currentDropZone = null;
+                document.getElementById('place-image').style.display = 'none';
+                nextCard();
+            } else {
+                // Replacer la carte dans la zone de dépôt si le placement est incorrect
+                document.getElementById(`${data.color}-drop`).appendChild(currentCard);
+            }
+        }
+
+        document.getElementById('place-image').addEventListener('click', function() {
+            if (currentDropZone) {
+                const data = JSON.parse(JSON.stringify(currentCard.dataset));
+                const targetCell = document.querySelector(`#${data.color}-zone [data-row="${data.row}"][data-col="${data.col}"]`);
+                if (targetCell) {
+                    targetCell.style.backgroundImage = `url(${data.image})`;
+                    targetCell.style.backgroundSize = 'cover';
+                    targetCell.style.border = '3px solid white';
+                    currentCard.remove();
+                    currentDropZone = null;
+                    this.style.display = 'none';
+                    nextCard();
+                }
+            }
+        });
+
+        function nextCard() {
+            currentCardIndex++;
+            createCards();
+        }
+
+        createCards();
+        createColorZones();
+    </script>
+</body>
+</html>

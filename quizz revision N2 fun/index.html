@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module de Quiz Interactif</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        #quiz-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+        #feedback {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="quiz-container">
+        <h1>Quiz</h1>
+        <div id="question"></div>
+        <div id="answers"></div>
+        <div id="feedback"></div>
+        <button id="next-question" style="display:none;">Question suivante</button>
+    </div>
+
+    <script>
+        // Tableau de données (à personnaliser selon vos besoins)
+        const quizData = [
+            {
+                question: "Dans le panthéon des couleurs de l'Olympe, ou devrions nous positionner Zeus, le roi des dieux ?",
+                answers: ["moitié supérieure de la boussole", "moitié inférieure de la boussole", "Exactement au centre de la boussole"],
+                correctAnswer: "moitié supérieure de la boussole",
+                feedback: {
+                    correct: "Excellent choix ! Zeus, comme le Nord de la boussole, représente la tendance à se concentrer sur les tâches et objectifs, tout comme Zeus veut toujours voir ses désirs se réaliser.",
+                    incorrect: "Pas tout à fait. Le Sud est plus orienté vers les relations. Réfléchissez à l'autorité de Zeus plutôt qu'à sa sociabilité."
+                }
+            },
+            {
+                question: "Quel héros grec pourrait représenter le quadrant Sud-Ouest de la boussole ?",
+                answers: ["Achille", "Ulysse", "Hector", "Orphée"],
+                correctAnswer: "Orphée",
+                feedback: {
+                    correct: "Bravo ! Orphée est en effet le choix parfait pour le quadrant Sud-Ouest (Vert). Sa musique apaisante et son désir d'harmonie incarnent parfaitement l'empathie, la patience et la recherche d'équilibre caractéristiques de ce profil.",
+                    incorrect: "Pas tout à fait. Achille est connu pour sa fougue, ce qui le placerait plutôt au Nord. Le Sud-Ouest recherche l'harmonie, pas le conflit."
+                }
+            },
+            {
+                question: "Si Callioppe devait expliquer la signification de l'axe Nord-Sud, que dirait-elle ?",
+                answers: ["Il représente la vitesse de pensée", "Il représente la perception de l'environnement", "Il représente la préférence pour le travail en solo ou en équipe", "Il représente le niveau d'énergie"],
+                correctAnswer: "Il représente la perception de l'environnement",
+                feedback: {
+                    correct: "Parfait ! Callioppe serait fière de votre compréhension. L'axe Nord-Sud représente effectivement comment on perçoit l'environnement : plus hostile au Nord (nécessitant action et contrôle) et plus favorable au Sud (permettant coopération et stabilité).",
+                    incorrect: "Pas exactement. La vitesse de pensée n'est pas liée à cet axe. Réfléchissez à comment on voit le monde autour de soi."
+                }
+            },
+            {
+                question: "Quel dieu grec serait le plus à l'aise dans le quadrant Sud-Est de la boussole ?",
+                answers: ["Héphaïstos", "Apollon", "Artémis", "Hadès"],
+                correctAnswer: "Apollon",
+                feedback: {
+                    correct: "Excellent choix ! Apollon, dieu de la musique, des arts et du soleil, incarne parfaitement le quadrant Sud-Est (Jaune). Son charisme, sa créativité et son enthousiasme correspondent à l'énergie extravertie et orientée vers les personnes de ce profil.",
+                    incorrect: "Pas tout à fait. Héphaïstos est plus associé au travail solitaire. Pensez à un dieu plus sociable et expressif."
+                }
+            },
+            {
+                question: "Si la boussole des couleurs était une cité grecque, dans quelle partie trouver l'agora, le lieu de rassemblement public ?",
+                answers: ["Nord", "Sud", "Est", "Ouest"],
+                correctAnswer: "Sud",
+                feedback: {
+                    correct: "Bravo ! Le sud, comme l'agora, est le lieu de l'échange, de la communication. C'est là que l'énergie s'exprime vers les autres, tout comme dans une place publique animée.",
+                    incorrect: "Pas exactement. Le Nord est plus orienté vers l'action que vers l'échange. Où se situe l'énergie tournée vers les autres ?"
+                }
+            },
+            {
+                question: "Quelle couleur de la boussole Athéna, déesse de la sagesse et de la stratégie, représenterait-elle le mieux ?",
+                answers: ["Rouge (Nord-Est)", "Jaune (Sud-Est)", "Vert (Sud-Ouest)", "Bleu (Nord-Ouest)"],
+                correctAnswer: "Bleu (Nord-Ouest)",
+                feedback: {
+                    correct: "Parfait ! Le Bleu correspond parfaitement à Athéna. Cette couleur représente l'analyse, la réflexion et la planification stratégique, des qualités que la déesse de la sagesse incarne pleinement.",
+                    incorrect: "Pas tout à fait. Le Rouge est plus impulsif. Athéna est connue pour sa réflexion avant l'action. Quelle couleur symbolise l'analyse ?"
+                }
+            },
+            {
+                question: "Afin d'agir sans hésitations ni précipitation, quel axe de la boussole Chiron conseillerait-il d'harmoniser ?",
+                answers: ["Nord-Sud", "Est-Ouest", "Diagonale Nord-Est/Sud-Ouest", "Diagonale Nord-Ouest/Sud-Est"],
+                correctAnswer: "Est-Ouest",
+                feedback: {
+                    correct: "Excellent ! Chiron, dans sa sagesse, soulignerait l'importance de l'axe Est-Ouest. Cet axe représente l'équilibre entre l'extraversion (Est) et l'introversion (Ouest), une base essentielle pour la mise en action.",
+                    incorrect: "Pas exactement. Le Nord-Sud concerne la perception de l'environnement. Pensez à l'équilibre entre l'intérieur et l'extérieur de soi."
+                }
+            },
+            {
+                question: "Quel héros de l'Odyssée représenterait le mieux la position Ouest sur la boussole ?",
+                answers: ["Ulysse", "Achille", "Pénélope", "Circé"],
+                correctAnswer: "Pénélope",
+                feedback: {
+                    correct: "Excellent choix ! Pénélope incarne parfaitement le quadrant Ouest (mélange de Bleu et de Vert). Sa patience, sa loyauté et sa réflexion profonde correspondent à l'introversion et à la stabilité de ce profil.",
+                    incorrect: "Pas exactement. Ulysse est plus adaptable et extraverti. Pensez à un personnage plus constant et introverti."
+                }
+            },
+            {
+                question: "Pour un banquet olympien, de quelle direction de la boussole viendraient ceux s'occuperaient au mieux de l'événement ?",
+                answers: ["Est (Rouge-Jaune)", "Sud (Jaune-Vert)", "Ouest (Vert-Bleu)", "Nord (Bleu-Rouge)"],
+                correctAnswer: "Nord (Bleu-Rouge)",
+                feedback: {
+                    correct: "Parfait ! Le Nord (Bleu-Rouge) serait idéal pour planifier et mettre en oeuvre le banquet. Il combine l'analyse méticuleuse du Bleu avec l'orientation vers les résultats du Rouge, assurant une organisation parfaite de l'événement.",
+                    incorrect: "Pas tout à fait. L'Est serait plus dans l'action que dans la planification. Quel duo de couleurs allie analyse et efficacité ?"
+                }
+            },
+            {
+                question: "A la fin de ce premier quizz de révision vous vous sentez :",
+                answers: ["Comme si vous aviez conquis le Mont Olympe (Fier)", "Comme si vous aviez été perdu dans le Labyrinthe de Minos (Perdu)", "Comme si vous aviez partagé un festin avec Dionysos (Amusé)", "Comme si vous aviez été transformé en statue par Méduse (Confus)"],
+                correctAnswer: "Comme si vous aviez conquis le Mont Olympe (Fier)",
+                feedback: {
+                    correct: "Bravo, héros ! Votre performance est digne des plus grands dieux de l'Olympe. Continuez sur cette voie et préparez-vous à découvrir encore plus de savoirs divins dans la suite de notre formation !",
+                    incorrect: "Rassurez-vous Thésée a trouvé la sortie et vous le pouvez aussi ! La suite de la formation est là pour vous guider et vous éclairer. Chaque dédale de connaissance vous rapproche de la maîtrise. Choisissez d'être fier de vos efforts!"
+                }
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        function loadQuestion() {
+            const question = quizData[currentQuestion];
+            document.getElementById('question').textContent = question.question;
+            
+            const answersDiv = document.getElementById('answers');
+            answersDiv.innerHTML = '';
+            question.answers.forEach(answer => {
+                const button = document.createElement('button');
+                button.textContent = answer;
+                button.onclick = () => checkAnswer(answer);
+                answersDiv.appendChild(button);
+            });
+            
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('next-question').style.display = 'none';
+        }
+
+        function checkAnswer(selectedAnswer) {
+            const question = quizData[currentQuestion];
+            const feedbackDiv = document.getElementById('feedback');
+            
+            if (selectedAnswer === question.correctAnswer) {
+                feedbackDiv.textContent = question.feedback.correct;
+            } else {
+                feedbackDiv.textContent = question.feedback.incorrect;
+            }
+            
+            document.getElementById('next-question').style.display = 'block';
+        }
+
+        document.getElementById('next-question').onclick = () => {
+            currentQuestion++;
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                document.getElementById('quiz-container').innerHTML = '<h2>Quiz terminé !</h2>';
+            }
+        };
+
+        // Charger la première question au chargement de la page
+        loadQuestion();
+    </script>
+</body>
+</html>
