@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test analyse comportementale couleurs</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+  }
+  h1, h2, h3 {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #003366;
+  }
+  .container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  .section {
+    margin-bottom: 20px;
+  }
+  .section h2 {
+    border-bottom: 2px solid #003366;
+    padding-bottom: 10px;
+  }
+  .section p {
+    text-align: justify;
+    line-height: 1.6;
+  }
+  #scoreChart {
+    display: block;
+    margin: 0 auto;
+  }
+  button {
+    font-size: 1.2em;
+    padding: 10px 20px;
+    background-color: #003366;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  #printReport {
+    font-size: 1.2em;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .half-width {
+    display: flex;
+    justify-content: space-between;
+  }
+  .half-width .left,
+  .half-width .right {
+    width: 48%;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .page-break {
+    page-break-before: always;
+  }
+  .progress-container {
+    width: 100%;
+    background-color: #f3f3f3;
+    border-radius: 25px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 20px;
+    background-color: #003366;
+    width: 0;
+  }
+  #progressText {
+    text-align: center;
+    margin-top: 10px;
+  }
+  @media print {
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      margin: 0;
+      padding: 20px;
+      box-shadow: none;
+      background-color: #fff;
+    }
+    body * {
+      visibility: hidden;
+    }
+    #reportContainer, #reportContainer * {
+      visibility: visible;
+    }
+    #reportContainer {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .half-width {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .half-width .left,
+    .half-width .right {
+      width: 48%;
+    }
+    .page-break {
+      page-break-before: always;
+    }
+  }
+</style>
+</head>
+<body>
+<h1>Test Analyse comportementale couleurs</h1>
+<!-- Ajouter un formulaire pour saisir les informations de l'utilisateur -->
+<form id="userForm" class="container">
+  <div class="section">
+    <label for="firstName">Prénom:</label>
+    <input type="text" id="firstName" name="firstName" required>
+  </div>
+  <div class="section">
+    <label for="lastName">Nom:</label>
+    <input type="text" id="lastName" name="lastName" required>
+  </div>
+  <div class="section">
+    <label for="email">Adresse e-mail:</label>
+    <input type="email" id="email" name="email" required>
+  </div>
+  <button type="submit">Commencer le test adapté</button>
+</form>
+<!-- Div pour afficher les informations de l'utilisateur -->
+<div id="userInfo" class="container" style="display:none;">
+  <div class="section">
+    <h2>Informations Utilisateur</h2>
+    <p id="displayFirstName"></p>
+    <p id="displayLastName"></p>
+    <p id="displayEmail"></p>
+  </div>
+</div>
+<!-- Ajouter une barre de progression -->
+<div class="container" id="progressContainer" style="display:none;">
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <p id="progressText"></p>
+</div>
+<!-- Ajouter une section pour afficher la question -->
+<div id="question" class="container" style="width: calc(100vw / 3);"></div>
+<!-- Ajouter une liste pour afficher les réponses -->
+<ul id="answers" class="container" style="display: flex; flex-wrap: wrap; gap: 10px;">
+  <!-- Les réponses seront ajoutées dynamiquement ici -->
+</ul>
+<!-- Ajouter une section pour afficher le résultat -->
+<div id="result" class="container"></div>
+<!-- Ajouter un élément canvas pour le diagramme circulaire -->
+<canvas id="scoreChart" width="400" height="400"></canvas>
+
+<!-- Rapport généré automatiquement -->
+<div class="container" style="display:none;" id="reportContainer">
+  <img src="logo.jpg" alt="Logo">
+  <div class="section">
+    <h1>Rapport d'Analyse Comportementale</h1>
+  </div>
+  <div class="section half-width">
+    <div class="left">
+      <h2>Informations Utilisateur</h2>
+      <p><span class="bold">Prénom:</span> <span id="reportFirstName"></span></p>
+      <p><span class="bold">Nom:</span> <span id="reportLastName"></span></p>
+      <p><span class="bold">Email:</span> <span id="reportEmail"></span></p>
+    </div>
+    <div class="right">
+      <canvas id="reportScoreChart"></canvas>
+    </div>
+  </div>
+  <div class="section">
+    <h2>Résultat et Couleur Dominante</h2>
+    <p><span class="bold">Votre résultat final est :</span> <span id="finalScore"></span></p>
+    <p><span class="bold">Votre couleur dominante est :</span> <span id="dominantColor"></span></p>
+  </div>
+  <div class="section">
+    <div id="introductionContent"></div>
+  </div>
+  <div class="section page-break">
+    <h2>Rappel du Résultat Final et Dominante</h2>
+    <p><span class="bold">Votre résultat final est :</span> <span id="finalScoreReminder"></span></p>
+    <p><span class="bold">Votre couleur dominante est :</span> <span id="dominantColorReminder"></span></p>
+  </div>
+  <div class="section">
+    <h2>Description du Profil Dominant</h2>
+    <div id="dominantDescription"></div>
+  </div>
+  <div class="section">
+    <h2>Recommandations</h2>
+    <p>Pour améliorer vos interactions et votre performance, voici un lien pour pouvoir suivre notre formation complète sur la méthode 4 couleurs.</p>
+  </div>
+</div>
+
+<!-- Bouton pour imprimer le rapport en PDF -->
+<button id="printReport" style="display:none;">Imprimer ou sauver le Rapport</button>
+
+<script>
+
+// Tableau contenant toutes les questions et réponses
+const questions = [
+{
+question: "Dans votre rôle professionnel actuel, comment abordez-vous généralement les nouveaux projets ?",
+answers: [
+{ text: "Je prends l'initiative et définis rapidement les objectifs à atteindre.", score: 1000000 },
+{ text: "Je rassemble l'équipe pour discuter et générer de l'enthousiasme autour du projet.", score: 10000 },
+{ text: "Je m'assure que tout le monde comprend son rôle et travaille en harmonie.", score: 100 },
+{ text: "J'établis un plan détaillé avec des échéances intermédiaires, en m'assurant que toutes les procédures et normes sont respectées.", score: 1 }
+]
+},
+
+{
+question: "Comment gérez-vous habituellement les délais serrés dans votre travail actuel ?",
+answers: [
+{ text: "Je prends les choses en main et pousse l'équipe à atteindre l'objectif.", score: 1000000 },
+{ text: "J'encourage et motive l'équipe pour qu'elle reste positive et productive.", score: 10000 },
+{ text: "Je reste calme et aide l'équipe à travailler de manière stable et cohérente.", score: 100 },
+{ text: "Je réorganise les tâches et les priorités de manière méthodique.", score: 1 }
+]
+},
+
+{
+question: "Dans votre poste actuel, comment préférez-vous communiquer avec vos collègues ?",
+answers: [
+{ text: "De manière directe et concise, en allant droit au but.", score: 1000000 },
+{ text: "De façon animée et expressive, en impliquant tout le monde.", score: 10000 },
+{ text: "Calmement et patiemment, en écoutant attentivement les autres.", score: 100 },
+{ text: "De manière structurée, en fournissant des détails précis et des faits.", score: 1 }
+]
+},
+
+{
+question: "Comment réagissez-vous face aux changements imprévus dans votre environnement de travail actuel ?",
+answers: [
+{ text: "Je les vois comme des opportunités et j'agis rapidement pour les exploiter.", score: 1000000 },
+{ text: "J'aide les autres à s'adapter en restant positif et en communiquant beaucoup.", score: 10000 },
+{ text: "Je cherche à maintenir la stabilité et à rassurer l'équipe.", score: 100 },
+{ text: "J'analyse l'impact du changement et j'élabore un plan d'adaptation détaillé.", score: 1 }
+]
+},
+
+{
+question: "Dans votre rôle actuel, comment préférez-vous recevoir des feedbacks de votre supérieur ?",
+answers: [
+{ text: "Direct et axé sur les résultats, avec des objectifs clairs pour l'amélioration.", score: 1000000 },
+{ text: "Positif et encourageant, mettant en valeur mes contributions.", score: 10000 },
+{ text: "De manière constructive et sans confrontation, avec un soutien pour le développement.", score: 100 },
+{ text: "Détaillé et spécifique, basé sur des faits et des données concrètes.", score: 1 }
+]
+},
+
+{
+question: "Dans votre environnement de travail actuel, quelles qualités appréciez-vous le plus chez un supérieur hiérarchique ?",
+answers: [
+{ text: "Sa capacité à prendre des décisions rapides et à fixer des objectifs clairs et ambitieux.", score: 1000000 },
+{ text: "Son enthousiasme contagieux et sa capacité à inspirer et motiver l'équipe.", score: 10000 },
+{ text: "Son approche bienveillante et sa capacité à créer un environnement de travail harmonieux.", score: 100 },
+{ text: "Sa rigueur analytique et sa capacité à fournir des directives précises et structurées.", score: 1 }
+]
+},
+
+{
+question: "Comment préférez-vous que votre supérieur gère les situations de crise ou de forte pression ?",
+answers: [
+{ text: "En prenant les commandes avec assurance et en donnant des directives claires pour une action immédiate.", score: 1000000 },
+{ text: "En maintenant une attitude positive et en ralliant l'équipe autour d'une vision commune pour surmonter les défis.", score: 10000 },
+{ text: "En restant calme et en s'assurant que chaque membre de l'équipe se sente soutenu et entendu.", score: 100 },
+{ text: "En analysant méthodiquement la situation et en élaborant un plan d'action détaillé basé sur des faits.", score: 1 }
+]
+},
+
+{
+question: "Quelle approche de communication de la part de votre supérieur vous permet de donner le meilleur de vous-même ?",
+answers: [
+{ text: "Des échanges directs et concis, axés sur les résultats et les attentes.", score: 1000000 },
+{ text: "Une communication ouverte et dynamique, encourageant le partage d'idées et la créativité.", score: 10000 },
+{ text: "Des discussions régulières et personnalisées, axées sur le bien-être et le développement de chacun.", score: 100 },
+{ text: "Des briefings structurés avec des informations détaillées et des explications logiques.", score: 1 }
+]
+},
+
+{
+question: "Dans votre rôle actuel, comment souhaitez-vous que votre supérieur reconnaisse et récompense vos performances ?",
+answers: [
+{ text: "Par des promotions rapides et des responsabilités accrues basées sur les résultats obtenus.", score: 1000000 },
+{ text: "Par des éloges publics et des opportunités de mettre en valeur mes réalisations devant l'équipe.", score: 10000 },
+{ text: "Par une reconnaissance sincère de mes efforts et de ma contribution à l'harmonie de l'équipe.", score: 100 },
+{ text: "Par une évaluation objective et détaillée de mes performances, avec des critères clairement définis.", score: 1 }
+]
+},
+
+{
+question: "Quelle approche de votre supérieur vous motiverait le plus pour relever un nouveau défi professionnel ?",
+answers: [
+{ text: "Me confier le projet en me donnant carte blanche pour atteindre les objectifs fixés.", score: 1000000 },
+{ text: "Présenter le défi comme une opportunité excitante de se démarquer et d'innover.", score: 10000 },
+{ text: "M'assurer de son soutien continu et de la possibilité de collaborer étroitement avec l'équipe.", score: 100 },
+{ text: "Fournir un cadre clair avec des attentes précises et des ressources bien définies.", score: 1 }
+]
+},
+
+{
+question: "Comment supposez-vous que votre N+1 souhaite que vous gériez un projet en retard ?",
+answers: [
+{ text: "En prenant des mesures immédiates pour accélérer le rythme et atteindre les objectifs rapidement.", score: 1000000 },
+{ text: "En rassemblant l'équipe pour discuter des obstacles et en trouvant des moyens créatifs de rattraper le retard.", score: 10000 },
+{ text: "En maintenant la cohésion de l'équipe et en assurant que chacun se sente soutenu malgré la pression.", score: 100 },
+{ text: "En analysant les causes du retard et en réorganisant le plan de projet avec des étapes détaillées pour éviter d'autres retards.", score: 1 }
+]
+},
+
+{
+question: "Comment supposez-vous que votre N+1 souhaite que vous gériez les feedbacks négatifs d'un client important ?",
+answers: [
+{ text: "En répondant rapidement et en prenant des mesures correctives immédiates pour satisfaire le client.", score: 1000000 },
+{ text: "En communiquant de manière empathique avec le client et en cherchant à restaurer la relation.", score: 10000 },
+{ text: "En écoutant attentivement les préoccupations du client et en travaillant avec l'équipe pour apporter des améliorations.", score: 100 },
+{ text: "En recueillant des détails précis sur les problèmes soulevés et en proposant des solutions basées sur une analyse approfondie.", score: 1 }
+]
+},
+
+{
+question: "Comment supposez-vous que votre N+1 souhaite que vous gériez une situation où un membre de l'équipe ne respecte pas les délais ?",
+answers: [
+{ text: "En confrontant directement la personne et en insistant sur l'importance de respecter les délais.", score: 1000000 },
+{ text: "En discutant avec la personne pour comprendre les raisons du retard et en la motivant à améliorer ses performances.", score: 10000 },
+{ text: "En offrant du soutien et en travaillant avec la personne pour trouver des solutions ensemble.", score: 100 },
+{ text: "En documentant les retards et en mettant en place un plan d'amélioration précis avec des étapes mesurables.", score: 1 }
+]
+},
+
+{
+question: "Comment supposez-vous que votre N+1 souhaite que vous gériez l'introduction de nouvelles procédures dans l'équipe ?",
+answers: [
+{ text: "En expliquant clairement les avantages des nouvelles procédures et en insistant sur leur mise en œuvre immédiate.", score: 1000000 },
+{ text: "En organisant des sessions interactives pour présenter les nouvelles procédures de manière engageante et positive.", score: 10000 },
+{ text: "En prenant le temps de discuter des nouvelles procédures avec chaque membre de l'équipe et en répondant à leurs questions.", score: 100 },
+{ text: "En fournissant des documents détaillés et des formations spécifiques pour assurer une compréhension complète des nouvelles procédures.", score: 1 }
+]
+},
+
+{
+question: "Comment supposez-vous que votre N+1 souhaite que vous gériez un conflit entre deux membres de l'équipe ?",
+answers: [
+{ text: "En intervenant rapidement pour résoudre le conflit et en réaffirmant les objectifs de l'équipe.", score: 1000000 },
+{ text: "En facilitant une discussion ouverte entre les parties pour trouver une solution mutuellement acceptable.", score: 10000 },
+{ text: "En écoutant attentivement les deux parties et en cherchant à comprendre leurs points de vue pour trouver un compromis.", score: 100 },
+{ text: "En analysant les causes du conflit et en proposant une solution basée sur des faits et des règles établies.", score: 1 }
+]
+},
+
+{
+question: "Comment supposez-vous que votre N+1 souhaite que vous gériez l'innovation et les nouvelles idées dans votre équipe ?",
+answers: [
+{ text: "En encourageant la prise de risques et en mettant en œuvre rapidement les idées prometteuses.", score: 1000000 },
+{ text: "En organisant des sessions de brainstorming et en valorisant les contributions créatives de chacun.", score: 10000 },
+{ text: "En assurant que les nouvelles idées sont discutées en équipe et que tout le monde se sente impliqué.", score: 100 },
+{ text: "En évaluant soigneusement les nouvelles idées et en les intégrant dans un plan structuré et bien pensé.", score: 1 }
+]
+},
+
+{
+question: "Dans une réunion d'équipe, quel rôle avez-vous tendance à adopter naturellement ?",
+answers: [
+{ text: "Le capitaine qui dirige le navire vers sa destination.", score: 1000000 },
+{ text: "L'animateur qui maintient l'énergie et l'engagement de l'équipage.", score: 10000 },
+{ text: "Le médiateur qui s'assure que tout le monde est à l'aise et entendu.", score: 100 },
+{ text: "Le navigateur qui analyse la carte et planifie le meilleur itinéraire.", score: 1 }
+]
+},
+
+{
+question: "Si votre travail était un plat cuisiné, que serait-il ?",
+answers: [
+{ text: "Un steak saignant - direct, rapide à préparer et énergisant.", score: 1000000 },
+{ text: "Un buffet coloré - varié, social et stimulant pour les sens.", score: 10000 },
+{ text: "Un pot-au-feu mijotant - réconfortant, stable et nourrissant pour tous.", score: 100 },
+{ text: "Un soufflé au fromage - précis, méthodique et nécessitant une attention aux détails.", score: 1 }
+]
+},
+
+{
+question: "Dans votre environnement professionnel actuel, quel super-pouvoir aimeriez-vous avoir ?",
+answers: [
+{ text: "La super-vitesse pour accomplir rapidement les tâches et atteindre les objectifs.", score: 1000000 },
+{ text: "La télépathie pour mieux comprendre et influencer les autres.", score: 10000 },
+{ text: "La guérison pour résoudre les conflits et maintenir l'harmonie dans l'équipe.", score: 100 },
+{ text: "La vision aux rayons X pour analyser en profondeur chaque situation.", score: 1 }
+]
+},
+
+{
+question: "Comment supposez-vous que votre supérieur hiérarchique souhaite que vous gériez un projet avec des ressources limitées ?",
+answers: [
+{ text: "En trouvant des solutions innovantes et en prenant des décisions rapides pour maximiser l'efficacité.", score: 1000000 },
+{ text: "En maintenant une attitude positive et en motivant l'équipe à faire preuve de créativité.", score: 10000 },
+{ text: "En assurant que chaque membre de l'équipe se sente valorisé et en répartissant les ressources de manière équitable.", score: 100 },
+{ text: "En analysant minutieusement les ressources disponibles et en planifiant leur utilisation de manière détaillée.", score: 1 }
+]
+},
+
+{
+question: "Lorsque vous devez présenter un rapport important à votre supérieur, quelle approche adoptez-vous généralement ?",
+answers: [
+{ text: "Je me concentre sur les résultats et les conclusions clés, en mettant en avant les succès.", score: 1000000 },
+{ text: "Je crée une présentation engageante et visuellement attrayante pour capter l'attention.", score: 10000 },
+{ text: "Je m'assure que tous les membres de l'équipe sont représentés et que leurs contributions sont reconnues.", score: 100 },
+{ text: "Je fournis une analyse détaillée avec des données précises et des graphiques explicatifs.", score: 1 }
+]
+},
+
+{
+question: "Comment adaptez-vous votre style de communication pour répondre aux attentes de votre supérieur ?",
+answers: [
+{ text: "Je suis direct et concis, en me concentrant sur les faits et les actions nécessaires.", score: 1000000 },
+{ text: "Je suis enthousiaste et engageant, en mettant l'accent sur les aspects positifs et les opportunités.", score: 10000 },
+{ text: "Je suis patient et empathique, en prenant le temps d'écouter et de répondre aux préoccupations.", score: 100 },
+{ text: "Je suis précis et méthodique, en fournissant des informations détaillées et bien structurées.", score: 1 }
+]
+},
+
+{
+question: "Comment supposez-vous que votre supérieur souhaite que vous gériez les erreurs ou les échecs dans votre travail ?",
+answers: [
+{ text: "En prenant immédiatement des mesures correctives et en évitant que cela ne se reproduise.", score: 1000000 },
+{ text: "En restant positif et en encourageant l'équipe à apprendre de l'expérience.", score: 10000 },
+{ text: "En discutant ouvertement des erreurs avec l'équipe pour comprendre les causes et renforcer la cohésion.", score: 100 },
+{ text: "En analysant en profondeur les erreurs et en mettant en place des procédures pour les éviter à l'avenir.", score: 1 }
+]
+},
+
+{
+question: "Comment adaptez-vous votre gestion du temps pour répondre aux attentes de votre rôle actuel ?",
+answers: [
+{ text: "Je priorise les tâches les plus urgentes et les plus impactantes pour atteindre rapidement les objectifs.", score: 1000000 },
+{ text: "Je planifie des réunions régulières et des sessions de brainstorming pour maintenir l'engagement de l'équipe.", score: 10000 },
+{ text: "Je répartis mon temps de manière équilibrée pour assurer que toutes les tâches sont accomplies sans stress.", score: 100 },
+{ text: "Je crée des calendriers détaillés et des listes de tâches pour suivre précisément l'avancement de chaque projet.", score: 1 }
+]
+},
+
+{
+question: "Comment supposez-vous que votre supérieur souhaite que vous gériez l'innovation et les nouvelles idées dans votre équipe ?",
+answers: [
+{ text: "En encourageant la prise de risques et en mettant en œuvre rapidement les idées prometteuses.", score: 1000000 },
+{ text: "En organisant des sessions de brainstorming et en valorisant les contributions créatives de chacun.", score: 10000 },
+{ text: "En assurant que les nouvelles idées sont discutées en équipe et que tout le monde se sente impliqué.", score: 100 },
+{ text: "En évaluant soigneusement les nouvelles idées et en les intégrant dans un plan structuré et bien pensé.", score: 1 }
+]
+}
+];
+
+
+
+  let currentQuestionIndex = 0;
+  let score = 0;
+  let selectedAnswer = null; // Réponse sélectionnée par l'utilisateur
+
+  // Fonction pour mélanger les questions
+  function shuffleQuestions() {
+    questions.sort(() => Math.random() - 0.5);
+  }
+
+  // Fonction pour afficher la question suivante
+  function showNextQuestion() {
+    const questionElement = document.getElementById('question');
+    const answersElement = document.getElementById('answers');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+
+    // Vérifier s'il reste des questions
+    if (currentQuestionIndex >= questions.length) {
+      showResult();
+      return;
+    }
+
+    const currentQuestion = questions[currentQuestionIndex];
+    // Vider les éléments HTML
+    questionElement.innerHTML = '';
+    answersElement.innerHTML = '';
+
+    // Mettre à jour la barre de progression et le texte
+    const progressPercentage = ((currentQuestionIndex + 1) / questions.length) * 100;
+    progressBar.style.width = progressPercentage + '%';
+    progressText.textContent = `Question ${currentQuestionIndex + 1} / ${questions.length}`;
+
+    // Ajouter le texte de la question
+    questionElement.textContent = currentQuestion.question;
+
+    // Afficher les réponses
+    currentQuestion.answers.forEach(answer => {
+      const li = document.createElement('li');
+      li.textContent = answer.text;
+      // Ajouter un événement de clic pour sélectionner la réponse
+      li.addEventListener('click', () => selectAnswer(answer));
+      // Si cette réponse est la réponse sélectionnée, la mettre en gras et italique
+      if (selectedAnswer === answer) {
+        li.style.fontWeight = 'bold';
+        li.style.fontStyle = 'italic';
+      }
+      answersElement.appendChild(li);
+    });
+
+    // Ajouter un bouton de validation si une réponse est sélectionnée
+    if (selectedAnswer) {
+      const validationButton = document.createElement('button');
+      validationButton.textContent = 'Valider';
+      validationButton.style.fontSize = '1.2em'; // Agrandir le bouton de validation
+      validationButton.addEventListener('click', () => {
+        score += selectedAnswer.score;
+        selectedAnswer = null; // Réinitialiser la réponse sélectionnée
+        currentQuestionIndex++; // Passer à la question suivante
+        showNextQuestion(); // Afficher la prochaine question
+      });
+      answersElement.appendChild(validationButton);
+    }
+  }
+
+  // Fonction pour sélectionner une réponse
+  function selectAnswer(answer) {
+    // Réinitialiser tous les styles
+    const answers = document.querySelectorAll('#answers li');
+    answers.forEach(li => {
+      li.style.fontWeight = 'normal';
+      li.style.fontStyle = 'normal';
+    });
+    // Mettre en gras et italique la réponse sélectionnée
+    selectedAnswer = answer;
+    showNextQuestion(); // Réafficher les réponses avec la nouvelle sélection
+  }
+
+  // Fonction pour afficher le résultat final
+  function showResult() {
+    const questionElement = document.getElementById('question');
+    const answersElement = document.getElementById('answers');
+    const resultElement = document.getElementById('result');
+    const reportContainer = document.getElementById('reportContainer');
+    const printButton = document.getElementById('printReport');
+
+    // Cacher les containers de question et de réponses
+    questionElement.style.display = 'none';
+    answersElement.style.display = 'none';
+    document.getElementById('progressContainer').style.display = 'none';
+
+    // Formatage du score final
+    const formattedScore = formatScore(score);
+
+    // Calculer les scores après que toutes les questions ont été répondues
+    const scores = calculateScores(score);
+    const dominant = calculateDominant(scores); // Calculer la dominante
+
+    // Afficher le rapport
+    displayReport(formattedScore, scores, dominant);
+
+    // Afficher le graphique et les scores
+    showScoreChart(scores);
+
+    // Afficher le bouton d'impression
+    printButton.style.display = 'block';
+  }
+
+  // Fonction pour formater le score
+  function formatScore(score) {
+    const formattedScore = score.toString().padStart(8, '0'); // Ajoute des zéros devant si nécessaire
+    return formattedScore.replace(/(\d{2})(?=\d{2}|$)/g, '$1 '); // Ajoute des espaces tous les deux chiffres
+  }
+
+  // Fonction pour calculer les scores rouge, jaune, vert et bleu
+  function calculateScores(score) {
+    const rouge = Math.floor(score / 1000000);
+    const jaune = Math.floor(score / 10000) - 100 * rouge;
+    const vert = Math.floor(score / 100) - 10000 * rouge - 100 * jaune;
+    const bleu = score - 1000000 * rouge - 10000 * jaune - 100 * vert;
+    return [rouge, jaune, vert, bleu];
+  }
+
+  // Fonction pour calculer la dominante
+  function calculateDominant(scores) {
+    const maxScore = Math.max(...scores);
+    const dominantIndex = scores.indexOf(maxScore);
+    const dominants = ['Rouge', 'Jaune', 'Vert', 'Bleu'];
+    return dominants[dominantIndex];
+  }
+
+  // Fonction pour afficher le graphique circulaire avec les proportions de chaque score
+  function showScoreChart(scores) {
+    const labels = ['Rouge', 'Jaune', 'Vert', 'Bleu'];
+    const colors = ['red', 'yellow', 'green', 'blue'];
+    const ctx = document.getElementById('reportScoreChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: scores,
+          backgroundColor: colors
+        }]
+      },
+      options: {
+        responsive: false,
+        legend: {
+          display: false
+        }
+      }
+    });
+  }
+
+  // Fonction pour afficher le rapport complet
+  function displayReport(formattedScore, scores, dominant) {
+    const reportContainer = document.getElementById('reportContainer');
+    const firstName = document.getElementById('firstName').value;
+    const lastName = document.getElementById('lastName').value;
+    const email = document.getElementById('email').value;
+
+    document.getElementById('reportFirstName').textContent = firstName;
+    document.getElementById('reportLastName').textContent = lastName;
+    document.getElementById('reportEmail').textContent = email;
+    document.getElementById('finalScore').textContent = formattedScore;
+    document.getElementById('dominantColor').textContent = dominant;
+    document.getElementById('finalScoreReminder').textContent = formattedScore;
+    document.getElementById('dominantColorReminder').textContent = dominant;
+
+	// Stocker les valeurs dans le local storage
+	localStorage.setItem('lastname', lastname);
+	localStorage.setItem('firstname', firstname);
+	localStorage.setItem('email', email);
+	localStorage.setItem('Adformatscore', formattedScore);
+
+    fetchDescription(dominant);
+
+    reportContainer.style.display = 'block'; // Afficher le rapport
+
+    // Cacher tous les éléments sauf le rapport
+    const bodyChildren = document.body.children;
+    for (let i = 0; i < bodyChildren.length; i++) {
+      if (bodyChildren[i].id !== 'reportContainer' && bodyChildren[i].id !== 'printReport') {
+        bodyChildren[i].style.display = 'none';
+      }
+    }
+  }
+
+  // Fonction pour récupérer la description du profil dominant à partir des fichiers texte locaux
+  function fetchDescription(color) {
+    const descriptions = {
+      'Rouge': 'https://raw.githubusercontent.com/AgoraSkills/test4couleurs/main/Drouge.txt',
+      'Jaune': 'https://raw.githubusercontent.com/AgoraSkills/test4couleurs/main/Djaune.txt',
+      'Vert': 'https://raw.githubusercontent.com/AgoraSkills/test4couleurs/main/Dvert.txt',
+      'Bleu': 'https://raw.githubusercontent.com/AgoraSkills/test4couleurs/main/Dbleu.txt'
+    };
+    const descriptionFile = descriptions[color];
+
+    fetch(descriptionFile)
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('dominantDescription').innerHTML = marked.parse(data);
+      })
+      .catch(error => {
+        console.error('Erreur lors de la récupération de la description:', error);
+      });
+  }
+
+  // Fonction pour afficher l'introduction formatée en Markdown
+  function fetchIntroduction() {
+    const introductionMarkdown = `
+
+<div class="page-break"></div>
+
+## La Méthode des 4 Couleurs : Une Clé pour Déverrouiller le Potentiel Humain
+
+Dans le vaste monde des interactions humaines, la méthode des 4 couleurs se démarque comme un outil puissant et polyvalent. Bien au-delà d'une simple catégorisation, cette approche offre une compréhension profonde des comportements, des motivations et des préférences individuelles, ouvrant ainsi la voie à une communication plus efficace et à des relations plus harmonieuses.
+
+# Les Principes Fondamentaux
+
+Au cœur de cette méthode se trouve la reconnaissance que chaque individu possède un ensemble unique de traits de personnalité, de valeurs et de styles de communication. En attribuant une couleur distinctive à chaque profil, la méthode des 4 couleurs crée un langage commun qui facilite la compréhension mutuelle et l'appréciation des différences.
+
+Loin d'être une simple étiquette, chaque couleur représente un spectre riche de caractéristiques comportementales, offrant ainsi une perspective nuancée sur les forces, les défis et les préférences de chacun. Cette approche encourage l'empathie, la tolérance et la valorisation de la diversité, éléments essentiels pour construire des relations saines et productives.
+
+# Des Applications Variées
+
+La beauté de la méthode des 4 couleurs réside dans sa polyvalence. Elle trouve son application dans divers domaines, allant du développement personnel à la gestion d'équipe, en passant par le coaching, la vente et même les relations interpersonnelles.
+
+Dans le milieu professionnel, cette méthode permet aux équipes de mieux comprendre les forces et les défis de chacun, favorisant ainsi une collaboration plus efficace et une synergie accrue. Les gestionnaires peuvent l'utiliser pour adapter leur style de leadership et maximiser le potentiel de leurs employés.
+
+Dans le domaine du développement personnel, la méthode des 4 couleurs offre un tremplin pour l'introspection et la croissance. En explorant leur profil unique, les individus peuvent acquérir une meilleure compréhension d'eux-mêmes, de leurs motivations et de leurs zones de confort, leur permettant ainsi de se développer de manière plus ciblée.
+
+# Un Voyage Vers l'Harmonie
+
+Que vous soyez un professionnel cherchant à optimiser les performances de votre équipe, un coach désireux d'aider vos clients à atteindre leur plein potentiel, ou simplement quelqu'un qui souhaite approfondir sa compréhension des relations humaines, la méthode des 4 couleurs offre un cadre riche et accessible.
+
+En embrassant cette approche, vous ouvrez la porte à un monde de possibilités, où la communication devient plus fluide, les relations plus profondes et les objectifs plus facilement atteignables. C'est un voyage vers l'harmonie, où chaque couleur apporte sa propre nuance à la tapisserie vibrante de l'expérience humaine.
+`;
+
+    document.getElementById('introductionContent').innerHTML = marked.parse(introductionMarkdown);
+  }
+
+  // Appel de la fonction fetchIntroduction pour charger l'introduction formatée en Markdown
+  fetchIntroduction();
+
+  // Fonction pour imprimer le rapport
+  function printReport() {
+    window.print();
+  }
+
+  // Ajouter un écouteur d'événement au bouton d'impression
+  document.getElementById('printReport').addEventListener('click', printReport);
+
+  // Écouteur d'événement pour le formulaire utilisateur
+  const userForm = document.getElementById('userForm');
+  userForm.addEventListener('submit', (event) => {
+    event.preventDefault(); // Empêcher le formulaire de se soumettre
+
+// Récupérer les valeurs du local storage
+const storedFirstName = localStorage.getItem('firstName');
+const storedLastName = localStorage.getItem('lastName');
+const storedEmail = localStorage.getItem('email');
+
+// Pré-remplir les champs du formulaire avec les valeurs stockées
+if (storedFirstName) {
+  document.getElementById('firstName').value = storedFirstName;
+}
+if (storedLastName) {
+  document.getElementById('lastName').value = storedLastName;
+}
+if (storedEmail) {
+  document.getElementById('email').value = storedEmail;
+}
+
+    // Récupérer les valeurs du formulaire
+    const firstName = document.getElementById('firstName').value;
+    const lastName = document.getElementById('lastName').value;
+    const email = document.getElementById('email').value;
+
+    // Afficher les informations de l'utilisateur
+    document.getElementById('displayFirstName').textContent = `Prénom: ${firstName}`;
+    document.getElementById('displayLastName').textContent = `Nom: ${lastName}`;
+    document.getElementById('displayEmail').textContent = `Email: ${email}`;
+
+   // Stocker les valeurs dans le local storage
+   localStorage.setItem('firstName', firstName);
+   localStorage.setItem('lastName', lastName);
+   localStorage.setItem('email', email);
+
+    // Afficher les informations de l'utilisateur
+    document.getElementById('userInfo').style.display = 'block';
+    // Afficher la barre de progression
+    document.getElementById('progressContainer').style.display = 'block';
+    // Cacher le formulaire
+    userForm.style.display = 'none';
+    // Démarrer le quiz
+    shuffleQuestions(); // Mélanger les questions avant de commencer
+    showNextQuestion(); // Afficher la première question
+  });
+</script>
+</body>
+</html>
