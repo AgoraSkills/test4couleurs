@@ -1,8 +1,8 @@
 // game.js
 
 import { createProfile, getProfile, addRecognition } from './profile.js';
-import { getCurrentEnergy, recoverEnergy, capEnergyForNewDay, updateEnergy } from './energy.js';
-import { generateMissions, getAvailableMissions, evaluateMission, getMissionRewards } from './missions.js';
+import { getCurrentEnergy, updateEnergy, recoverEnergy, capEnergyForNewDay } from './energy.js';
+import { generateMissions, evaluateMission, getMissionRewards } from './missions.js';
 import { adaptProfile } from './adaptation.js';
 import { updateProfileCircle, updateEnergyBar, updateAvailableMissions, displayMissionResult, updateRecognitionPoints, updateCalendar, initializeUI } from './ui.js';
 
@@ -28,11 +28,11 @@ function startNewDay() {
     generateMissions(5); // Générer 5 missions pour la journée
     updateAvailableMissions();
     updateCalendar(currentDay);
+    updateEnergyBar();
 }
 
 // Tenter une mission
-export function attemptMission(missionId, adaptedProfile) {
-    const mission = getMissionById(missionId);
+export function attemptMission(mission, adaptedProfile) {
     const success = adaptProfile(adaptedProfile.red, adaptedProfile.yellow, adaptedProfile.green, adaptedProfile.blue);
     
     if (!success) {
@@ -52,10 +52,8 @@ export function attemptMission(missionId, adaptedProfile) {
 // Appliquer les récompenses
 function applyRewards(rewards) {
     recognitionPoints += rewards.recognition;
-    addRecognition(rewards.recognition);
     updateEnergy(rewards.energy);
     updateRecognitionPoints(recognitionPoints);
-    updateEnergyBar();
 }
 
 // Passer au jour suivant
@@ -71,14 +69,22 @@ function endGame() {
     // Afficher un récapitulatif ou proposer de recommencer
 }
 
-// Fonction utilitaire pour obtenir une mission par son ID
-function getMissionById(missionId) {
-    const missions = getAvailableMissions();
-    return missions.find(mission => mission.id === missionId);
-}
-
 // Initialiser le jeu au chargement de la page
 document.addEventListener('DOMContentLoaded', initializeGame);
 
 // Ajouter un écouteur d'événement pour le bouton "Jour Suivant"
 document.getElementById('next-day').addEventListener('click', nextDay);
+
+// Ajouter un écouteur d'événement pour la zone de défi
+document.getElementById('challenge-zone').addEventListener('drop', (event) => {
+    event.preventDefault();
+    const missionData = event.dataTransfer.getData('text/plain');
+    const mission = JSON.parse(missionData);
+    const adaptedProfile = {
+        red: parseInt(document.getElementById('red-slider').value),
+        yellow: parseInt(document.getElementById('yellow-slider').value),
+        green: parseInt(document.getElementById('green-slider').value),
+        blue: parseInt(document.getElementById('blue-slider').value)
+    };
+    attemptMission(mission, adaptedProfile);
+});
