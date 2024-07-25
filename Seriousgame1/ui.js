@@ -21,9 +21,9 @@ export function updateProfileCircle() {
 
 export function updateEnergyBar() {
     const energy = getEnergy();
-    const energyBar = document.getElementById('energy-bar');
+    const energyBar = document.getElementById('energy-fill');
     const energyValue = document.getElementById('energy-value');
-    energyBar.style.width = `${Math.min(energy, 100)}%`;
+    energyBar.style.height = `${Math.min(energy, 100)}%`;
     energyValue.textContent = energy;
 }
 
@@ -59,7 +59,6 @@ export function updateCalendar(day) {
     if (calendarCell) {
         calendarCell.classList.add('completed');
     }
-    document.getElementById('current-day').textContent = `Jour : ${day}`;
 }
 
 export function initializeUI() {
@@ -73,11 +72,13 @@ export function initializeUI() {
     ['red', 'yellow', 'green', 'blue'].forEach(color => {
         const slider = document.getElementById(`${color}-slider`);
         const effort = document.getElementById(`${color}-effort`);
+        const minusBtn = slider.previousElementSibling;
+        const plusBtn = slider.nextElementSibling;
+
         slider.value = profile[color];
-        slider.addEventListener('input', () => {
-            const diff = slider.value - profile[color];
-            effort.textContent = Math.abs(diff) * (diff > 0 ? 2 : 1);
-        });
+        slider.addEventListener('input', updateEffortValue);
+        minusBtn.addEventListener('click', () => adjustSlider(slider, -1));
+        plusBtn.addEventListener('click', () => adjustSlider(slider, 1));
     });
 
     const challengeZone = document.getElementById('challenge-zone');
@@ -88,6 +89,19 @@ export function initializeUI() {
         const mission = JSON.parse(missionData);
         document.getElementById('current-challenge').textContent = `Mission en cours: ${mission.type}`;
     });
+}
+
+function updateEffortValue() {
+    const initialValue = parseInt(this.getAttribute('value'));
+    const currentValue = parseInt(this.value);
+    const diff = Math.abs(currentValue - initialValue);
+    const effort = diff * (currentValue > initialValue ? 2 : 1);
+    this.nextElementSibling.nextElementSibling.textContent = effort;
+}
+
+function adjustSlider(slider, change) {
+    slider.value = parseInt(slider.value) + change;
+    slider.dispatchEvent(new Event('input'));
 }
 
 export function updatePeriodButtons(currentPeriod) {

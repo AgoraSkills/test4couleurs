@@ -36,3 +36,7 @@ export function setEnergy(energy) {
 export function getEnergy() {
     return playerProfile.energy;
 }
+
+export function getAdaptationPrecision() {
+    return playerProfile.adaptationPrecision;
+}
