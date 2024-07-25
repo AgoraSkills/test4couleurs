@@ -10,22 +10,62 @@ body {
 }
 
 .game-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto auto;
-    gap: 20px;
-    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    width: 800px;
+    height: 600px;
     background-color: white;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    max-width: 1000px;
-    width: 90%;
+    padding: 20px;
 }
 
-.profile-section {
-    grid-column: 1 / 3;
+.top-section {
     display: flex;
     justify-content: space-between;
+}
+
+#calendar {
+    display: flex;
+}
+
+.day {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 5px;
+}
+
+#energy-bar-container {
+    width: 30px;
+    height: 200px;
+    background-color: #e0e0e0;
+    position: relative;
+}
+
+#energy-bar {
+    width: 100%;
+    background-color: #4CAF50;
+    position: absolute;
+    bottom: 0;
+    transition: height 0.3s;
+}
+
+#energy-value {
+    position: absolute;
+    top: -20px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+}
+
+.middle-section {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
 }
 
 #profile-circle {
@@ -56,9 +96,6 @@ body {
 }
 
 #adaptation-sliders {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
     width: 60%;
 }
 
@@ -77,72 +114,21 @@ body {
     margin: 0 10px;
 }
 
-#red-slider::-webkit-slider-thumb { background: red; }
-#yellow-slider::-webkit-slider-thumb { background: yellow; }
-#green-slider::-webkit-slider-thumb { background: green; }
-#blue-slider::-webkit-slider-thumb { background: blue; }
+.slider button {
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    line-height: 1;
+    padding: 0;
+}
 
 .effort-value {
     width: 30px;
     text-align: right;
 }
 
-.energy-section {
-    grid-column: 1 / 3;
-}
-
-#energy-bar-container {
-    width: 100%;
-    height: 30px;
-    background-color: #e0e0e0;
-    border-radius: 15px;
-    overflow: hidden;
-    position: relative;
-}
-
-#energy-bar {
-    height: 100%;
-    background-color: #4CAF50;
-    transition: width 0.3s;
-}
-
-#energy-value {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-weight: bold;
-}
-
-.calendar-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-#calendar {
-    display: flex;
-    justify-content: space-around;
-    width: 100%;
-}
-
-.day {
-    width: 30px;
-    height: 30px;
-    border: 1px solid #ccc;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-}
-
-.day.completed {
-    background-color: #4CAF50;
-    color: white;
-}
-
-.missions-section {
-    grid-column: 1 / 3;
+.bottom-section {
+    margin-top: 20px;
 }
 
 #recognition-points {
@@ -159,9 +145,9 @@ body {
 }
 
 .controls-section {
-    grid-column: 1 / 3;
     display: flex;
     justify-content: space-around;
+    margin-top: 20px;
 }
 
 button {
