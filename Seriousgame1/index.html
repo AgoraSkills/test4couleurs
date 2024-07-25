@@ -10,44 +10,48 @@
     <div id="game-container">
         <div id="top-bar">
             <div id="calendar">
-                <!-- Ajoutez les jours du calendrier ici -->
-                <div id="day-1">1</div>
-                <div id="day-2">2</div>
-                <div id="day-3">3</div>
-                <div id="day-4">4</div>
-                <div id="day-5">5</div>
-                <div id="day-6">6</div>
-                <div id="day-7">7</div>
-                <div id="day-8">8</div>
-                <div id="day-9">9</div>
-                <div id="day-10">10</div>
+                <div class="day">1</div>
+                <div class="day">2</div>
+                <div class="day">3</div>
+                <div class="day">4</div>
+                <div class="day">5</div>
+                <div class="day">6</div>
+                <div class="day">7</div>
+                <div class="day">8</div>
             </div>
-            <div id="energy-bar"></div>
+            <div id="energy-bar-container">
+                <div id="energy-bar"></div>
+                <span id="energy-value">100</span>
+            </div>
         </div>
         
         <div id="profile-circle">
-            <div id="red-value">0</div>
-            <div id="yellow-value">0</div>
-            <div id="green-value">0</div>
-            <div id="blue-value">0</div>
+            <div id="red-value">40</div>
+            <div id="yellow-value">20</div>
+            <div id="green-value">15</div>
+            <div id="blue-value">25</div>
         </div>
         
         <div id="adaptation-sliders">
-            <div class="slider" id="red-slider">
-                <label for="red-range">Rouge</label>
-                <input type="range" id="red-range" min="0" max="100" value="0">
+            <div class="slider">
+                <label for="red-slider">Rouge</label>
+                <input type="range" id="red-slider" min="0" max="100" value="40">
+                <span class="effort-value" id="red-effort">0</span>
             </div>
-            <div class="slider" id="yellow-slider">
-                <label for="yellow-range">Jaune</label>
-                <input type="range" id="yellow-range" min="0" max="100" value="0">
+            <div class="slider">
+                <label for="yellow-slider">Jaune</label>
+                <input type="range" id="yellow-slider" min="0" max="100" value="20">
+                <span class="effort-value" id="yellow-effort">0</span>
             </div>
-            <div class="slider" id="green-slider">
-                <label for="green-range">Vert</label>
-                <input type="range" id="green-range" min="0" max="100" value="0">
+            <div class="slider">
+                <label for="green-slider">Vert</label>
+                <input type="range" id="green-slider" min="0" max="100" value="15">
+                <span class="effort-value" id="green-effort">0</span>
             </div>
-            <div class="slider" id="blue-slider">
-                <label for="blue-range">Bleu</label>
-                <input type="range" id="blue-range" min="0" max="100" value="0">
+            <div class="slider">
+                <label for="blue-slider">Bleu</label>
+                <input type="range" id="blue-slider" min="0" max="100" value="25">
+                <span class="effort-value" id="blue-effort">0</span>
             </div>
         </div>
         
@@ -69,7 +73,6 @@
         </div>
         
         <button id="next-day">Jour Suivant</button>
-        <span id="current-day" style="display:none;">1</span>
     </div>
 
     <script src="profile.js" type="module"></script>
