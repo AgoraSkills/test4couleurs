@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaptons nos couleurs</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="top-bar">
+            <div id="calendar">
+                <!-- Ajoutez les jours du calendrier ici -->
+                <div id="day-1">1</div>
+                <div id="day-2">2</div>
+                <div id="day-3">3</div>
+                <div id="day-4">4</div>
+                <div id="day-5">5</div>
+                <div id="day-6">6</div>
+                <div id="day-7">7</div>
+                <div id="day-8">8</div>
+                <div id="day-9">9</div>
+                <div id="day-10">10</div>
+            </div>
+            <div id="energy-bar"></div>
+        </div>
+        
+        <div id="profile-circle">
+            <div id="red-value">0</div>
+            <div id="yellow-value">0</div>
+            <div id="green-value">0</div>
+            <div id="blue-value">0</div>
+        </div>
+        
+        <div id="adaptation-sliders">
+            <div class="slider" id="red-slider">
+                <label for="red-range">Rouge</label>
+                <input type="range" id="red-range" min="0" max="100" value="0">
+            </div>
+            <div class="slider" id="yellow-slider">
+                <label for="yellow-range">Jaune</label>
+                <input type="range" id="yellow-range" min="0" max="100" value="0">
+            </div>
+            <div class="slider" id="green-slider">
+                <label for="green-range">Vert</label>
+                <input type="range" id="green-range" min="0" max="100" value="0">
+            </div>
+            <div class="slider" id="blue-slider">
+                <label for="blue-range">Bleu</label>
+                <input type="range" id="blue-range" min="0" max="100" value="0">
+            </div>
+        </div>
+        
+        <div id="recognition-points">Points de reconnaissance : <span id="points">0</span></div>
+        
+        <div id="missions-container">
+            <h3>Missions disponibles</h3>
+            <div id="available-missions"></div>
+        </div>
+        
+        <div id="challenge-zone">
+            <h3>Zone de défi</h3>
+            <div id="current-challenge"></div>
+        </div>
+        
+        <div id="results-zone">
+            <h3>Résultats</h3>
+            <div id="mission-result"></div>
+        </div>
+        
+        <button id="next-day">Jour Suivant</button>
+        <span id="current-day" style="display:none;">1</span>
+    </div>
+
+    <script src="profile.js" type="module"></script>
+    <script src="energy.js" type="module"></script>
+    <script src="missions.js" type="module"></script>
+    <script src="adaptation.js" type="module"></script>
+    <script src="ui.js" type="module"></script>
+    <script src="game.js" type="module"></script>
+</body>
+</html>
