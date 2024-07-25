@@ -9,6 +9,7 @@ import { updateProfileCircle, updateEnergyBar, updateAvailableMissions, displayM
 let currentDay = 1;
 const totalDays = 8;
 let currentPeriod = 'morning';
+let missionsAttempted = 0;
 
 export function initializeGame() {
     initializeUI();
@@ -27,10 +28,16 @@ function startNewDay() {
     updateCalendar(currentDay);
     updateEnergyBar();
     currentPeriod = 'morning';
+    missionsAttempted = 0;
     updatePeriodButtons(currentPeriod);
 }
 
 export function attemptMission(mission, adaptedProfile) {
+    if (missionsAttempted >= 2) {
+        displayMissionResult("Vous avez déjà tenté 2 missions aujourd'hui. Passez au jour suivant.");
+        return;
+    }
+
     const success = adaptProfile(adaptedProfile.red, adaptedProfile.yellow, adaptedProfile.green, adaptedProfile.blue);
     
     if (!success) {
@@ -48,6 +55,8 @@ export function attemptMission(mission, adaptedProfile) {
     updateEnergyBar();
     updateRecognitionPoints();
 
+    missionsAttempted++;
+
     if (currentPeriod === 'morning') {
         currentPeriod = 'afternoon';
     } else if (currentPeriod === 'afternoon') {
@@ -57,7 +66,7 @@ export function attemptMission(mission, adaptedProfile) {
 }
 
 export function nextDay() {
-    if (currentPeriod === 'evening') {
+    if (currentPeriod === 'evening' || missionsAttempted === 2) {
         recoverEnergy();
         currentDay++;
         startNewDay();
