@@ -1,31 +1,38 @@
-// energy.js
+// profile.js
 
-import { getEnergy, setEnergy } from './profile.js';
+let playerProfile = {
+    red: 40,
+    yellow: 20,
+    green: 15,
+    blue: 25,
+    energy: 100,
+    recognition: 0,
+    adaptationPrecision: 'intermediate'
+};
 
-export function updateEnergy(amount) {
-    let currentEnergy = getEnergy();
-    currentEnergy += amount;
-    setEnergy(currentEnergy);
-    return currentEnergy;
+export function getProfile() {
+    return { ...playerProfile };
 }
 
-export function recoverEnergy() {
-    let currentEnergy = getEnergy();
-    const recovery = Math.floor((100 - currentEnergy) / 2);
-    currentEnergy += recovery;
-    setEnergy(currentEnergy);
+export function updateProfile(red, yellow, green, blue) {
+    playerProfile.red = red;
+    playerProfile.yellow = yellow;
+    playerProfile.green = green;
+    playerProfile.blue = blue;
 }
 
-export function capEnergyForNewDay() {
-    let currentEnergy = getEnergy();
-    if (currentEnergy > 100) {
-        setEnergy(100);
-    }
+export function addRecognition(points) {
+    playerProfile.recognition += points;
 }
 
-export function calculateAdaptationCost(currentValue, targetValue) {
-    const difference = Math.abs(targetValue - currentValue);
-    const increaseCost = Math.max(targetValue - currentValue, 0) * 2;
-    const decreaseCost = Math.max(currentValue - targetValue, 0);
-    return increaseCost + decreaseCost;
+export function getRecognition() {
+    return playerProfile.recognition;
+}
+
+export function setEnergy(energy) {
+    playerProfile.energy = energy;
+}
+
+export function getEnergy() {
+    return playerProfile.energy;
 }

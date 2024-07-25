@@ -23,7 +23,7 @@ export function updateEnergyBar() {
     const energy = getEnergy();
     const energyBar = document.getElementById('energy-bar');
     const energyValue = document.getElementById('energy-value');
-    energyBar.style.height = `${Math.min(energy, 100)}%`;
+    energyBar.style.width = `${Math.min(energy, 100)}%`;
     energyValue.textContent = energy;
 }
 
@@ -59,6 +59,7 @@ export function updateCalendar(day) {
     if (calendarCell) {
         calendarCell.classList.add('completed');
     }
+    document.getElementById('current-day').textContent = `Jour : ${day}`;
 }
 
 export function initializeUI() {
@@ -66,6 +67,7 @@ export function initializeUI() {
     updateEnergyBar();
     updateAvailableMissions();
     updateRecognitionPoints();
+    updateCalendar(1);
 
     const profile = getProfile();
     ['red', 'yellow', 'green', 'blue'].forEach(color => {
@@ -86,4 +88,10 @@ export function initializeUI() {
         const mission = JSON.parse(missionData);
         document.getElementById('current-challenge').textContent = `Mission en cours: ${mission.type}`;
     });
+}
+
+export function updatePeriodButtons(currentPeriod) {
+    document.getElementById('morning-btn').disabled = currentPeriod !== 'morning';
+    document.getElementById('afternoon-btn').disabled = currentPeriod !== 'afternoon';
+    document.getElementById('next-day').disabled = currentPeriod !== 'evening';
 }
