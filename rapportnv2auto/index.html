@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyse des Profils</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="number"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .chart-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            margin: 0 auto;
+        }
+        .chart-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: rotate(45deg);
+        }
+        .color-info {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .color-box {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        .effort-bar-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 20px auto;
+        }
+        .effort-bar-container canvas {
+            height: 150px;
+        }
+        #rapport-texte {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Analyse des Profils</h1>
+        
+        <div class="chart-container">
+            <canvas id="donutChart"></canvas>
+            <div class="chart-overlay">
+                <canvas id="radarChart"></canvas>
+            </div>
+        </div>
+
+        <div class="color-info">
+            <p><span class="color-box" id="dominantColor"></span> Couleur dominante naturelle: <span id="dominantColorText"></span></p>
+            <p><span class="color-box" id="minorColor"></span> Couleur mineure naturelle: <span id="minorColorText"></span></p>
+        </div>
+
+        <div class="effort-bar-container">
+            <canvas id="effortBarChart"></canvas>
+        </div>
+
+        <div id="rapport-texte"></div>
+    </div>
+
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="graphic.js"></script>
+    <script type="module">
+        import { genererRapport } from './reportGenerator.js';
+
+        function afficherRapportTexte() {
+            const rapport = genererRapport();
+            const contenuRapport = document.getElementById('rapport-texte');
+
+            let rapportHTML = `
+                <h2>Rapport Détaillé</h2>
+                <p>Date : ${rapport.date}</p>
+                <p>Nom : ${rapport.nom}</p>
+                <p>Prénom : ${rapport.prenom}</p>
+                <p>Email : ${rapport.email}</p>
+
+                <h3>Profils</h3>
+                <h4>Profil Naturel</h4>
+                <ul>
+                    <li>Rouge : ${rapport.profilsNaturels.rouge}%</li>
+                    <li>Jaune : ${rapport.profilsNaturels.jaune}%</li>
+                    <li>Vert : ${rapport.profilsNaturels.vert}%</li>
+                    <li>Bleu : ${rapport.profilsNaturels.bleu}%</li>
+                </ul>
+
+                <h4>Profil Adapté</h4>
+                <ul>
+                    <li>Rouge : ${rapport.profilsAdaptes.rouge}%</li>
+                    <li>Jaune : ${rapport.profilsAdaptes.jaune}%</li>
+                    <li>Vert : ${rapport.profilsAdaptes.vert}%</li>
+                    <li>Bleu : ${rapport.profilsAdaptes.bleu}%</li>
+                </ul>
+
+                <h3>Résumé</h3>
+                <p>Dominante Naturelle : ${rapport.dominanteNaturelle}</p>
+                <p>Dominante Adaptée : ${rapport.dominanteAdaptee}</p>
+                <p>Effort d'Adaptation : ${rapport.effortAdaptationFinal}</p>
+
+                <h3>Anomalies Détectées</h3>
+                <ul>
+                    ${rapport.anomalies.map(anomalie => `<li>${anomalie}</li>`).join('')}
+                </ul>
+
+                <h3>Analyse de l'Effort d'Adaptation</h3>
+                <p>${rapport.analyseEffort}</p>
+
+                <h3>Analyse de la Gemme Comportementale</h3>
+                <p>Modification de forme : ${rapport.analyseForme.modification}</p>
+                <p>Interprétation : ${rapport.analyseForme.interpretation}</p>
+
+                <h3>Impacts Significatifs</h3>
+                <p>Couleur : ${rapport.analyseImpacts.couleur}</p>
+                <p>Interprétation : ${rapport.analyseImpacts.interpretation}</p>
+
+                <h3>Conclusion</h3>
+                <p>${rapport.conclusion}</p>
+            `;
+
+            contenuRapport.innerHTML = rapportHTML;
+        }
+
+        // Appeler la fonction pour afficher le rapport texte après le chargement des graphiques
+        window.addEventListener('load', () => {
+            setTimeout(afficherRapportTexte, 1000); // Délai d'une seconde pour s'assurer que les graphiques sont chargés
+        });
+    </script>
+</body>
+</html>
