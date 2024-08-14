@@ -11,7 +11,7 @@
     background: url('fondtest.jpg') no-repeat center center fixed;
     background-size: cover;
   }
-  {
+  body, html {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
@@ -32,11 +32,11 @@
   .question {
     margin-bottom: 20px;
     padding: 15px;
-    background-color: #f9f9f9; /* Couleur de fond gris clair */
+    background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    font-size: 18px; /* Ajustez la taille de la police selon vos besoins */
-    font-weight: bold; /* Applique le style gras au texte */
+    font-size: 18px;
+    font-weight: bold;
   }
   .section {
     margin-bottom: 20px;
@@ -164,12 +164,23 @@
     background-color: rgba(255, 255, 255, 0.6);
     z-index: -1;
   }
+  /* Styles spécifiques pour le Markdown */
+  #introductionContent h1, #introductionContent h2, #introductionContent h3 {
+    color: #003366;
+  }
+  #introductionContent p {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  #introductionContent ul, #introductionContent ol {
+    margin-left: 20px;
+    padding-left: 20px;
+  }
 </style>
 </head>
 <body>
 <div class="overlay"></div>
 <h1>Test Analyse comportementale couleurs</h1>
-<!-- Ajouter un formulaire pour saisir les informations de l'utilisateur -->
 <form id="userForm" class="container">
   <div class="section">
     <label for="firstName">Prénom:</label>
@@ -185,7 +196,6 @@
   </div>
   <button type="submit">Commencer le test</button>
 </form>
-<!-- Div pour afficher les informations de l'utilisateur -->
 <div id="userInfo" class="container" style="display:none;">
   <div class="section">
     <h2>Informations Utilisateur</h2>
@@ -194,27 +204,20 @@
     <p id="displayEmail"></p>
   </div>
 </div>
-<!-- Ajouter une barre de progression -->
 <div class="container" id="progressContainer" style="display:none;">
   <div class="progress-container">
     <div class="progress-bar" id="progressBar"></div>
   </div>
   <p id="progressText"></p>
 </div>
-<!-- Ajouter une section pour afficher la question et l'image -->
 <div id="questionContainer" class="container" style="width: calc(100vw / 3); font-size: 1.8em;">
   <img id="questionImage" src="" alt="Illustration de la question" style="max-width: 50%; height: auto; display: none; margin: 0 auto; display: block;">
   <div id="question"></div>
 </div>
-<!-- Ajouter une liste pour afficher les réponses -->
 <ul id="answers" class="container" style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 1.3em;">
-  <!-- Les réponses seront ajoutées dynamiquement ici -->
 </ul>
-<!-- Ajouter une section pour afficher le résultat -->
 <div id="result" class="container"></div>
-<!-- Ajouter un élément canvas pour le diagramme circulaire -->
 <canvas id="scoreChart" width="400" height="400"></canvas>
-<!-- Rapport généré automatiquement -->
 <div class="container" style="display:none;" id="reportContainer">
   <img src="logo.jpg" alt="Logo">
   <div class="section">
@@ -253,7 +256,6 @@
     <p>Pour améliorer vos interactions et votre performance, voici un lien pour pouvoir suivre notre formation complète sur la méthode 4 couleurs.</p>
   </div>
 </div>
-<!-- Bouton pour imprimer le rapport en PDF -->
 <button id="printReport" style="display:none;">Imprimer ou sauver le Rapport</button>
 <script>
 // Tableau contenant toutes les questions et réponses
@@ -570,229 +572,204 @@
   }
 ];
 
-  let currentQuestionIndex = 0;
-  let score = 0;
-  let selectedAnswer = null; // Réponse sélectionnée par l'utilisateur
 
-  // Fonction pour mélanger les questions
-  function shuffleQuestions() {
-    questions.sort(() => Math.random() - 0.5);
+let currentQuestionIndex = 0;
+let score = 0;
+let selectedAnswer = null; // Réponse sélectionnée par l'utilisateur
+
+function shuffleQuestions() {
+  questions.sort(() => Math.random() - 0.5);
+}
+
+function showNextQuestion() {
+  const questionElement = document.getElementById('question');
+  const answersElement = document.getElementById('answers');
+  const progressBar = document.getElementById('progressBar');
+  const progressText = document.getElementById('progressText');
+  const questionImage = document.getElementById('questionImage');
+
+  if (currentQuestionIndex >= questions.length) {
+    showResult();
+    return;
   }
 
-  // Fonction pour afficher la question suivante
-  function showNextQuestion() {
-    const questionElement = document.getElementById('question');
-    const answersElement = document.getElementById('answers');
-    const progressBar = document.getElementById('progressBar');
-    const progressText = document.getElementById('progressText');
-    const questionImage = document.getElementById('questionImage');
+  const currentQuestion = questions[currentQuestionIndex];
+  questionElement.innerHTML = '';
+  answersElement.innerHTML = '';
 
-    // Vérifier s'il reste des questions
-    if (currentQuestionIndex >= questions.length) {
-      showResult();
-      return;
+  const progressPercentage = ((currentQuestionIndex + 1) / questions.length) * 100;
+  progressBar.style.width = progressPercentage + '%';
+  progressText.textContent = `Question ${currentQuestionIndex + 1} / ${questions.length}`;
+
+  if (currentQuestion.illustration) {
+    questionImage.src = currentQuestion.illustration;
+    questionImage.style.display = 'block';
+  } else {
+    questionImage.style.display = 'none';
+  }
+
+  questionElement.innerHTML = '<strong>' + currentQuestion.question + '</strong>';
+
+  currentQuestion.answers.forEach(answer => {
+    const li = document.createElement('li');
+    li.textContent = answer.text + '\n' + '\n';
+    const separator = document.createElement('li');
+    separator.textContent = '____________________________________________________________\n';
+    answersElement.appendChild(separator);
+    li.addEventListener('click', () => selectAnswer(answer));
+    if (selectedAnswer === answer) {
+      li.style.fontWeight = 'bold';
+      li.style.fontStyle = 'italic';
     }
+    answersElement.appendChild(li);
+  });
 
-    const currentQuestion = questions[currentQuestionIndex];
-    // Vider les éléments HTML
-    questionElement.innerHTML = '';
-    answersElement.innerHTML = '';
-
-    // Mettre à jour la barre de progression et le texte
-    const progressPercentage = ((currentQuestionIndex + 1) / questions.length) * 100;
-    progressBar.style.width = progressPercentage + '%';
-    progressText.textContent = `Question ${currentQuestionIndex + 1} / ${questions.length}`;
-
-    // Ajouter l'image de la question
-    if (currentQuestion.illustration) {
-      questionImage.src = currentQuestion.illustration;
-      questionImage.style.display = 'block';
-    } else {
-      questionImage.style.display = 'none';
-    }
-
-    // Ajouter le texte de la question
-    questionElement.innerHTML = '<strong>' + currentQuestion.question + '</strong>';
-
-    // Afficher les réponses
-    currentQuestion.answers.forEach(answer => {
-      const li = document.createElement('li');
-      li.textContent = answer.text + '\n'+'\n';
-      const separator = document.createElement('li');
-      separator.textContent = '____________________________________________________________\n';
-      answersElement.appendChild(separator);
-      // Ajouter un événement de clic pour sélectionner la réponse
-      li.addEventListener('click', () => selectAnswer(answer));
-      // Si cette réponse est la réponse sélectionnée, la mettre en gras et italique
-      if (selectedAnswer === answer) {
-        li.style.fontWeight = 'bold';
-        li.style.fontStyle = 'italic';
-      }
-      answersElement.appendChild(li);
+  if (selectedAnswer) {
+    const validationButton = document.createElement('button');
+    validationButton.textContent = 'Valider';
+    validationButton.style.fontSize = '1.2em';
+    validationButton.addEventListener('click', () => {
+      score += selectedAnswer.score;
+      selectedAnswer = null;
+      currentQuestionIndex++;
+      showNextQuestion();
     });
-
-    // Ajouter un bouton de validation si une réponse est sélectionnée
-    if (selectedAnswer) {
-      const validationButton = document.createElement('button');
-      validationButton.textContent = 'Valider';
-      validationButton.style.fontSize = '1.2em'; // Agrandir le bouton de validation
-      validationButton.addEventListener('click', () => {
-        score += selectedAnswer.score;
-        selectedAnswer = null; // Réinitialiser la réponse sélectionnée
-        currentQuestionIndex++; // Passer à la question suivante
-        showNextQuestion(); // Afficher la prochaine question
-      });
-      answersElement.appendChild(validationButton);
-    }
+    answersElement.appendChild(validationButton);
   }
+}
 
-  // Fonction pour sélectionner une réponse
-  function selectAnswer(answer) {
-    // Réinitialiser tous les styles
-    const answers = document.querySelectorAll('#answers li');
-    answers.forEach(li => {
-      li.style.fontWeight = 'normal';
-      li.style.fontStyle = 'normal';
-    });
-    // Mettre en gras et italique la réponse sélectionnée
-    selectedAnswer = answer;
-    showNextQuestion(); // Réafficher les réponses avec la nouvelle sélection
-  }
+function selectAnswer(answer) {
+  const answers = document.querySelectorAll('#answers li');
+  answers.forEach(li => {
+    li.style.fontWeight = 'normal';
+    li.style.fontStyle = 'normal';
+  });
+  selectedAnswer = answer;
+  showNextQuestion();
+}
 
-  // Fonction pour afficher le résultat final
-  function showResult() {
-    const questionElement = document.getElementById('question');
-    const answersElement = document.getElementById('answers');
-    const resultElement = document.getElementById('result');
-    const reportContainer = document.getElementById('reportContainer');
-    const printButton = document.getElementById('printReport');
+function showResult() {
+  const questionElement = document.getElementById('question');
+  const answersElement = document.getElementById('answers');
+  const resultElement = document.getElementById('result');
+  const reportContainer = document.getElementById('reportContainer');
+  const printButton = document.getElementById('printReport');
 
-    // Cacher les containers de question et de réponses
-    questionElement.style.display = 'none';
-    answersElement.style.display = 'none';
-    document.getElementById('progressContainer').style.display = 'none';
+  questionElement.style.display = 'none';
+  answersElement.style.display = 'none';
+  document.getElementById('progressContainer').style.display = 'none';
 
-    // Formatage du score final
-    const formattedScore = formatScore(score);
+  const formattedScore = formatScore(score);
 
-    // Calculer les scores après que toutes les questions ont été répondues
-    const scores = calculateScores(score);
-    const dominant = calculateDominant(scores); // Calculer la dominante
+  const scores = calculateScores(score);
+  const dominant = calculateDominant(scores);
 
-    // Afficher le rapport
-    displayReport(formattedScore, scores, dominant);
+  displayReport(formattedScore, scores, dominant);
 
-    // Afficher le graphique et les scores
-    showScoreChart(scores);
+  showScoreChart(scores);
 
-    // Afficher le bouton d'impression
-    printButton.style.display = 'block';
-  }
+  printButton.style.display = 'block';
+}
 
-  // Fonction pour formater le score
-  function formatScore(score) {
-    const formattedScore = score.toString().padStart(8, '0'); // Ajoute des zéros devant si nécessaire
-    return formattedScore.replace(/(\d{2})(?=\d{2}|$)/g, '$1 '); // Ajoute des espaces tous les deux chiffres
-  }
-  // Fonction pour calculer les scores rouge, jaune, vert et bleu et les exprimer en pourcentage
-  function calculateScores(score) {
-    const rou = Math.floor(score / 1000000);
-    const jau = Math.floor(score / 10000) - 100 * rou;
-    const ver = Math.floor(score / 100) - 10000 * rou - 100 * jau;
-    const ble = score - 1000000 * rou - 10000 * jau - 100 * ver;
-    const total = rou + jau + ver + ble;
-    // Calculer les pourcentages
-    const Rouge = (rou / total) * 100;
-    const Jaune = (jau / total) * 100;
-    const Vert = (ver / total) * 100;
-    const Bleu = (ble / total) * 100;
-    return [Rouge, Jaune, Vert, Bleu];
-  }
+function formatScore(score) {
+  const formattedScore = score.toString().padStart(8, '0');
+  return formattedScore.replace(/(\d{2})(?=\d{2}|$)/g, '$1 ');
+}
 
-  // Fonction pour calculer la dominante
-  function calculateDominant(scores) {
-    const maxScore = Math.max(...scores);
-    const dominantIndex = scores.indexOf(maxScore);
-    const dominants = ['Rouge', 'Jaune', 'Vert', 'Bleu'];
-    return dominants[dominantIndex];
-  }
+function calculateScores(score) {
+  const rou = Math.floor(score / 1000000);
+  const jau = Math.floor(score / 10000) - 100 * rou;
+  const ver = Math.floor(score / 100) - 10000 * rou - 100 * jau;
+  const ble = score - 1000000 * rou - 10000 * jau - 100 * ver;
+  const total = rou + jau + ver + ble;
+  const Rouge = (rou / total) * 100;
+  const Jaune = (jau / total) * 100;
+  const Vert = (ver / total) * 100;
+  const Bleu = (ble / total) * 100;
+  return [Rouge, Jaune, Vert, Bleu];
+}
 
-  // Fonction pour afficher le graphique circulaire avec les proportions de chaque score
-  function showScoreChart(scores) {
-    const labels = ['Rouge', 'Jaune', 'Vert', 'Bleu'];
-    const colors = ['red', 'yellow', 'green', 'blue'];
-    const ctx = document.getElementById('reportScoreChart').getContext('2d');
-    const myChart = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: labels,
-        datasets: [{
-          data: scores,
-          backgroundColor: colors
-        }]
-      },
-      options: {
-        responsive: false,
-        legend: {
-          display: false
-        }
-      }
-    });
-  }
+function calculateDominant(scores) {
+  const maxScore = Math.max(...scores);
+  const dominantIndex = scores.indexOf(maxScore);
+  const dominants = ['Rouge', 'Jaune', 'Vert', 'Bleu'];
+  return dominants[dominantIndex];
+}
 
-  // Fonction pour afficher le rapport complet
-  function displayReport(formattedScore, scores, dominant) {
-    const reportContainer = document.getElementById('reportContainer');
-    const firstName = document.getElementById('firstName').value;
-    const lastName = document.getElementById('lastName').value;
-    const email = document.getElementById('email').value;
-
-    document.getElementById('reportFirstName').textContent = firstName;
-    document.getElementById('reportLastName').textContent = lastName;
-    document.getElementById('reportEmail').textContent = email;
-    document.getElementById('finalScore').textContent = formattedScore;
-    document.getElementById('dominantColor').textContent = dominant;
-    document.getElementById('finalScoreReminder').textContent = formattedScore;
-    document.getElementById('dominantColorReminder').textContent = dominant;
-
-    fetchDescription(dominant);
-
-    reportContainer.style.display = 'block'; // Afficher le rapport
-
-    // Cacher tous les éléments sauf le rapport
-    const bodyChildren = document.body.children;
-    for (let i = 0; i < bodyChildren.length; i++) {
-      if (bodyChildren[i].id !== 'reportContainer' && bodyChildren[i].id !== 'printReport') {
-        bodyChildren[i].style.display = 'none';
+function showScoreChart(scores) {
+  const labels = ['Rouge', 'Jaune', 'Vert', 'Bleu'];
+  const colors = ['red', 'yellow', 'green', 'blue'];
+  const ctx = document.getElementById('reportScoreChart').getContext('2d');
+  const myChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: scores,
+        backgroundColor: colors
+      }]
+    },
+    options: {
+      responsive: false,
+      legend: {
+        display: false
       }
     }
+  });
+}
+
+function displayReport(formattedScore, scores, dominant) {
+  const reportContainer = document.getElementById('reportContainer');
+
+  const firstName = document.getElementById('firstName').value;
+  const lastName = document.getElementById('lastName').value;
+  const email = document.getElementById('email').value;
+
+  document.getElementById('reportFirstName').textContent = firstName;
+  document.getElementById('reportLastName').textContent = lastName;
+  document.getElementById('reportEmail').textContent = email;
+  document.getElementById('finalScore').textContent = formattedScore;
+  document.getElementById('dominantColor').textContent = dominant;
+  document.getElementById('finalScoreReminder').textContent = formattedScore;
+  document.getElementById('dominantColorReminder').textContent = dominant;
+
+  fetchDescription(dominant);
+
+  reportContainer.style.display = 'block';
+
+  const bodyChildren = document.body.children;
+  for (let i = 0; i < bodyChildren.length; i++) {
+    if (bodyChildren[i].id !== 'reportContainer' && bodyChildren[i].id !== 'printReport') {
+      bodyChildren[i].style.display = 'none';
+    }
   }
+}
 
-  // Fonction pour récupérer la description du profil dominant à partir des fichiers texte locaux
-  function fetchDescription(color) {
-    const descriptions = {
-      'Rouge': 'drouge.txt',
-      'Jaune': 'djaune.txt',
-      'Vert': 'dvert.txt',
-      'Bleu': 'dbleu.txt'
-    };
-    const descriptionFile = descriptions[color];
+// Fonction pour récupérer la description du profil dominant à partir des fichiers texte locaux
+function fetchDescription(color) {
+  const descriptions = {
+    'Rouge': 'https://github.com/AgoraSkills/test4couleurs/blob/d20c90b2a771074782ce5c1ac42b36888d12e69b/drouge.txt',
+    'Jaune': 'https://github.com/AgoraSkills/test4couleurs/blob/d20c90b2a771074782ce5c1ac42b36888d12e69b/djaune.txt',
+    'Vert': 'https://github.com/AgoraSkills/test4couleurs/blob/d20c90b2a771074782ce5c1ac42b36888d12e69b/dvert.txt',
+    'Bleu': 'https://github.com/AgoraSkills/test4couleurs/blob/d20c90b2a771074782ce5c1ac42b36888d12e69b/dbleu.txt'
+  };
+  const descriptionFile = descriptions[color];
 
-    fetch(descriptionFile)
-      .then(response => response.text())
-      .then(data => {
-        document.getElementById('dominantDescription').innerHTML = marked.parse(data);
-      })
-      .catch(error => {
-        console.error('Erreur lors de la récupération de la description:', error);
-      });
-  }
+  fetch(descriptionFile)
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById('dominantDescription').innerHTML = marked.parse(data);
+    })
+    .catch(error => {
+      console.error('Erreur lors de la récupération de la description:', error);
+    });
+}
 
-  // Fonction pour afficher l'introduction formatée en Markdown
-  function fetchIntroduction() {
-    const introductionMarkdown = `
-<div class="page-break"></div>
+// Fonction pour afficher l'introduction formatée en Markdown
+function fetchIntroduction() {
+  const introductionMarkdown = `
 ## La Méthode des 4 Couleurs : Une Clé pour Déverrouiller le Potentiel Humain
+
 Dans le vaste monde des interactions humaines, la méthode des 4 couleurs se démarque comme un outil puissant et polyvalent. Bien au-delà d'une simple catégorisation, cette approche offre une compréhension profonde des comportements, des motivations et des préférences individuelles, ouvrant ainsi la voie à une communication plus efficace et à des relations plus harmonieuses.
 # Les Principes Fondamentaux
 Au cœur de cette méthode se trouve la reconnaissance que chaque individu possède un ensemble unique de traits de personnalité, de valeurs et de styles de communication. En attribuant une couleur distinctive à chaque profil, la méthode des 4 couleurs crée un langage commun qui facilite la compréhension mutuelle et l'appréciation des différences.
@@ -805,47 +782,40 @@ Dans le domaine du développement personnel, la méthode des 4 couleurs offre un
 Que vous soyez un professionnel cherchant à optimiser les performances de votre équipe, un coach désireux d'aider vos clients à atteindre leur plein potentiel, ou simplement quelqu'un qui souhaite approfondir sa compréhension des relations humaines, la méthode des 4 couleurs offre un cadre riche et accessible.
 En embrassant cette approche, vous ouvrez la porte à un monde de possibilités, où la communication devient plus fluide, les relations plus profondes et les objectifs plus facilement atteignables. C'est un voyage vers l'harmonie, où chaque couleur apporte sa propre nuance à la tapisserie vibrante de l'expérience humaine.
 `;
-    document.getElementById('introductionContent').innerHTML = marked.parse(introductionMarkdown);
-  }
+  document.getElementById('introductionContent').innerHTML = marked.parse(introductionMarkdown);
+}
 
-  // Appel de la fonction fetchIntroduction pour charger l'introduction formatée en Markdown
-  fetchIntroduction();
+// Appel de la fonction fetchIntroduction pour charger l'introduction formatée en Markdown
+fetchIntroduction();
 
-  // Fonction pour imprimer le rapport
-  function printReport() {
-    window.print();
-  }
+// Fonction pour imprimer le rapport
+function printReport() {
+  window.print();
+}
 
-  // Ajouter un écouteur d'événement au bouton d'impression
-  document.getElementById('printReport').addEventListener('click', printReport);
+// Ajouter un écouteur d'événement au bouton d'impression
+document.getElementById('printReport').addEventListener('click', printReport);
 
-  // Écouteur d'événement pour le formulaire utilisateur
-  const userForm = document.getElementById('userForm');
-  userForm.addEventListener('submit', (event) => {
-    event.preventDefault(); // Empêcher le formulaire de se soumettre
+// Écouteur d'événement pour le formulaire utilisateur
+const userForm = document.getElementById('userForm');
+userForm.addEventListener('submit', (event) => {
+  event.preventDefault();
 
-    // Récupérer les valeurs du formulaire
-    const firstName = document.getElementById('firstName').value;
-    const lastName = document.getElementById('lastName').value;
-    const email = document.getElementById('email').value;
+  const firstName = document.getElementById('firstName').value;
+  const lastName = document.getElementById('lastName').value;
+  const email = document.getElementById('email').value;
 
-    // Afficher les informations de l'utilisateur
-    document.getElementById('displayFirstName').textContent = `Prénom: ${firstName}`;
-    document.getElementById('displayLastName').textContent = `Nom: ${lastName}`;
-    document.getElementById('displayEmail').textContent = `Email: ${email}`;
+  document.getElementById('displayFirstName').textContent = `Prénom: ${firstName}`;
+  document.getElementById('displayLastName').textContent = `Nom: ${lastName}`;
+  document.getElementById('displayEmail').textContent = `Email: ${email}`;
 
-    // Afficher les informations de l'utilisateur
-    document.getElementById('userInfo').style.display = 'block';
-    // Afficher la barre de progression
-    document.getElementById('progressContainer').style.display = 'block';
-    // Cacher le formulaire
-    userForm.style.display = 'none';
-    // Démarrer le quiz
-    // Cacher les informations de l'utilisateur
-    document.getElementById('userInfo').style.display = 'none';
-    shuffleQuestions(); // Mélanger les questions avant de commencer
-    showNextQuestion(); // Afficher la première question
-  });
+  document.getElementById('userInfo').style.display = 'block';
+  document.getElementById('progressContainer').style.display = 'block';
+  userForm.style.display = 'none';
+  document.getElementById('userInfo').style.display = 'none';
+  shuffleQuestions();
+  showNextQuestion();
+});
 </script>
 </body>
 </html>
