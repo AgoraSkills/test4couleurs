@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test analyse comportementale couleurs</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+  body {
+    background: url('fondtest.jpg') no-repeat center center fixed;
+    background-size: cover;
+  }
+  body, html {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+  }
+  h1, h2, h3 {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #003366;
+  }
+  .container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  .question {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .section {
+    margin-bottom: 20px;
+  }
+  .section h2 {
+    border-bottom: 2px solid #003366;
+    padding-bottom: 10px;
+  }
+  .section p {
+    text-align: justify;
+    line-height: 1.6;
+  }
+  #scoreChart {
+    display: block;
+    margin: 0 auto;
+  }
+  #answers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  #answers label {
+    background-color: #fff;
+    border: 1px solid #75c9e3;
+    border-radius: 4px;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  #answers label:hover {
+    background-color: #e6f3f7;
+  }
+  button {
+    font-size: 1.2em;
+    padding: 10px 20px;
+    background-color: #003366;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  #printReport {
+    font-size: 1.2em;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .half-width {
+    display: flex;
+    justify-content: space-between;
+  }
+  .half-width .left,
+  .half-width .right {
+    width: 48%;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .page-break {
+    page-break-before: always;
+  }
+  .progress-container {
+    width: 100%;
+    background-color: #f3f3f3;
+    border-radius: 25px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 20px;
+    background-color: #003366;
+    width: 0;
+  }
+  #progressText {
+    text-align: center;
+    margin-top: 10px;
+  }
+  @media print {
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      margin: 0;
+      padding: 20px;
+      box-shadow: none;
+      background-color: #fff;
+    }
+    body * {
+      visibility: hidden;
+    }
+    #reportContainer, #reportContainer * {
+      visibility: visible;
+    }
+    #reportContainer {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .half-width {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .half-width .left,
+    .half-width .right {
+      width: 48%;
+    }
+    .page-break {
+      page-break-before: always;
+    }
+  }
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.6);
+    z-index: -1;
+  }
+  /* Styles spécifiques pour le Markdown */
+  #introductionContent h1, #introductionContent h2, #introductionContent h3 {
+    color: #003366;
+  }
+  #introductionContent p {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  #introductionContent ul, #introductionContent ol {
+    margin-left: 20px;
+    padding-left: 20px;
+  }
+</style>
+</head>
+<body>
+<div class="overlay"></div>
+<h1>Test Analyse comportementale couleurs</h1>
+<form id="userForm" class="container">
+  <div class="section">
+    <label for="firstName">Prénom:</label>
+    <input type="text" id="firstName" name="firstName" required>
+  </div>
+  <div class="section">
+    <label for="lastName">Nom:</label>
+    <input type="text" id="lastName" name="lastName" required>
+  </div>
+  <div class="section">
+    <label for="email">Adresse e-mail:</label>
+    <input type="email" id="email" name="email" required>
+  </div>
+  <button type="submit">Commencer le test</button>
+</form>
+<div id="userInfo" class="container" style="display:none;">
+  <div class="section">
+    <h2>Informations Utilisateur</h2>
+    <p id="displayFirstName"></p>
+    <p id="displayLastName"></p>
+    <p id="displayEmail"></p>
+  </div>
+</div>
+<div class="container" id="progressContainer" style="display:none;">
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <p id="progressText"></p>
+</div>
+<div id="questionContainer" class="container" style="width: calc(100vw / 3); font-size: 1.8em;">
+  <img id="questionImage" src="" alt="Illustration de la question" style="max-width: 50%; height: auto; display: none; margin: 0 auto; display: block;">
+  <div id="question"></div>
+</div>
+<ul id="answers" class="container" style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 1.3em;">
+</ul>
+<div id="result" class="container"></div>
+<canvas id="scoreChart" width="400" height="400"></canvas>
+<div class="container" style="display:none;" id="reportContainer">
+  <img src="logo.jpg" alt="Logo">
+  <div class="section">
+    <h1>Rapport d'Analyse Comportementale</h1>
+  </div>
+  <div class="section half-width">
+    <div class="left">
+      <h2>Informations Utilisateur</h2>
+      <p><span class="bold">Prénom:</span> <span id="reportFirstName"></span></p>
+      <p><span class="bold">Nom:</span> <span id="reportLastName"></span></p>
+      <p><span class="bold">Email:</span> <span id="reportEmail"></span></p>
+    </div>
+    <div class="right">
+      <canvas id="reportScoreChart"></canvas>
+    </div>
+  </div>
+  <div class="section">
+    <h2>Résultat et Couleur Dominante</h2>
+    <p><span class="bold">Votre résultat final est :</span> <span id="finalScore"></span></p>
+    <p><span class="bold">Votre couleur dominante est :</span> <span id="dominantColor"></span></p>
+  </div>
+  <div class="section">
+    <div id="introductionContent"></div>
+  </div>
+  <div class="section page-break">
+    <h2>Rappel du Résultat Final et Dominante</h2>
+    <p><span class="bold">Votre résultat final est :</span> <span id="finalScoreReminder"></span></p>
+    <p><span class="bold">Votre couleur dominante est :</span> <span id="dominantColorReminder"></span></p>
+  </div>
+  <div class="section">
+    <h2>Description du Profil Dominant</h2>
+    <div id="dominantDescription"></div>
+  </div>
+  <div class="section">
+    <h2>Recommandations</h2>
+    <p>Pour améliorer vos interactions et votre performance, voici un lien pour pouvoir suivre notre formation complète sur la méthode 4 couleurs.</p>
+  </div>
+</div>
+<button id="printReport" style="display:none;">Imprimer ou sauver le Rapport</button>
+<script>
+// Tableau contenant toutes les questions et réponses
+ const questions = [
+  {
+    question: "Lorsque vous rencontrez quelqu'un pour la première fois, quelle est votre première réaction ?",
+    illustration: "iq1.jfif",
+    answers: [
+      { text: "Vous engagez la conversation pour que la personne sache qui vous êtes.", score: 1000000 },
+      { text: "Vous souriez et vous engagez rapidement la conversation si l'autre répond a votre sourire.", score: 10000 },
+      { text: "Vous êtes calme et vous laissez l'autre personne prendre l'initiative.ne pas la brusquer est important.", score: 100 },
+      { text: "Vous observez attentivement et vous posez des questions pour mieux comprendre qui est cette personne.", score: 1 }
+    ]
+  },
+  {
+    question: "Dans une activité de loisir, quelle est votre approche préférée ?",
+    illustration: "iq2.jfif",
+    answers: [
+      { text: "Vous aimez prendre les choses en main et diriger le groupe.", score: 1000000 },
+      { text: "Vous créez une ambiance conviviale pour impliquer tout le monde.", score: 10000 },
+      { text: "Vous préférez vous adapter au rythme du groupe. on s'amuse mieux a plusieurs.", score: 100 },
+      { text: "Vous vous concentrez sur les détails techniques et le respect des règles.", score: 1 }
+    ]
+  },
+  {
+    question: "Lorsque vous rencontrez un problème personnel, comment réagissez-vous généralement ?",
+    illustration: "iq3.jfif",
+    answers: [
+      { text: "Vous cherchez rapidement une solution efficace pour le résoudre.", score: 1000000 },
+      { text: "Vous en parlez à vos amis pour avoir leur soutien et leurs conseils.", score: 10000 },
+      { text: "Vous restez calme et patient, en attendant que la situation se dénoue.", score: 100 },
+      { text: "Vous analysez attentivement tous les aspects du problème avant d'agir.", score: 1 }
+    ]
+  },
+  {
+    question: "Comment vous définissez vous dans la vie de tous les jours",
+    illustration: "iq4.jfif",
+    answers: [
+      { text: "J'aime relever des défis, il me faut de l'action pour me sentir bien.", score: 1000000 },
+      { text: "Avec moi les gens ne s'ennuient jamais, j'aime divertir les autres.", score: 10000 },
+      { text: "Je suis plutôt comprehensif, je n'aime pas blesser les autres.", score: 100 },
+      { text: "Je suis prudent, je ne donne pas ma confiance facilement.", score: 1 }
+    ]
+  },
+  {
+    question: "Vous avez une journée libre inattendue. Comment la passez-vous ?",
+    illustration: "iq5.jfif",
+    answers: [
+      { text: "Parfait, je vais avancer sur mon projet personnel et peut-être battre mon record à la salle de sport. Pas de temps à perdre !", score: 1000000 },
+      { text: "Super ! Je vais appeler des amis pour une sortie improvisée. On pourrait découvrir un nouveau café en ville.", score: 10000 },
+      { text: "Quelle belle surprise ! Je vais me détendre et passer du temps avec ma famille. Peut-être une promenade dans la nature.", score: 100 },
+      { text: "Parfait, je vais organiser mon agenda et lire un livre. Une journée productive en perspective !", score: 1 }
+    ]
+  },
+  {
+    question: "Quand vous devez apprendre quelque chose de nouveau, quelle est votre approche ?",
+    illustration: "iq6.jfif",
+    answers: [
+      { text: "Vous voulez rapidement mettre en pratique.On apprend de ses erreurs.", score: 1000000 },
+      { text: "Vous aimez échanger en apprenant. Il y en a plus dans deux têtes que dans une !", score: 10000 },
+      { text: "Vous assimilez chaque étape du raisonnement pour comprendre le concept global pas à pas.", score: 100 },
+      { text: "Vous vous concentrez sur la compréhension détaillée de la matière.", score: 1 }
+    ]
+  },
+  {
+    question: "Lorsque vous devez résoudre un problème, quelle est votre première étape ?",
+    illustration: "iq7.jfif",
+    answers: [
+      { text: "Vous identifiez les actions à entreprendre.", score: 1000000 },
+      { text: "Vous cherchez l'avis des autres. leur manière de franchir des problèmes similaires.", score: 10000 },
+      { text: "Vous prenez le temps d'examiner calmement la situation. vous regarder tous les impacts sur vous et les autres.", score: 100 },
+      { text: "Vous rassemblez le plus d'informations possible. Il doit y avoir un moyen optimal de gérer cela, vous allez le trouver.", score: 1 }
+    ]
+  },
+  {
+    question: "Quand vous devez faire face à un changement inattendu, comment réagissez-vous ?",
+    illustration: "iq8.jfif",
+    answers: [
+      { text: "Vous saisissez l'opportunité et vous vous adaptez. Le changement est la, autant ne pas le subir !", score: 1000000 },
+      { text: "Vous accueillez le changement avec enthousiasme et créativité. après tout la routine est si ennuyeuse!", score: 10000 },
+      { text: "Vous cherchez à maintenir la stabilité et la sécurité. Il faut préserver le reste pourne pas tout perturber.", score: 100 },
+      { text: "Vous analysez attentivement les implications et la signification de ce changement avant de vous engager. Qui sait ou cela va mener ?", score: 1 }
+    ]
+  },
+  {
+    question: "Lorsque vous devez donner votre opinion sur un sujet, quelle est votre approche ?",
+    illustration: "iq9.jfif",
+    answers: [
+      { text: "Vous exprimez clairement votre point de vue sans détour.", score: 1000000 },
+      { text: "Vous partagez vos idées de manière animée et engageante.", score: 10000 },
+      { text: "Vous écoutez attentivement les autres avant de vous prononcer.", score: 100 },
+      { text: "Vous apportez des arguments détaillés et factuels.", score: 1 }
+    ]
+  },
+  {
+    question: "Quand vous devez planifier une activité, quelle est votre priorité ?",
+    illustration: "iq10.jfif",
+    answers: [
+      { text: "Vous voulez définir des objectifs et les atteindre.", score: 1000000 },
+      { text: "Vous cherchez à impliquer les participants et à créer une dynamique.", score: 10000 },
+      { text: "Vous voulez que tout se déroule progressivement, de manière fluide et agréable.", score: 100 },
+      { text: "Vous voulez vous assurer que tous les détails sont pris en compte. Vous préparer avant les imprévus!", score: 1 }
+    ]
+  },
+  {
+    question: "Comment vous comportez-vous quand vous êtes malade ?",
+    illustration: "iq11.jfif",
+    answers: [
+      { text: "Je prends mes médicaments et je continue mes activités sans rien changer. Je n'ai pas de temps à perdre !", score: 1000000 },
+      { text: "Je m'ennuie déjà à l'idée de rester seul à la maison sans rien faire.", score: 10000 },
+      { text: "Je ne veux pas contaminer mes collègues alors je reste à la maison pour me reposer.", score: 100 },
+      { text: "Je vais chez le médecin et je suis sa prescription et ses conseils à la lettre.", score: 1 }
+    ]
+  },
+  {
+  question: "Le métier d'acteur est intéressant pour beaucoup de monde parce que...",
+  illustration: "iq34.jfif",
+  answers: [
+    { text: "Il me permet de se mettre en avant et de captiver l'attention du public.ce sont des stars !", score: 1000000 },
+    { text: "Il offre l'opportunité de partager des émotions, de divertir les gens ou de vivre des émotions différentes du quotidien.", score: 10000 },
+    { text: "Il permet de travailler avec des partenaires ou des collaborateurs prestigieux, de faire partie du monde du cinéma.", score: 100 },
+    { text: "Il exige une compréhension approfondie des personnages, une grande technique pour maitriser cet art et faire oublier, justement, la technique.", score: 1 }
+  ]
+},
+  {
+    question: "Quelle est votre plus belle qualité ?",
+    illustration: "iq13.jfif",
+    answers: [
+      { text: "La détermination : Je sais atteindre mes objectifs", score: 1000000 },
+      { text: "La sociabilité : J'ai le contact facile avec tout le monde", score: 10000 },
+      { text: "L'altruisme : Je sais rendre service", score: 100 },
+      { text: "La fiabilité : Je suis méticuleux et ponctuel", score: 1 }
+    ]
+  },
+  {
+    question: "Comment êtes-vous quand vous cuisinez en famille ?",
+    illustration: "iq14.jfif",
+    answers: [
+      { text: "Je file acheter tous les ingrédients et un maximum de plats préparés", score: 1000000 },
+      { text: "Je mets le bazar dans la cuisine mais j'adore cuisiner !", score: 10000 },
+      { text: "Je ne ménage pas mes efforts pour que tout le monde se régale", score: 100 },
+      { text: "Je m'assure d'avoir tous les ingrédients et je suis la recette", score: 1 }
+    ]
+  },
+  {
+    question: "Vous êtes invité à une soirée entre amis, comment vous comportez-vous idéalement ?",
+    illustration: "iq15.jfif",
+    answers: [
+      { text: "Vous prenez les devants pour organiser les activités et vous assurez que tout se passe bien.", score: 1000000 },
+      { text: "Vous êtes la vie de la fête, vous animez les discussions et vous créez une ambiance chaleureuse.", score: 10000 },
+      { text: "Vous vous fondez dans le groupe, vous écoutez attentivement et vous apportez votre soutien.", score: 100 },
+      { text: "Vous vous concentrez sur les détails de l'organisation, vous vous assurez que les règles sont respectées.", score: 1 }
+    ]
+  },
+  {
+    question: "Vous découvrez une nouvelle activité passionnante, comment réagissez-vous ?",
+    illustration: "iq16.jfif",
+    answers: [
+      { text: "Vous vous lancez sans hésiter, prêt à relever le défi et à dominer la situation.", score: 1000000 },
+      { text: "Vous en parlez à vos amis avec enthousiasme, vous les encouragez à essayer avec vous.", score: 10000 },
+      { text: "Vous prenez le temps d'observer et de vous épanouir dans cette activité.", score: 100 },
+      { text: "Vous vous renseignez en détail sur les techniques et le matériel avant de vous lancer.", score: 1 }
+    ]
+  },
+  {
+    question: "Vous devez déménager dans une nouvelle ville. Comment abordez-vous ce changement ?",
+    illustration: "iq17.jfif",
+    answers: [
+      { text: "C'est un nouveau défi ! Je vais planifier chaque étape et explorer les opportunités professionnelles. Allons-y !", score: 1000000 },
+      { text: "Super excitant ! Je vais organiser une fête d'adieu et explorer les nouveaux endroits sympas. Une nouvelle aventure commence !", score: 10000 },
+      { text: "C'est un grand changement, mais je suis prêt à m'adapter. Je vais dire au revoir à mes proches et découvrir la nouvelle ville à mon rythme.", score: 100 },
+      { text: "Je vais tout planifier méticuleusement. Faire des listes, organiser les cartons et me renseigner sur les services de la nouvelle ville.", score: 1 }
+    ]
+  },
+  {
+  question: "Que recherchez-vous quand vous visitez un musée ?",
+  illustration: "iq33.jfif",
+  answers: [
+    { text: "Je cherche à voir les expositions les plus célèbres et impressionnantes, celles qui ont un impact fort et qui sont reconnues mondialement.", score: 1000000 },
+    { text: "Je visite un musée pour m'inspirer et me surprendre, en découvrant des œuvres qui stimulent ma créativité.", score: 10000 },
+    { text: "J'apprécie les œuvres dans un environnement paisible et harmonieux. Chaque œuvre est mise en valeur.", score: 100 },
+    { text: "Je lis aussi des détails historiques et techniques de chaque œuvre, il n'y a que dans les musées que c'est précis et vérifié.", score: 1 }
+  ]
+},
+  {
+    question: "Vous devez résoudre un conflit avec un membre de votre famille, comment réagissez-vous ?",
+    illustration: "iq19.jfif",
+    answers: [
+      { text: "Vous exprimez fermement votre point de vue et vous cherchez une solution rapide.", score: 1000000 },
+      { text: "Vous écoutez attentivement les différentes perspectives et vous cherchez un compromis.", score: 10000 },
+      { text: "Vous restez patient et vous essayez d'apaiser la situation pour préserver l'harmonie.", score: 100 },
+      { text: "Vous analysez calmement tous les aspects du problème avant de prendre une décision.", score: 1 }
+    ]
+  },
+  {
+    question: "Vous découvrez qu'un de vos amis a remporté un prix prestigieux, comment réagissez-vous ?",
+    illustration: "iq20.jfif",
+    answers: [
+      { text: "Vous le félicitez chaleureusement et vous l'encouragez à poursuivre ses ambitions.", score: 10000 },
+      { text: "Vous analysez en détail les raisons de son succès et vous cherchez à comprendre le processus.", score: 1 },
+      { text: "Vous vous réjouissez sincèrement pour lui et vous vous concentrez sur son bien-être.", score: 100 },
+      { text: "Vous vous demandez comment vous pourriez également remporter un prix similaire.", score: 1000000 }
+    ]
+  },
+  {
+    question: "Vous devez organiser une soirée jeux de société entre amis, comment vous y prenez-vous ?",
+    illustration: "iq21.jfif",
+    answers: [
+      { text: "Vous choisissez des jeux stimulants qui vont pousser les participants à se surpasser.", score: 1000000 },
+      { text: "Vous sélectionnez des jeux conviviaux qui vont favoriser les interactions et les rires.", score: 10000 },
+      { text: "Vous optez pour des jeux classiques et familiers qui vont créer une ambiance chaleureuse.", score: 100 },
+      { text: "Vous vous assurez que les règles et les procédures de chaque jeu soient bien comprises.", score: 1 }
+    ]
+  },
+  {
+    question: "Face à une situation totalement nouvelle vous êtes ...?",
+    illustration: "iq22.jfif",
+    answers: [
+      { text: "Aventureux, j'aime relever des défis !", score: 1000000 },
+      { text: "Ouvert aux suggestions et idées des autres", score: 10000 },
+      { text: "Chaleureux envers les nouvelles personnes rencontrées", score: 100 },
+      { text: "Modéré. J'évite les extrêmes et je respecte les conventions", score: 1 }
+    ]
+  },
+ {
+  question: "Pour monter un meuble en kit, la meilleure approche c'est...?",
+  illustration: "iq32.jfif",
+  answers: [
+    { text: "Je commence immédiatement, en prenant les devants pour assembler le meuble au plus vite.", score: 1000000 },
+    { text: "Je cherche à monter le meuble avec des amis, en rendant l'activité plus facile et amusante.", score: 10000 },
+    { text: "Je prends le temps de lire les instructions et je m'assure comprendre tutes les étapes avant de commencer.", score: 100 },
+    { text: "Je vérifie minutieusement toutes les pièces et je suis les instructions pour garantir un montage précis.", score: 1 }
+  ]
+},
+  {
+    question: "Vous êtes coincé(e) dans les embouteillages. Comment réagissez-vous ?",
+    illustration: "iq24.jfif",
+    answers: [
+      { text: "C'est frustrant, mais je vais en profiter pour passer des appels importants et avancer sur mes projets. Pas de temps à perdre !", score: 1000000 },
+      { text: "Pas grave, je vais mettre de la musique et appeler un ami pour bavarder. Autant rendre ce moment agréable !", score: 10000 },
+      { text: "Je vais prendre une grande respiration et me détendre. Peut-être écouter un podcast ou réfléchir à mes projets personnels.", score: 100 },
+      { text: "Je vais vérifier les itinéraires alternatifs et planifier mon emploi du temps pour rattraper le retard. Tout est sous contrôle.", score: 1 }
+    ]
+  },
+  {
+    question: "Comment réagissez-vous face à une critique ?",
+    illustration: "iq25.jfif",
+    answers: [
+      { text: "Je prends note de la critique, mais je vais surtout me concentrer sur mes points forts et continuer à avancer. Pas de temps à perdre avec les détails négatifs.", score: 1000000 },
+      { text: "Je vais essayer de voir le côté positif et en rire. Les critiques ne doivent pas gâcher ma bonne humeur. Allons de l'avant !", score: 10000 },
+      { text: "Je vais écouter attentivement et essayer de comprendre le point de vue de l'autre. C'est important de maintenir l'harmonie et de voir comment je peux m'améliorer.", score: 100 },
+      { text: "Je vais analyser la critique de manière objective et voir comment je peux m'améliorer. Tout est une opportunité d'apprentissage.", score: 1 }
+    ]
+  },
+  {
+    question: "Vous découvrez qu'un de vos amis a traversé une période difficile, comment réagissez-vous ?",
+    illustration: "iq26.jfif",
+    answers: [
+      { text: "Vous l'encouragez à prendre les choses en main et à trouver rapidement des solutions.", score: 1000000 },
+      { text: "Vous l'écoutez attentivement, vous le soutenez émotionnellement et vous l'aidez à se sentir mieux.", score: 10000 },
+      { text: "Vous restez à ses côtés avec patience et vous faites de votre mieux pour le réconforter.", score: 100 },
+      { text: "Vous l'aidez à analyser calmement la situation afin de trouver la meilleure approche.", score: 1 }
+    ]
+  },
+  {
+    question: "Vous avez l'opportunité de voyager à l'étranger pour un court séjour. Comment réagissez-vous ?",
+    illustration: "iq27.jfif",
+    answers: [
+      { text: "Excellent ! Je vais planifier un itinéraire efficace pour voir le maximum de choses en peu de temps. Aucune minute ne sera perdue !", score: 1000000 },
+      { text: "Génial ! Je vais découvrir de nouveaux endroits, rencontrer des gens et m'amuser. Une aventure inoubliable en perspective !", score: 10000 },
+      { text: "Quelle chance ! Je vais prendre le temps de me détendre et de profiter des paysages. Peut-être même visiter des lieux calmes et apaisants.", score: 100 },
+      { text: "Parfait, je vais tout organiser à l'avance : réservations, itinéraires, et informations sur les lieux à visiter. Tout sera bien préparé.", score: 1 }
+    ]
+  },
+  {
+    question: "Vous vous promenez dans un parc et vous trouvez un portefeuille oublié. Que faites-vous ?",
+    illustration: "iq28.jfif",
+    answers: [
+      { text: "Pas de temps à perdre, je file au poste de police pour le rapporter immédiatement !", score: 1000000 },
+      { text: "Trop cool, je vais pouvoir faire la fête avec les amis ce soir grâce à cet argent !", score: 10000 },
+      { text: "Pas de problème, je vais le garder en lieu sûr jusqu'à ce que son propriétaire vienne le récupérer.", score: 100 },
+      { text: "Commençons par examiner le contenu du portefeuille pour identifier son propriétaire en détail.", score: 1 }
+    ]
+  },
+  {
+    question: "Vous découvrez qu'un de vos amis a décidé de changer de carrière. Quelle est votre réaction ?",
+    illustration: "iq29.jfif",
+    answers: [
+      { text: "Intéressant, je me demande comment je pourrais faire pour saisir une opportunité similaire.", score: 1000000 },
+      { text: "Trop cool, je suis sûr que tu vas pouvoir t'épanouir dans cette nouvelle voie ! Raconte-moi tout !", score: 10000 },
+      { text: "Je suis heureux pour toi, j'espère que tu trouveras la stabilité et l'équilibre que tu recherches.", score: 100 },
+      { text: "C'est une décision importante, j'aimerais en savoir plus sur tes réflexions et ton plan d'action.", score: 1 }
+    ]
+  },
+  {
+    question: "Vous recevez une invitation pour une soirée karaoké entre amis. Comment répondez-vous ?",
+    illustration: "iq30.jfif",
+    answers: [
+      { text: "Parfait, je vais pouvoir montrer à tout le monde mes talents de chanteur hors pair et mettre l'ambiance !", score: 1000000 },
+      { text: "Super, j'adore ces moments de partage et de rire avec mes amis !", score: 10000 },
+      { text: "Je vais y aller pour soutenir mes amis, même si je préfère écouter que chanter.", score: 100 },
+      { text: "Je vais préparer une liste de chansons et m'assurer que tout est bien organisé pour la soirée.", score: 1 }
+    ]
+  },
+  {
+    question: "Vous avez rendez-vous et votre réveil n'a pas sonné ce matin !!!",
+    illustration: "iq31.jfif",
+    answers: [
+        { text: "Rien de tel pour me mettre de mauvaise humeur pour le reste de la journée !", score: 1000000 },
+        { text: "Tant pis ! Tant qu'à être en retard, j'en profite pour trainer encore un peu...", score: 10000 },
+        { text: "Je suis en panique ! Je me précipite mon téléphone pour informer de mon retard", score: 100 },
+        { text: "J'ai horreur d'être en retard. Je réorganise tout mes rendez-vous de la journée !", score: 1 }
+    ]
+  }
+];
+
+
+let currentQuestionIndex = 0;
+let score = 0;
+let selectedAnswer = null; // Réponse sélectionnée par l'utilisateur
+
+function shuffleQuestions() {
+  questions.sort(() => Math.random() - 0.5);
+}
+
+function showNextQuestion() {
+  const questionElement = document.getElementById('question');
+  const answersElement = document.getElementById('answers');
+  const progressBar = document.getElementById('progressBar');
+  const progressText = document.getElementById('progressText');
+  const questionImage = document.getElementById('questionImage');
+
+  if (currentQuestionIndex >= questions.length) {
+    showResult();
+    return;
+  }
+
+  const currentQuestion = questions[currentQuestionIndex];
+  questionElement.innerHTML = '';
+  answersElement.innerHTML = '';
+
+  const progressPercentage = ((currentQuestionIndex + 1) / questions.length) * 100;
+  progressBar.style.width = progressPercentage + '%';
+  progressText.textContent = `Question ${currentQuestionIndex + 1} / ${questions.length}`;
+
+  if (currentQuestion.illustration) {
+    questionImage.src = currentQuestion.illustration;
+    questionImage.style.display = 'block';
+  } else {
+    questionImage.style.display = 'none';
+  }
+
+  questionElement.innerHTML = '<strong>' + currentQuestion.question + '</strong>';
+
+  currentQuestion.answers.forEach(answer => {
+    const li = document.createElement('li');
+    li.textContent = answer.text + '\n' + '\n';
+    const separator = document.createElement('li');
+    separator.textContent = '____________________________________________________________\n';
+    answersElement.appendChild(separator);
+    li.addEventListener('click', () => selectAnswer(answer));
+    if (selectedAnswer === answer) {
+      li.style.fontWeight = 'bold';
+      li.style.fontStyle = 'italic';
+    }
+    answersElement.appendChild(li);
+  });
+
+  if (selectedAnswer) {
+    const validationButton = document.createElement('button');
+    validationButton.textContent = 'Valider';
+    validationButton.style.fontSize = '1.2em';
+    validationButton.addEventListener('click', () => {
+      score += selectedAnswer.score;
+      selectedAnswer = null;
+      currentQuestionIndex++;
+      showNextQuestion();
+    });
+    answersElement.appendChild(validationButton);
+  }
+}
+
+function selectAnswer(answer) {
+  const answers = document.querySelectorAll('#answers li');
+  answers.forEach(li => {
+    li.style.fontWeight = 'normal';
+    li.style.fontStyle = 'normal';
+  });
+  selectedAnswer = answer;
+  showNextQuestion();
+}
+
+function showResult() {
+  const questionElement = document.getElementById('question');
+  const answersElement = document.getElementById('answers');
+  const resultElement = document.getElementById('result');
+  const reportContainer = document.getElementById('reportContainer');
+  const printButton = document.getElementById('printReport');
+
+  questionElement.style.display = 'none';
+  answersElement.style.display = 'none';
+  document.getElementById('progressContainer').style.display = 'none';
+
+  const formattedScore = formatScore(score);
+
+  const scores = calculateScores(score);
+  const dominant = calculateDominant(scores);
+
+  displayReport(formattedScore, scores, dominant);
+
+  showScoreChart(scores);
+
+  printButton.style.display = 'block';
+}
+
+function formatScore(score) {
+    const { Rouge, Jaune, Vert, Bleu } = calculateScores(score);
+    console.log("Scores calculés:", { Rouge, Jaune, Vert, Bleu });
+    
+    const Scores = Bleu + 100 * Vert + 10000 * Jaune + 1000000 * Rouge;
+    console.log("Score total:", Scores);
+    
+    if (isNaN(Scores)) {
+        console.error("Le score total est NaN");
+        return "Erreur de calcul";
+    }
+    
+    const formattedScore = Scores.toString().padStart(8, '0');
+    return formattedScore.replace(/(\d{2})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4');
+}
+
+function calculateScores(score) {
+  const rou = Math.floor(score / 1000000);
+  const jau = Math.floor(score / 10000) - 100 * rou;
+  const ver = Math.floor(score / 100) - 10000 * rou - 100 * jau;
+  const ble = score - 1000000 * rou - 10000 * jau - 100 * ver;
+  const total = rou + jau + ver + ble;
+  const Rouge = Math.round((rou / total) * 100);
+  const Jaune = Math.round((jau / total) * 100);
+  const Vert = Math.round((ver / total) * 100);
+  const Bleu = 100 - Rouge - Jaune - Vert;
+  return { Rouge, Jaune, Vert, Bleu };
+}
+
+function calculateDominant(scores) {
+  const colors = ['Rouge', 'Jaune', 'Vert', 'Bleu'];
+  const maxScore = Math.max(...colors.map(color => scores[color]));
+  const dominantColor = colors.find(color => scores[color] === maxScore);
+  return dominantColor;
+}
+
+function showScoreChart(scores) {
+  const labels = ['Rouge', 'Jaune', 'Vert', 'Bleu'];
+  const colors = ['red', 'yellow', 'green', 'blue'];
+  const ctx = document.getElementById('reportScoreChart').getContext('2d');
+  const myChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: scores,
+        backgroundColor: colors
+      }]
+    },
+    options: {
+      responsive: false,
+      legend: {
+        display: false
+      }
+    }
+  });
+}
+
+function displayReport(formattedScore, scores, dominant) {
+  const reportContainer = document.getElementById('reportContainer');
+
+  const firstName = document.getElementById('firstName').value;
+  const lastName = document.getElementById('lastName').value;
+  const email = document.getElementById('email').value;
+
+  document.getElementById('reportFirstName').textContent = firstName;
+  document.getElementById('reportLastName').textContent = lastName;
+  document.getElementById('reportEmail').textContent = email;
+  document.getElementById('finalScore').textContent = formattedScore;
+  document.getElementById('dominantColor').textContent = dominant;
+  document.getElementById('finalScoreReminder').textContent = formattedScore;
+  document.getElementById('dominantColorReminder').textContent = dominant;
+
+  fetchDescription(dominant);
+
+  reportContainer.style.display = 'block';
+
+  const bodyChildren = document.body.children;
+  for (let i = 0; i < bodyChildren.length; i++) {
+    if (bodyChildren[i].id !== 'reportContainer' && bodyChildren[i].id !== 'printReport') {
+      bodyChildren[i].style.display = 'none';
+    }
+  }
+}
+
+// Fonction pour récupérer la description du profil dominant à partir des fichiers texte locaux
+function fetchDescription(color) {
+  const descriptions = {
+    'Rouge': 'Drouge.txt',
+    'Jaune': 'Djaune.txt',
+    'Vert': 'Dvert.txt',
+    'Bleu': 'Dbleu.txt'
+  };
+  const descriptionFile = descriptions[color];
+
+  fetch(descriptionFile)
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById('dominantDescription').innerHTML = marked.parse(data);
+    })
+    .catch(error => {
+      console.error('Erreur lors de la récupération de la description:', error);
+    });
+}
+
+// Fonction pour afficher l'introduction formatée en Markdown
+function fetchIntroduction() {
+  const introductionMarkdown = `
+## La Méthode des 4 Couleurs : Une Clé pour Déverrouiller le Potentiel Humain
+
+Dans le vaste monde des interactions humaines, la méthode des 4 couleurs se démarque comme un outil puissant et polyvalent. Bien au-delà d'une simple catégorisation, cette approche offre une compréhension profonde des comportements, des motivations et des préférences individuelles, ouvrant ainsi la voie à une communication plus efficace et à des relations plus harmonieuses.
+# Les Principes Fondamentaux
+Au cœur de cette méthode se trouve la reconnaissance que chaque individu possède un ensemble unique de traits de personnalité, de valeurs et de styles de communication. En attribuant une couleur distinctive à chaque profil, la méthode des 4 couleurs crée un langage commun qui facilite la compréhension mutuelle et l'appréciation des différences.
+Loin d'être une simple étiquette, chaque couleur représente un spectre riche de caractéristiques comportementales, offrant ainsi une perspective nuancée sur les forces, les défis et les préférences de chacun. Cette approche encourage l'empathie, la tolérance et la valorisation de la diversité, éléments essentiels pour construire des relations saines et productives.
+# Des Applications Variées
+La beauté de la méthode des 4 couleurs réside dans sa polyvalence. Elle trouve son application dans divers domaines, allant du développement personnel à la gestion d'équipe, en passant par le coaching, la vente et même les relations interpersonnelles.
+Dans le milieu professionnel, cette méthode permet aux équipes de mieux comprendre les forces et les défis de chacun, favorisant ainsi une collaboration plus efficace et une synergie accrue. Les gestionnaires peuvent l'utiliser pour adapter leur style de leadership et maximiser le potentiel de leurs employés.
+Dans le domaine du développement personnel, la méthode des 4 couleurs offre un tremplin pour l'introspection et la croissance. En explorant leur profil unique, les individus peuvent acquérir une meilleure compréhension d'eux-mêmes, de leurs motivations et de leurs zones de confort, leur permettant ainsi de se développer de manière plus ciblée.
+# Un Voyage Vers l'Harmonie
+Que vous soyez un professionnel cherchant à optimiser les performances de votre équipe, un coach désireux d'aider vos clients à atteindre leur plein potentiel, ou simplement quelqu'un qui souhaite approfondir sa compréhension des relations humaines, la méthode des 4 couleurs offre un cadre riche et accessible.
+En embrassant cette approche, vous ouvrez la porte à un monde de possibilités, où la communication devient plus fluide, les relations plus profondes et les objectifs plus facilement atteignables. C'est un voyage vers l'harmonie, où chaque couleur apporte sa propre nuance à la tapisserie vibrante de l'expérience humaine.
+`;
+  document.getElementById('introductionContent').innerHTML = marked.parse(introductionMarkdown);
+}
+
+// Appel de la fonction fetchIntroduction pour charger l'introduction formatée en Markdown
+fetchIntroduction();
+
+// Fonction pour imprimer le rapport
+function printReport() {
+  window.print();
+}
+
+// Ajouter un écouteur d'événement au bouton d'impression
+document.getElementById('printReport').addEventListener('click', printReport);
+
+// Écouteur d'événement pour le formulaire utilisateur
+const userForm = document.getElementById('userForm');
+userForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+
+  const firstName = document.getElementById('firstName').value;
+  const lastName = document.getElementById('lastName').value;
+  const email = document.getElementById('email').value;
+
+  document.getElementById('displayFirstName').textContent = `Prénom: ${firstName}`;
+  document.getElementById('displayLastName').textContent = `Nom: ${lastName}`;
+  document.getElementById('displayEmail').textContent = `Email: ${email}`;
+
+  document.getElementById('userInfo').style.display = 'block';
+  document.getElementById('progressContainer').style.display = 'block';
+  userForm.style.display = 'none';
+  document.getElementById('userInfo').style.display = 'none';
+  shuffleQuestions();
+  showNextQuestion();
+});
+</script>
+</body>
+</html>

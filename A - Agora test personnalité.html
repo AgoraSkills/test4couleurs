@@ -666,7 +666,7 @@ function showResult() {
 
   displayReport(formattedScore, scores, dominant);
 
-  showScoreChart(scores);
+  showScoreChart([scores.Rouge, scores.Jaune, scores.Vert, scores.Bleu]);
 
   printButton.style.display = 'block';
 }
@@ -754,6 +754,11 @@ function displayReport(formattedScore, scores, dominant) {
       bodyChildren[i].style.display = 'none';
     }
   }
+
+  // Ajouter un délai court avant de lancer l'impression
+  setTimeout(() => {
+    window.print();
+  }, 900);
 }
 
 // Fonction pour récupérer la description du profil dominant à partir des fichiers texte locaux
