@@ -117,7 +117,8 @@
     text-align: center;
     margin-top: 10px;
   }
- @media print {
+
+  @media print {
     body {
       margin: 0;
       padding: 0;
@@ -169,44 +170,8 @@
     #reportContainer, #reportContainer * {
       visibility: visible;
     }
-}
+  }
 
-    body * {
-      visibility: hidden;
-    }
-    #reportContainer, #reportContainer * {
-      visibility: visible;
-    }
-    #reportContainer {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-    .half-width {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-    }
-    .half-width .left,
-    .half-width .right {
-      width: 48%;
-    }
-    .page-break {
-      page-break-before: always;
-    }
-  }
-  .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 0.6);
-    z-index: -1;
-  }
   /* Styles spécifiques pour le Markdown */
   #introductionContent h1, #introductionContent h2, #introductionContent h3 {
     color: #003366;
