@@ -660,7 +660,7 @@ function showNextQuestion() {
     const li = document.createElement('li');
     li.textContent = answer.text + '\n';
     const separator = document.createElement('li');
-    separator.textContent = '◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌\n';
+    separator.textContent = '◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉\n';
     answersElement.appendChild(separator);
     li.addEventListener('click', () => selectAnswer(answer));
     if (selectedAnswer === answer) {
