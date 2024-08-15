@@ -672,8 +672,19 @@ function showResult() {
 }
 
 function formatScore(score) {
-  const formattedScore = score.toString().padStart(8, '0');
-  return formattedScore.replace(/(\d{2})(?=\d{2}|$)/g, '$1 ');
+    const { Rouge, Jaune, Vert, Bleu } = calculateScores(score);
+    console.log("Scores calculés:", { Rouge, Jaune, Vert, Bleu });
+    
+    const Scores = Bleu + 100 * Vert + 10000 * Jaune + 1000000 * Rouge;
+    console.log("Score total:", Scores);
+    
+    if (isNaN(Scores)) {
+        console.error("Le score total est NaN");
+        return "Erreur de calcul";
+    }
+    
+    const formattedScore = Scores.toString().padStart(8, '0');
+    return formattedScore.replace(/(\d{2})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4');
 }
 
 function calculateScores(score) {
@@ -682,18 +693,18 @@ function calculateScores(score) {
   const ver = Math.floor(score / 100) - 10000 * rou - 100 * jau;
   const ble = score - 1000000 * rou - 10000 * jau - 100 * ver;
   const total = rou + jau + ver + ble;
-  const Rouge = (rou / total) * 100;
-  const Jaune = (jau / total) * 100;
-  const Vert = (ver / total) * 100;
-  const Bleu = (ble / total) * 100;
-  return [Rouge, Jaune, Vert, Bleu];
+  const Rouge = Math.round((rou / total) * 100);
+  const Jaune = Math.round((jau / total) * 100);
+  const Vert = Math.round((ver / total) * 100);
+  const Bleu = 100 - Rouge - Jaune - Vert;
+  return { Rouge, Jaune, Vert, Bleu };
 }
 
 function calculateDominant(scores) {
-  const maxScore = Math.max(...scores);
-  const dominantIndex = scores.indexOf(maxScore);
-  const dominants = ['Rouge', 'Jaune', 'Vert', 'Bleu'];
-  return dominants[dominantIndex];
+  const colors = ['Rouge', 'Jaune', 'Vert', 'Bleu'];
+  const maxScore = Math.max(...colors.map(color => scores[color]));
+  const dominantColor = colors.find(color => scores[color] === maxScore);
+  return dominantColor;
 }
 
 function showScoreChart(scores) {
