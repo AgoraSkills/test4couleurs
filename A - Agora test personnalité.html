@@ -67,13 +67,13 @@
   #answers {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 15px;
   }
   #answers label {
     background-color: #fff;
     border: 1px solid #75c9e3;
     border-radius: 4px;
-    padding: 10px;
+    padding: 15px;
     cursor: pointer;
     transition: background-color 0.3s;
   }
@@ -658,9 +658,9 @@ function showNextQuestion() {
 
   currentQuestion.answers.forEach(answer => {
     const li = document.createElement('li');
-    li.textContent = answer.text + '\n' + '\n';
+    li.textContent = answer.text + '\n';
     const separator = document.createElement('li');
-    separator.textContent = '____________________________________________________________\n';
+    separator.textContent = '◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌\n';
     answersElement.appendChild(separator);
     li.addEventListener('click', () => selectAnswer(answer));
     if (selectedAnswer === answer) {
@@ -830,6 +830,9 @@ function fetchDescription(color) {
 // Fonction pour afficher l'introduction formatée en Markdown
 function fetchIntroduction() {
   const introductionMarkdown = `
+.
+.
+
 ## La Méthode des 4 Couleurs : Une Clé pour Déverrouiller le Potentiel Humain
 
 Dans le vaste monde des interactions humaines, la méthode des 4 couleurs se démarque comme un outil puissant et polyvalent. Bien au-delà d'une simple catégorisation, cette approche offre une compréhension profonde des comportements, des motivations et des préférences individuelles, ouvrant ainsi la voie à une communication plus efficace et à des relations plus harmonieuses.
