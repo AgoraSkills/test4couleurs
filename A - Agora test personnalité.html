@@ -117,17 +117,60 @@
     text-align: center;
     margin-top: 10px;
   }
-  @media print {
+ @media print {
     body {
       margin: 0;
       padding: 0;
     }
+    
     .container {
       margin: 0;
       padding: 20px;
       box-shadow: none;
       background-color: #fff;
     }
+
+    /* Supprimer le pied de page */
+    .no-print {
+      display: none !important;
+    }
+
+    /* S'assurer que les paragraphes restent sur une seule page */
+    p {
+      page-break-inside: avoid;
+      orphans: 3;
+      widows: 3;
+    }
+  
+    /* Éviter que les titres se retrouvent seuls en bas de page */
+    h1, h2, h3, h4, h5, h6 {
+      page-break-after: avoid;
+    }
+
+    /* Configuration de l'en-tête */
+    @page {
+      margin: 20mm;
+      @top-left {
+        content: "Page " counter(page) " of " counter(pages);
+      }
+      @top-center {
+        content: "Agora Skills Academy";
+      }
+      @top-right {
+        content: "Date: " string(today);
+      }
+    }
+
+    /* Masquer tout sauf le contenu principal pour l'impression */
+    body * {
+      visibility: hidden;
+    }
+  
+    #reportContainer, #reportContainer * {
+      visibility: visible;
+    }
+}
+
     body * {
       visibility: hidden;
     }
