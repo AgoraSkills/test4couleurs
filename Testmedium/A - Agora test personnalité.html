@@ -22,7 +22,7 @@
     background: url('fondtest.jpg') no-repeat center center fixed;
     background-size: cover;
   }
-  body, html {
+  {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
@@ -257,7 +257,7 @@
   <p id="progressText"></p>
 </div>
 <div id="questionContainer" class="container" style="width: calc(100vw / 3); font-size: 1.8em;">
-  <img id="questionImage" src="" alt="Illustration de la question" style="max-width: 50%; height: auto; display: none; margin: 0 auto; display: block;">
+  <img id="questionImage" src="" alt="Illustration" style="max-width: 50%; height: auto; display: none; margin: 0 auto; display: block;">
   <div id="question"></div>
 </div>
 <ul id="answers" class="container" style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 1.3em;">
@@ -652,19 +652,19 @@ function showResult() {
 }
 
 function formatScore(score) {
-    const { Rouge, Jaune, Vert, Bleu } = calculateScores(score);
-    console.log("Scores calculés:", { Rouge, Jaune, Vert, Bleu });
-    
-    const Scores = Bleu + 100 * Vert + 10000 * Jaune + 1000000 * Rouge;
-    console.log("Score total:", Scores);
-    
-    if (isNaN(Scores)) {
-        console.error("Le score total est NaN");
-        return "Erreur de calcul";
-    }
-    
-    const formattedScore = Scores.toString().padStart(8, '0');
-    return formattedScore.replace(/(\d{2})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4');
+  const { Rouge, Jaune, Vert, Bleu } = calculateScores(score);
+  console.log("Scores calculés:", { Rouge, Jaune, Vert, Bleu });
+
+  const Scores = Bleu + 100 * Vert + 10000 * Jaune + 1000000 * Rouge;
+  console.log("Score total:", Scores);
+
+  if (isNaN(Scores)) {
+    console.error("Le score total est NaN");
+    return "Erreur de calcul";
+  }
+
+  const formattedScore = Scores.toString().padStart(8, '0');
+  return formattedScore.replace(/(\d{2})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4');
 }
 
 function calculateScores(score) {
@@ -724,7 +724,10 @@ function displayReport(formattedScore, scores, dominant) {
   document.getElementById('finalScoreReminder').textContent = formattedScore;
   document.getElementById('dominantColorReminder').textContent = dominant;
 
-  fetchDescription(dominant);
+  // Utiliser fetchDescription pour récupérer le texte de l'introduction au format Markdown
+  fetchDescription(dominant).then(description => {
+    document.getElementById('introduction').innerHTML = description;
+  });
 
   reportContainer.style.display = 'block';
 
@@ -751,7 +754,7 @@ function fetchDescription(color) {
   };
   const descriptionFile = descriptions[color];
 
-  fetch(descriptionFile)
+  return fetch(descriptionFile)
     .then(response => response.text())
     .then(data => {
       document.getElementById('dominantDescription').innerHTML = marked.parse(data);
@@ -781,11 +784,48 @@ Sur le plan individuel, la compréhension des profils adaptés aide à réduire 
 Adopter la notion de profil adapté est un voyage continu vers une meilleure compréhension et une gestion optimisée des interactions et des tâches. En reconnaissant et en adaptant nos comportements et nos méthodes en fonction des profils et des exigences spécifiques, nous évitons le stress inutile et favorisons une atmosphère de travail plus équilibrée et productive.
 
 En embrassant cette approche, nous ouvrons la voie à des interactions plus fluides, à une gestion de tâches plus efficace et à un bien-être amélioré. C'est un parcours vers l'harmonie, où chaque ajustement contribue à un équilibre global et à une meilleure performance.
+`;
   document.getElementById('introductionContent').innerHTML = marked.parse(introductionMarkdown);
 }
 
 // Appel de la fonction fetchIntroduction pour charger l'introduction formatée en Markdown
 fetchIntroduction();
+
+// Fonction pour afficher le rapport
+function displayReport(formattedScore, scores, dominant) {
+  const reportContainer = document.getElementById('reportContainer');
+
+  const firstName = document.getElementById('firstName').value;
+  const lastName = document.getElementById('lastName').value;
+  const email = document.getElementById('email').value;
+
+  document.getElementById('reportFirstName').textContent = firstName;
+  document.getElementById('reportLastName').textContent = lastName;
+  document.getElementById('reportEmail').textContent = email;
+  document.getElementById('finalScore').textContent = formattedScore;
+  document.getElementById('dominantColor').textContent = dominant;
+  document.getElementById('finalScoreReminder').textContent = formattedScore;
+  document.getElementById('dominantColorReminder').textContent = dominant;
+
+  // Utiliser fetchDescription pour récupérer le texte de l'introduction au format Markdown
+  fetchDescription(dominant).then(description => {
+    document.getElementById('introduction').innerHTML = description;
+  });
+
+  reportContainer.style.display = 'block';
+
+  const bodyChildren = document.body.children;
+  for (let i = 0; i < bodyChildren.length; i++) {
+    if (bodyChildren[i].id !== 'reportContainer' && bodyChildren[i].id !== 'printReport') {
+      bodyChildren[i].style.display = 'none';
+    }
+  }
+
+  // Ajouter un délai court avant de lancer l'impression
+  setTimeout(() => {
+    window.print();
+  }, 900);
+}
 
 // Fonction pour imprimer le rapport
 function printReport() {
@@ -811,7 +851,6 @@ userForm.addEventListener('submit', (event) => {
   document.getElementById('userInfo').style.display = 'block';
   document.getElementById('progressContainer').style.display = 'block';
   userForm.style.display = 'none';
-  document.getElementById('userInfo').style.display = 'none';
   shuffleQuestions();
   showNextQuestion();
 });
