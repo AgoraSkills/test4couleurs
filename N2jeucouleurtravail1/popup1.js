@@ -7,8 +7,8 @@ function showPopup() {
         popupContainer.innerHTML = `
             <div class="popup">
                 <div class="popup-content">
-                    <h2>Bienvenue !</h2>
-                    <p>Suivez les instructions pour accomplir chaque mission.</p>
+                    <h2>Bienvenue dans le Jeu "La Couleur des Actions"!</h2>
+                    <p>Suivez les instructions et associez les cartes aux zones de couleur correspondantes pour gagner des points. Analysez bien les missions, puis glissez-les dans les zones adéquates.</p>
                     <button id="start-button">Commencer</button>
                 </div>
             </div>
@@ -33,11 +33,44 @@ function updateCard() {
     if (cardStack) {
         const mission = missions[Math.floor(Math.random() * missions.length)];
         cardStack.innerHTML = `
-            <div class="card">
+            <div class="card" draggable="true" id="current-card">
                 <h3>${mission.nom}</h3>
                 <p>${mission.description}</p>
             </div>
         `;
+
+        const currentCard = document.getElementById('current-card');
+        if (currentCard) {
+            currentCard.addEventListener('dragstart', dragStart);
+        }
+    }
+}
+
+function dragStart(event) {
+    event.dataTransfer.setData('text', event.target.id);
+}
+
+function setupDropZones() {
+    const dropZones = document.querySelectorAll('.drop-zone');
+    dropZones.forEach(zone => {
+        zone.addEventListener('dragover', dragOver);
+        zone.addEventListener('drop', dropCard);
+    });
+}
+
+function dragOver(event) {
+    event.preventDefault();
+}
+
+function dropCard(event) {
+    event.preventDefault();
+    const cardId = event.dataTransfer.getData('text');
+    const cardElement = document.getElementById(cardId);
+
+    if (cardElement) {
+        const dropZone = event.target;
+        dropZone.appendChild(cardElement);
+        updateCard(); // Affiche la prochaine mission
     }
 }
 
@@ -65,4 +98,5 @@ function endGame() {
 
 document.addEventListener('DOMContentLoaded', () => {
     showPopup(); // Appel après le chargement complet du DOM
+    setupDropZones(); // Associe les zones de dépôt aux événements
 });
