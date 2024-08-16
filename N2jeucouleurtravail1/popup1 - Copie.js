@@ -27,11 +27,7 @@ function startGame() {
     
     // Démarre le jeu en mettant à jour la première carte
     updateCard();
-//
-//
-//
-//
-//    
+    
     // Lance le timer
     startTimer();
 }
