@@ -511,5 +511,4 @@ const missions = [
     exemple3: "Proposer des solutions innovantes pour réduire l'impact environnemental."
   }
 ];
-
 export default missions;
