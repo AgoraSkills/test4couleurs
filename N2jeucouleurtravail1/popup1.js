@@ -8,7 +8,7 @@ function showPopup() {
             <div class="popup">
                 <div class="popup-content">
                     <h2>Bienvenue !</h2>
-                    <p>Instructions du jeu...</p>
+                    <p>Suivez les instructions pour accomplir chaque mission.</p>
                     <button id="start-button">Commencer</button>
                 </div>
             </div>
@@ -22,17 +22,15 @@ function showPopup() {
 }
 
 function startGame() {
-    // Code pour démarrer le jeu...
     const popupContainer = document.getElementById('popup-container');
     popupContainer.innerHTML = ''; // Cache le popup
     updateCard(); // Affiche la première mission
-    startTimer();
+    startTimer(); // Lance le timer
 }
 
 function updateCard() {
     const cardStack = document.getElementById('card-stack');
     if (cardStack) {
-        // Met à jour la carte actuelle avec une mission
         const mission = missions[Math.floor(Math.random() * missions.length)];
         cardStack.innerHTML = `
             <div class="card">
@@ -61,8 +59,8 @@ function startTimer() {
 }
 
 function endGame() {
-    // Code pour terminer le jeu, afficher le score final
     alert("Le temps est écoulé ! Jeu terminé.");
+    // Autre logique pour afficher le score ou recommencer
 }
 
 document.addEventListener('DOMContentLoaded', () => {
