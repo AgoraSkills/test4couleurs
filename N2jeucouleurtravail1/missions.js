@@ -51,5 +51,5 @@ const missions = [
     exemple2: "Utiliser des techniques de brainstorming pour générer des idées.",
     exemple3: "Préparer un ordre du jour détaillé et structuré."
   }
-];
+]
 export default missions;
