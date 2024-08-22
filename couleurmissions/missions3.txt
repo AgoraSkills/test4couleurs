@@ -1,0 +1,284 @@
+### Missions RR (Rouge-Rouge)
+1
+
+2. **Gérer une situation de crise client**
+   - **Description** : Répondre rapidement et efficacement à un problème majeur soulevé par un client.
+   - **Code couleur** : RRVJ
+   - **Justification** : Urgence (R) avec collaboration (V) et créativité (J).
+   - **Compétences requises** : Gestion de crise, service client, résolution de problèmes
+   - **Niveau de difficulté** : 3
+   - **Secteur d'activité** : Service Client
+   - **Raison principale** : Nécessite une réponse rapide et une prise de décision immédiate pour gérer la crise.
+   - **Raison secondaire 1** : Implique une collaboration avec différentes parties prenantes pour résoudre le problème.
+   - **Raison secondaire 2** : Peut nécessiter de la créativité pour trouver des solutions innovantes et satisfaisantes pour le client.
+   - **Pourquoi pas** : Ne nécessite généralement pas une analyse approfondie ou une organisation méthodique.
+   - **Exemple 1** : Répondre immédiatement à une plainte majeure d'un client.
+   - **Exemple 2** : Collaborer avec les équipes internes pour trouver une solution rapide.
+   - **Exemple 3** : Proposer des solutions créatives pour résoudre le problème de manière satisfaisante pour le client.
+
+3. **Négocier un contrat avec un fournisseur**
+   - **Description** : Discuter et convenir des termes d'un contrat avec un partenaire commercial.
+   - **Code couleur** : RRJB
+   - **Justification** : Prise de décision rapide (R) avec des aspects de collaboration (J) et d'organisation (B).
+   - **Compétences requises** : Négociation, communication, stratégie
+   - **Niveau de difficulté** : 3
+   - **Secteur d'activité** : Achats
+   - **Raison principale** : Nécessite une prise de décision rapide pour conclure le contrat.
+   - **Raison secondaire 1** : Implique de la créativité pour trouver des solutions gagnant-gagnant.
+   - **Raison secondaire 2** : Demande une organisation pour structurer les termes du contrat.
+   - **Pourquoi pas** : Ne nécessite généralement pas de soutien ou de collaboration étroite.
+   - **Exemple 1** : Prendre des décisions rapides pour conclure le contrat.
+   - **Exemple 2** : Proposer des solutions créatives pour satisfaire les deux parties.
+   - **Exemple 3** : Structurer les termes du contrat de manière claire et détaillée.
+
+4. 
+5. 
+6. **Répondre à une demande de presse urgente**
+   - **Description** : Formuler et communiquer une réponse rapide à une sollicitation médiatique pressante.
+   - **Code couleur** : RRJV
+   - **Justification** : Action rapide (R) avec créativité (J) et collaboration (V).
+   - **Compétences requises** : Communication de crise, relations publiques, réactivité
+   - **Niveau de difficulté** : 3
+   - **Secteur d'activité** : Communication / Relations publiques
+   - **Raison principale** : Nécessite une réaction immédiate pour gérer l'image de l'entreprise.
+   - **Raison secondaire 1** : Implique de la créativité pour formuler une réponse appropriée et efficace.
+   - **Raison secondaire 2** : Demande une collaboration avec différentes parties prenantes pour valider le message.
+   - **Pourquoi pas** : Ne nécessite généralement pas d'analyse approfondie ou d'organisation méthodique.
+   - **Exemple 1** : Préparer une déclaration officielle suite à une controverse médiatique.
+   - **Exemple 2** : Organiser rapidement une conférence de presse pour clarifier une situation.
+   - **Exemple 3** : Collaborer avec la direction pour aligner le message avec la stratégie de l'entreprise.
+
+7.
+
+8. 
+
+9. **Intervenir sur un problème de production**
+   - **Description** : Réagir rapidement pour résoudre un problème sur la ligne de production.
+   - **Code couleur** : RRVB
+   - **Justification** : Action rapide (R) avec analyse (B) et collaboration (V).
+   - **Compétences requises** : Gestion de production, résolution de problèmes, communication
+   - **Niveau de difficulté** : 3
+   - **Secteur d'activité** : Production
+   - **Raison principale** : Nécessite une intervention immédiate pour éviter des retards de production.
+   - **Raison secondaire 1** : Implique une analyse rapide pour identifier la cause du problème.
+   - **Raison secondaire 2** : Peut nécessiter une collaboration avec l'équipe de production.
+   - **Pourquoi pas** : Ne nécessite généralement pas de créativité ou d'innovation.
+   - **Exemple 1** : Diagnostiquer un problème sur une machine de production.
+   - **Exemple 2** : Coordonner avec les techniciens pour effectuer des réparations.
+   - **Exemple 3** : Mettre en place des solutions temporaires pour maintenir la production.
+
+10. 
+### Missions JJ (Jaune-Jaune)
+
+11. 
+
+12. **Concevoir une campagne publicitaire innovante**
+    - **Description** : Créer une campagne publicitaire originale et percutante pour promouvoir un produit ou un service.
+    - **Code couleur** : JJRV
+    - **Justification** : Créativité (J) avec organisation (B) et collaboration (V).
+    - **Compétences requises** : Créativité, marketing, communication
+    - **Niveau de difficulté** : 3
+    - **Secteur d'activité** : Publicité
+    - **Raison principale** : Nécessite une forte créativité pour développer des concepts publicitaires innovants.
+    - **Raison secondaire 1** : Implique une certaine organisation pour respecter les délais de campagne.
+    - **Raison secondaire 2** : Demande une collaboration avec différentes équipes (graphistes, copywriters, etc.).
+    - **Pourquoi pas** : Ne nécessite généralement pas d'analyse approfondie ou de planification détaillée.
+    - **Exemple 1** : Brainstormer des concepts créatifs pour la campagne.
+    - **Exemple 2** : Travailler sous pression pour respecter les délais serrés.
+    - **Exemple 3** : Collaborer avec l'équipe créative pour affiner les idées.
+
+13. 
+
+14. **Animer un atelier de design thinking**
+    - **Description** : Faciliter une session interactive utilisant la méthodologie du design thinking pour résoudre des problèmes complexes.
+    - **Code couleur** : JJVB
+    - **Justification** : Créativité (J) avec collaboration (V) et organisation (B).
+    - **Compétences requises** : Animation de groupe, créativité, résolution de problèmes
+    - **Niveau de difficulté** : 2
+    - **Secteur d'activité** : Innovation
+    - **Raison principale** : Nécessite une forte créativité pour guider le processus de design thinking.
+    - **Raison secondaire 1** : Implique une collaboration intense entre les participants.
+    - **Raison secondaire 2** : Demande une organisation structurée pour mener l'atelier efficacement.
+    - **Pourquoi pas** : Ne nécessite généralement pas d'action immédiate ou de prise de décision rapide.
+    - **Exemple 1** : Concevoir des exercices créatifs pour stimuler l'innovation.
+    - **Exemple 2** : Faciliter la collaboration entre les participants de différents départements.
+    - **Exemple 3** : Structurer l'atelier en suivant les étapes du design thinking.
+
+15. 
+
+16. 
+17. 
+
+18. **Concevoir une formation innovante**
+    - **Description** : Créer un programme de formation original et engageant.
+    - **Code couleur** : JJVB
+    - **Justification** : Créativité (J) avec collaboration (V) et organisation (B).
+    - **Compétences requises** : Pédagogie, créativité, conception de formation
+    - **Niveau de difficulté** : 2
+    - **Secteur d'activité** : Formation et développement
+    - **Raison principale** : Nécessite une approche créative pour concevoir un contenu de formation engageant.
+    - **Raison secondaire 1** : Implique une collaboration avec les experts du domaine et les apprenants potentiels.
+    - **Raison secondaire 2** : Demande une organisation pour structurer le programme de formation.
+    - **Pourquoi pas** : Ne nécessite généralement pas de prise de décision rapide ou d'action immédiate.
+    - **Exemple 1** : Créer des activités d'apprentissage interactives et ludiques.
+    - **Exemple 2** : Collaborer avec des experts pour valider le contenu de la formation.
+    - **Exemple 3** : Organiser le programme de formation en modules cohérents et progressifs.
+
+19. **Développer une stratégie de marketing digital**
+    - **Description** : Élaborer une stratégie innovante pour la présence en ligne de l'entreprise.
+    - **Code couleur** : JJRB
+    - **Justification** : Créativité (J) avec analyse (B) et une certaine urgence (R).
+    - **Compétences requises** : Marketing digital, analyse de données, créativité
+    - **Niveau de difficulté** : 3
+    - **Secteur d'activité** : Marketing
+    - **Raison principale** : Nécessite une approche créative pour se démarquer dans l'environnement digital.
+    - **Raison secondaire 1** : Implique une analyse des tendances digitales et du comportement des consommateurs.
+    - **Raison secondaire 2** : Peut nécessiter une certaine urgence pour rester compétitif dans le paysage digital en évolution rapide.
+    - **Pourquoi pas** : Ne nécessite généralement pas de collaboration extensive ou de routine opérationnelle.
+    - **Exemple 1** : Concevoir une campagne de contenu viral pour les réseaux sociaux.
+    - **Exemple 2** : Analyser les données de trafic web pour optimiser la stratégie SEO.
+    - **Exemple 3** : Réagir rapidement aux changements d'algorithmes des plateformes digitales.
+
+20. 
+### Missions VV (Vert-Vert)
+
+21. 
+
+22. **Résoudre un conflit entre collègues**
+   - **Description** : Intervenir pour apaiser et trouver une solution à un désaccord entre membres de l'équipe.
+   - **Code couleur** : VVRJ
+   - **Justification** : Collaboration (V) avec urgence (R) et créativité (J).
+   - **Compétences requises** : Médiation, empathie, communication
+   - **Niveau de difficulté** : 3
+   - **Secteur d'activité** : Ressources Humaines
+   - **Raison principale** : Nécessite une forte collaboration et empathie pour comprendre les perspectives de chacun.
+   - **Raison secondaire 1** : Peut impliquer une certaine urgence pour éviter que le conflit n'escalade.
+   - **Raison secondaire 2** : Peut nécessiter de la créativité pour trouver des solutions innovantes et acceptables par tous.
+   - **Pourquoi pas** : Ne nécessite généralement pas une analyse approfondie ou une organisation méthodique.
+   - **Exemple 1** : Écouter activement les parties impliquées pour comprendre leurs préoccupations.
+   - **Exemple 2** : Intervenir rapidement pour éviter que le conflit n'affecte l'ensemble de l'équipe.
+   - **Exemple 3** : Proposer des solutions créatives pour résoudre le conflit de manière satisfaisante pour tous.
+
+23. 
+
+24. 
+
+25. **Coordonner un projet inter-services**
+   - **Description** : Assurer la liaison et la coordination entre différents départements pour mener à bien un projet commun.
+   - **Code couleur** : VVBR
+   - **Justification** : Collaboration (V) avec organisation (B) et une certaine urgence (R).
+   - **Compétences requises** : Gestion de projet, communication, diplomatie
+   - **Niveau de difficulté** : 3
+   - **Secteur d'activité** : Gestion de projet
+   - **Raison principale** : Nécessite une forte collaboration et coordination entre différents services.
+   - **Raison secondaire 1** : Implique une organisation rigoureuse pour aligner les objectifs et les ressources.
+   - **Raison secondaire 2** : Peut nécessiter une certaine urgence pour respecter les délais du projet.
+   - **Pourquoi pas** : Ne nécessite généralement pas de créativité ou d'innovation particulière.
+   - **Exemple 1** : Organiser des réunions régulières avec les représentants de chaque service impliqué.
+   - **Exemple 2** : Élaborer un plan de projet détaillé avec des jalons clairs pour chaque service.
+   - **Exemple 3** : Gérer les conflits potentiels entre les priorités des différents services.
+
+26. 
+27. **Organiser un événement d'entreprise**
+   - **Description** : Planifier et mettre en œuvre un événement impliquant l'ensemble du personnel de l'entreprise.
+   - **Code couleur** : VVJB
+   - **Justification** : Collaboration (V) avec créativité (J) et organisation (B).
+   - **Compétences requises** : Gestion d'événements, communication, organisation
+   - **Niveau de difficulté** : 3
+   - **Secteur d'activité** : Événementiel
+   - **Raison principale** : Nécessite une forte collaboration pour rassembler les équipes et les ressources.
+   - **Raison secondaire 1** : Implique de la créativité pour concevoir un événement engageant et mémorable.
+   - **Raison secondaire 2** : Demande une organisation minutieuse pour gérer les détails logistiques.
+   - **Pourquoi pas** : Ne nécessite généralement pas de prise de décision rapide ou d'action immédiate.
+   - **Exemple 1** : Élaborer un calendrier détaillé pour l'événement.
+   - **Exemple 2** : Coordonner avec les fournisseurs et les intervenants.
+   - **Exemple 3** : Évaluer le succès de l'événement à travers des retours des participants.
+
+28. **Mettre en place un programme de mentorat**
+   - **Description** : Développer et lancer un programme de mentorat au sein de l'organisation.
+   - **Code couleur** : VVJB
+   - **Justification** : Collaboration (V) avec organisation (B) et créativité (J).
+   - **Compétences requises** : Leadership, communication, gestion de programme
+   - **Niveau de difficulté** : 2
+   - **Secteur d'activité** : Développement des talents
+   - **Raison principale** : Nécessite une forte collaboration pour aligner les mentors et les mentorés.
+   - **Raison secondaire 1** : Implique de la créativité pour concevoir des activités de mentorat engageantes.
+   - **Raison secondaire 2** : Demande une organisation pour structurer le programme et suivre les progrès.
+   - **Pourquoi pas** : Ne nécessite généralement pas de prise de décision rapide ou d'action immédiate.
+   - **Exemple 1** : Identifier les mentors potentiels au sein de l'organisation.
+   - **Exemple 2** : Élaborer des objectifs clairs pour le programme de mentorat.
+   - **Exemple 3** : Évaluer l'impact du programme sur le développement des employés.
+
+29.
+30. 
+### Missions BB (Bleu-Bleu)
+
+1.
+
+2. 
+3.
+
+4. **Mettre à jour la documentation interne**
+   - **Description** : Réviser et actualiser les documents et procédures internes de l'entreprise.
+   - **Code couleur** : BBVR
+   - **Justification** : Analyse (B) avec des aspects routiniers (V) et d'urgence (R).
+   - **Compétences requises** : Rigueur, attention aux détails, rédaction
+   - **Niveau de difficulté** : 2
+   - **Secteur d'activité** : Administration
+   - **Raison principale** : Nécessite une analyse détaillée et rigoureuse des documents existants.
+   - **Raison secondaire 1** : Implique des tâches routinières de mise à jour et de vérification des informations.
+   - **Raison secondaire 2** : Peut nécessiter une certaine urgence pour s'assurer que les documents sont à jour.
+   - **Pourquoi pas** : Ne nécessite généralement pas de créativité ou d'innovation.
+   - **Exemple 1** : Analyser les documents existants pour identifier les informations obsolètes.
+   - **Exemple 2** : Mettre à jour les informations de manière régulière et systématique.
+   - **Exemple 3** : S'assurer que les documents sont à jour avant une date limite importante.
+
+5. **Effectuer une veille concurrentielle**
+   - **Description** : Rechercher et analyser les informations sur les concurrents et les tendances du marché.
+   - **Code couleur** : BBRJ
+   - **Justification** : Analyse (B) avec urgence (R) et créativité (J).
+   - **Compétences requises** : Recherche, analyse de marché, pensée stratégique
+   - **Niveau de difficulté** : 2
+   - **Secteur d'activité** : Marketing
+   - **Raison principale** : Nécessite une analyse détaillée et rigoureuse des informations concurrentielles.
+   - **Raison secondaire 1** : Peut impliquer une certaine urgence pour fournir des insights en temps opportun.
+   - **Raison secondaire 2** : Peut nécessiter de la créativité pour interpréter les données et proposer des stratégies innovantes.
+   - **Pourquoi pas** : Ne nécessite généralement pas de collaboration ou de soutien opérationnel.
+   - **Exemple 1** : Analyser les stratégies des concurrents et les tendances du marché.
+   - **Exemple 2** : Fournir des rapports de veille concurrentielle rapidement pour les réunions de direction.
+   - **Exemple 3** : Proposer des stratégies innovantes basées sur l'analyse concurrentielle.
+
+6. **Planifier un projet à long terme**
+   - **Description** : Élaborer une stratégie et un calendrier pour un projet s'étalant sur plusieurs mois.
+   - **Code couleur** : BBVJ
+   - **Justification** : Analyse (B) avec collaboration (V) et créativité (J).
+   - **Compétences requises** : Gestion de projet, planification stratégique, vision à long terme
+   - **Niveau de difficulté** : 3
+   - **Secteur d'activité** : Gestion de Projet
+   - **Raison principale** : Nécessite une planification et une analyse détaillée pour structurer le projet.
+   - **Raison secondaire 1** : Implique une collaboration avec différentes parties prenantes pour définir les objectifs et les ressources.
+   - **Raison secondaire 2** : Peut nécessiter de la créativité pour trouver des solutions innovantes et efficaces.
+   - **Pourquoi pas** : Ne nécessite généralement pas de prise de décision rapide ou d'action immédiate.
+   - **Exemple 1** : Définir les étapes clés et les livrables du projet.
+   - **Exemple 2** : Collaborer avec les membres de l'équipe pour allouer les ressources et les responsabilités.
+   - **Exemple 3** : Proposer des approches créatives pour surmonter les obstacles potentiels.
+
+7. 
+8. 
+9. 
+
+10. **Optimiser un processus de travail**
+   - **Description** : Analyser et améliorer un processus existant pour augmenter l'efficacité et la productivité.
+   - **Code couleur** : BBVJ
+   - **Justification** : Analyse (B) avec collaboration (V) et créativité (J).
+   - **Compétences requises** : Analyse de processus, pensée critique, innovation
+   - **Niveau de difficulté** : 3
+   - **Secteur d'activité** : Amélioration continue
+   - **Raison principale** : Nécessite une analyse approfondie du processus actuel pour identifier les points d'amélioration.
+   - **Raison secondaire 1** : Implique une collaboration avec les équipes concernées pour comprendre les enjeux et les contraintes.
+   - **Raison secondaire 2** : Demande de la créativité pour proposer des solutions innovantes d'optimisation.
+   - **Pourquoi pas** : Ne nécessite généralement pas de prise de décision rapide ou d'action immédiate.
+   - **Exemple 1** : Analyser le flux de travail actuel pour identifier les goulots d'étranglement.
+   - **Exemple 2** : Collaborer avec les utilisateurs du processus pour recueillir leurs suggestions d'amélioration.
+   - **Exemple 3** : Proposer des solutions créatives pour automatiser ou simplifier certaines étapes du processus.
+

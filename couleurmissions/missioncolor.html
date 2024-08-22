@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boussole des Couleurs - Dieux Grecs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #circle {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .quadrant {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        .quadrant.red { background: rgba(255, 0, 0, 0.7); top: 0; right: 0; }
+        .quadrant.blue { background: rgba(0, 0, 255, 0.7); top: 0; left: 0; }
+        .quadrant.yellow { background: rgba(255, 255, 0, 0.7); bottom: 0; right: 0; }
+        .quadrant.green { background: rgba(0, 128, 0, 0.7); bottom: 0; left: 0; }
+        #character-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            max-width: 600px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #character {
+            cursor: grab;
+            margin-right: 20px;
+        }
+        #character img {
+            display: block;
+            margin: 0 auto 10px;
+            width: 100px;
+            height: 100px;
+        }
+        #feedback {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: white;
+            max-width: 300px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <audio id="background-audio" src="finish.mp3" loop></audio>
+    <button id="start-button">Commencer le jeu</button>
+    <div id="circle" style="display: none;">
+        <div class="quadrant red" data-quadrant="Nord-Est">Nord-Est</div>
+        <div class="quadrant blue" data-quadrant="Nord-Ouest">Nord-Ouest</div>
+        <div class="quadrant yellow" data-quadrant="Sud-Est">Sud-Est</div>
+        <div class="quadrant green" data-quadrant="Sud-Ouest">Sud-Ouest</div>
+    </div>
+    <div id="character-container" style="display: none;">
+        <div id="character" draggable="true">
+            <img src="1.jfif" alt="Character" width="100" height="100">
+            <p id="description"></p>
+        </div>
+        <div id="feedback"></div>
+    </div>
+    <script>
+        const characters = [
+{
+    name: 'Préparer une présentation',
+    description: 'Concevoir et organiser un support visuel pour communiquer des informations clés à un public.',
+    correct: 'Nord-Ouest',
+    feedbacks: {
+        'Nord-Ouest': 'Parfait ! Cette mission nécessite une organisation méthodique et une analyse approfondie du contenu à présenter.',
+        'Sud-Est': 'Proche ! Cette mission implique de la créativité dans la conception visuelle et la présentation des idées de manière engageante.',
+        'Sud-Ouest': 'Pas loin ! Cette tâche peut nécessiter une collaboration pour rassembler et valider les informations auprès de différentes parties prenantes.',
+        'Nord-Est': 'Aïe ! Cette mission ne nécessite généralement pas de prise de décision rapide ou d\'action immédiate, sauf en cas de délai serré.'
+                },
+                icon: '1.jfif'
+},
+{
+    name: 'Répondre aux e-mails urgents',
+    description: 'Traiter rapidement les messages électroniques nécessitant une attention immédiate.',
+    correct: 'Nord-Est',
+    feedbacks: {
+        'Nord-Est': 'Parfait ! Cette mission nécessite une réponse rapide et une prise de décision immédiate.',
+        'Sud-Ouest': 'Proche ! Cette tâche implique de la communication et de la gestion des relations avec les correspondants.',
+        'Nord-Ouest': 'Pas loin ! Cette mission demande une organisation pour prioriser les e-mails et répondre de manière structurée.',
+        'Sud-Est': 'Aïe ! Cette tâche ne nécessite généralement pas de créativité ou d\'innovation.'
+                },
+                icon: '2.jfif'
+},
+{
+    name: 'Participer à une séance de brainstorming',
+    description: 'Contribuer à une réunion créative pour générer des idées et des solutions.',
+    correct: 'Sud-Est',
+    feedbacks: {
+        'Sud-Est': 'Parfait ! Cette mission nécessite une forte créativité pour générer des idées nouvelles et innovantes.',
+        'Sud-Ouest': 'Proche ! Cette tâche implique une collaboration avec les autres participants pour échanger et développer les idées.',
+        'Nord-Ouest': 'Pas loin ! Cette mission demande une certaine organisation pour structurer la séance de brainstorming.',
+        'Nord-Est': 'Aïe ! Cette tâche ne nécessite généralement pas de prise de décision rapide ou d\'action immédiate.'
+                },
+                icon: '7.jfif'
+},
+{
+    name: 'Organiser une réunion d\'équipe',
+    description: 'Planifier et coordonner une rencontre entre membres d\'une équipe pour discuter de sujets importants.',
+    correct: 'Sud-Ouest',
+    feedbacks: {
+        'Sud-Ouest': 'Parfait ! Cette mission nécessite une forte collaboration et interaction entre les membres de l\'équipe.',
+        'Sud-Est': 'Proche ! Cette tâche peut impliquer de la créativité pour rendre la réunion engageante et productive.',
+        'Nord-Ouest': 'Pas loin ! Cette mission demande une planification et une organisation pour structurer la réunion efficacement.',
+        'Nord-Est': 'Aïe ! Cette tâche ne nécessite généralement pas de prise de décision rapide ou d\'action immédiate.'
+                },
+                icon: '3.jfif'
+},
+{
+    name: 'Former un nouveau collaborateur',
+    description: 'Initier et accompagner un nouvel employé dans ses fonctions et l\'environnement de travail.',
+    correct: 'Sud-Ouest',
+    feedbacks: {
+        'Sud-Ouest': 'Parfait ! Cette mission nécessite une forte collaboration et soutien pour intégrer le nouveau collaborateur.',
+        'Sud-Est': 'Proche ! Cette tâche peut impliquer de la créativité pour rendre la formation engageante et efficace.',
+        'Nord-Ouest': 'Pas loin ! Cette mission demande une organisation pour structurer le programme de formation.',
+        'Nord-Est': 'Aïe ! Cette tâche ne nécessite généralement pas de prise de décision rapide ou d\'action immédiate.'
+                },
+                icon: '6.jfif'
+},
+{
+    name: 'Créer un tableau de bord de suivi des KPI',
+    description: 'Concevoir et mettre en place un outil visuel pour suivre les indicateurs clés de performance.',
+    correct: 'Nord-Ouest',
+    feedbacks: {
+        'Nord-Ouest': 'Parfait ! Cette mission nécessite une analyse approfondie pour identifier et structurer les KPI pertinents.',
+        'Sud-Est': 'Proche ! Cette tâche implique de la créativité pour concevoir une visualisation claire et efficace.',
+        'Sud-Ouest': 'Pas loin ! Cette mission demande une collaboration avec différentes équipes pour comprendre leurs besoins en termes de KPI.',
+        'Nord-Est': 'Aïe ! Cette tâche ne nécessite généralement pas de prise de décision rapide ou d\'action immédiate.'
+                },
+                icon: '17.jfif'
+},
+{
+    name: 'Gérer un incident de sécurité',
+    description: 'Réagir promptement à une menace ou une violation de la sécurité de l\'entreprise.',
+    correct: 'Nord-Est',
+    feedbacks: {
+        'Nord-Est': 'Parfait ! Cette mission nécessite une intervention immédiate pour contenir la menace et minimiser les dommages.',
+        'Nord-Ouest': 'Proche ! Cette tâche implique une analyse rapide pour évaluer l\'étendue et la nature de l\'incident.',
+        'Sud-Ouest': 'Pas loin ! Cette mission demande une collaboration avec différentes équipes pour mettre en place des mesures de protection.',
+        'Sud-Est': 'Aïe ! Cette tâche ne nécessite généralement pas de créativité ou d\'innovation.'
+                },
+                icon: '1.jfif'
+},
+{
+    name: 'Gérer un conflit d\'équipe urgent',
+    description: 'Intervenir rapidement pour résoudre un conflit sérieux au sein d\'une équipe.',
+    correct: 'Nord-Est',
+    feedbacks: {
+        'Nord-Est': 'Parfait ! Cette mission nécessite une intervention immédiate pour maintenir l\'harmonie dans l\'équipe.',
+        'Sud-Ouest': 'Proche ! Cette tâche implique une collaboration avec les membres de l\'équipe.',
+        'Sud-Est': 'Pas loin ! Cette mission peut nécessiter de la créativité pour trouver des solutions acceptables.',
+        'Nord-Ouest': 'Aïe ! Cette tâche ne nécessite généralement pas d\'analyse approfondie ou d\'organisation méthodique.'
+                },
+                icon: '4.jfif'
+},
+{
+    name: 'Développer un nouveau produit ou service',
+    description: 'Concevoir et mettre en œuvre un nouveau produit ou service innovant pour répondre aux besoins du marché.',
+    correct: 'Sud-Est',
+    feedbacks: {
+        'Sud-Est': 'Parfait ! Cette mission nécessite une forte créativité pour concevoir un produit ou service innovant.',
+        'Nord-Ouest': 'Proche ! Cette tâche implique une analyse approfondie du marché et de la faisabilité.',
+        'Sud-Ouest': 'Pas loin ! Cette mission demande une collaboration avec diverses équipes pour assurer le succès du produit.',
+        'Nord-Est': 'Aïe ! Cette tâche ne nécessite généralement pas d\'action immédiate ou de prise de décision rapide.'
+                },
+                icon: '1.jfif'
+},
+{
+    name: 'Animer un atelier de team building',
+    description: 'Organiser et faciliter une activité visant à renforcer la cohésion et la collaboration au sein de l\'équipe.',
+    correct: 'Sud-Ouest',
+    feedbacks: {
+        'Sud-Ouest': 'Parfait ! Cette mission nécessite une forte collaboration et interaction entre les membres de l\'équipe.',
+        'Sud-Est': 'Proche ! Cette tâche implique de la créativité pour concevoir des activités engageantes et pertinentes.',
+        'Nord-Est': 'Pas loin ! Cette mission peut nécessiter une certaine urgence pour maintenir l\'énergie et l\'intérêt du groupe.',
+        'Nord-Ouest': 'Aïe ! Cette tâche ne nécessite généralement pas d\'analyse approfondie ou d\'organisation méthodique.'
+                },
+                icon: '1.jfif'
+},
+{
+    name: 'Rédiger un rapport mensuel',
+    description: 'Compiler et analyser les données du mois pour produire un document synthétique.',
+    correct: 'Nord-Ouest',
+    feedbacks: {
+        'Nord-Ouest': 'Parfait ! Cette mission nécessite une analyse approfondie des données et une rédaction structurée.',
+        'Sud-Ouest': 'Proche ! Cette tâche implique des tâches routinières de collecte et de compilation de données.',
+        'Nord-Est': 'Pas loin ! Cette mission peut nécessiter une certaine urgence pour respecter les délais de soumission.',
+        'Sud-Est': 'Aïe ! Cette tâche ne nécessite généralement pas de créativité ou d\'innovation.'
+                },
+                icon: '12.jfif'
+},
+{
+    name: 'Évaluer les performances d\'un employé',
+    description: 'Analyser et donner un retour sur le travail d\'un membre de l\'équipe.',
+    correct: 'Nord-Ouest',
+    feedbacks: {
+        'Nord-Ouest': 'Parfait ! Cette mission nécessite une analyse détaillée et objective des performances de l\'employé.',
+        'Sud-Ouest': 'Proche ! Cette tâche implique un soutien et une collaboration pour aider l\'employé à s\'améliorer.',
+        'Sud-Est': 'Pas loin ! Cette mission demande une communication claire et constructive pour donner un retour efficace.',
+        'Nord-Est': 'Aïe ! Cette tâche ne nécessite généralement pas de prise de décision rapide ou d\'action immédiate.'
+                },
+                icon: '8.jfif'
+},
+{
+    name: 'Proposer des améliorations de processus',
+    description: 'Identifier et suggérer des moyens innovants d\'améliorer les processus de travail.',
+    correct: 'Sud-Est',
+    feedbacks: {
+        'Sud-Est': 'Parfait ! Cette mission nécessite une approche créative pour repenser les processus existants.',
+        'Nord-Ouest': 'Proche ! Cette tâche implique une analyse des processus actuels et de leurs inefficacités.',
+        'Nord-Est': 'Pas loin ! Cette mission peut nécessiter une certaine urgence pour résoudre des problèmes opérationnels.',
+        'Sud-Ouest': 'Aïe ! Cette tâche ne nécessite généralement pas de collaboration extensive ou de routine opérationnelle.'
+                },
+                icon: '19.jfif'
+},
+{
+    name: 'Élaborer une stratégie de marque',
+    description: 'Développer une stratégie cohérente pour positionner et promouvoir une marque sur le marché.',
+    correct: 'Sud-Est',
+    feedbacks: {
+        'Sud-Est': 'Parfait ! Cette mission nécessite une forte créativité pour développer une identité de marque unique.',
+        'Nord-Ouest': 'Proche ! Cette tâche implique une analyse approfondie du marché et du positionnement.',
+        'Nord-Est': 'Pas loin ! Cette mission peut nécessiter une certaine urgence pour répondre aux changements du marché.',
+        'Sud-Ouest': 'Aïe ! Cette tâche ne nécessite généralement pas de collaboration extensive ou de routine opérationnelle.'
+                },
+                icon: '18.jfif'
+},
+{
+    name: 'Prendre une décision stratégique rapide',
+    description: 'Évaluer rapidement une situation et choisir une direction stratégique.',
+    correct: 'Nord-Est',
+    feedbacks: {
+        'Nord-Est': 'Parfait ! Cette mission nécessite une évaluation rapide des options disponibles.',
+        'Sud-Est': 'Proche ! Cette tâche implique souvent une collaboration avec d\'autres décideurs.',
+        'Nord-Ouest': 'Pas loin ! Cette mission peut nécessiter une organisation pour structurer les informations pertinentes.',
+        'Sud-Ouest': 'Aïe ! Cette tâche ne nécessite généralement pas de créativité ou d\'innovation.'
+                },
+                icon: '16.jfif'
+},
+{
+    name: 'Résoudre un problème technique urgent',
+    description: 'Identifier et corriger rapidement un dysfonctionnement technique critique.',
+    correct: 'Nord-Est',
+    feedbacks: {
+        'Nord-Est': 'Parfait ! Cette mission nécessite une intervention immédiate pour minimiser l\'impact du problème.',
+        'Nord-Ouest': 'Proche ! Cette tâche implique une analyse rapide pour diagnostiquer la cause du problème.',
+        'Sud-Ouest': 'Pas loin ! Cette mission peut nécessiter une collaboration avec d\'autres équipes pour résoudre le problème.',
+        'Sud-Est': 'Aïe ! Cette tâche ne nécessite généralement pas de créativité ou d\'innovation.'
+                },
+                icon: '5.jfif'
+},
+{
+    name: 'Faciliter une session de feedback 360°',
+    description: 'Organiser et animer une session où les membres de l\'équipe donnent et reçoivent des retours constructifs.',
+    correct: 'Sud-Ouest',
+    feedbacks: {
+        'Sud-Ouest': 'Parfait ! Cette mission nécessite une forte collaboration et interaction entre les membres de l\'équipe pour stimuler la créativité collective.',
+        'Nord-Ouest': 'Proche ! Cette tâche implique une organisation minutieuse pour structurer la session de manière efficace.',
+        'Sud-Est': 'Pas loin ! Cette mission demande une communication claire et constructive pour faciliter les échanges.',
+        'Nord-Est': 'Aïe ! Cette tâche ne nécessite généralement pas de prise de décision rapide ou d\'action immédiate.'
+                },
+                icon: '3.jfif'
+},
+{
+    name: 'Animer une séance de médiation',
+    description: 'Faciliter une discussion entre parties en conflit pour trouver une résolution.',
+    correct: 'Sud-Ouest',
+    feedbacks: {
+        'Sud-Ouest': 'Parfait ! Cette mission implique une forte collaboration entre les parties concernées.',
+        'Sud-Est': 'Proche ! Cette tâche peut nécessiter de la créativité pour trouver des solutions acceptables.',
+        'Nord-Est': 'Pas loin ! Cette mission nécessite une intervention rapide pour éviter que le conflit ne s\'aggrave.',
+        'Nord-Ouest': 'Aïe ! Cette tâche ne nécessite généralement pas d\'analyse approfondie ou d\'organisation méthodique.'
+                },
+                icon: '15.jfif'
+},
+{
+    name: 'Analyser les données de performance',
+    description: 'Examiner en détail les indicateurs de performance pour en tirer des conclusions.',
+    correct: 'Nord-Ouest',
+    feedbacks: {
+        'Nord-Ouest': 'Parfait ! Cette mission nécessite une analyse détaillée et rigoureuse des données de performance.',
+        'Nord-Est': 'Proche ! Cette tâche peut impliquer une certaine urgence pour fournir des insights en temps opportun.',
+        'Sud-Ouest': 'Pas loin ! Cette mission implique des tâches routinières de collecte et de traitement des données.',
+        'Sud-Est': 'Aïe ! Cette tâche ne nécessite généralement pas de créativité ou d\'innovation.'
+                },
+                icon: '17.jfif'
+},
+{
+    name: 'Organiser une journée d\'intégration pour les nouveaux employés',
+    description: 'Planifier et animer une journée d\'accueil pour les nouveaux membres de l\'entreprise.',
+    correct: 'Sud-Ouest',
+    feedbacks: {
+        'Sud-Ouest': 'Parfait ! Cette mission nécessite une forte collaboration avec différents départements pour présenter l\'entreprise.',
+        'Sud-Est': 'Proche ! Cette tâche implique de la créativité pour rendre la journée engageante et informative.',
+        'Nord-Ouest': 'Pas loin ! Cette mission demande une organisation minutieuse pour accueillir efficacement les nouveaux employés.',
+        'Nord-Est': 'Aïe ! Cette tâche ne nécessite généralement pas de prise de décision rapide ou d\'action immédiate.'
+                },
+                icon: '11.jfif'
+},
+{
+    name: 'Créer un prototype de produit',
+    description: 'Concevoir et fabriquer un prototype pour un nouveau produit.',
+    correct: 'Sud-Est',
+    feedbacks: {
+        'Sud-Est': 'Parfait ! Cette mission nécessite une approche créative pour concevoir un produit innovant.',
+        'Sud-Ouest': 'Proche ! Cette tâche implique une collaboration avec différentes équipes (design, ingénierie, marketing).',
+        'Nord-Ouest': 'Pas loin ! Cette mission demande une organisation pour planifier et exécuter les étapes de prototypage.',
+        'Nord-Est': 'Aïe ! Cette tâche ne nécessite généralement pas de prise de décision rapide ou d\'action immédiate.'
+                },
+                icon: '14.jfif'
+},
+{
+    name: 'Créer du contenu pour les réseaux sociaux',
+    description: 'Développer et produire du contenu engageant pour diverses plateformes de médias sociaux.',
+    correct: 'Sud-Est',
+    feedbacks: {
+        'Sud-Est': 'Parfait ! Cette mission nécessite une forte créativité pour produire du contenu original et captivant.',
+        'Nord-Ouest': 'Proche ! Cette tâche implique une certaine organisation pour rester pertinent et réactif.',
+        'Sud-Ouest': 'Pas loin ! Cette mission demande une analyse des performances pour optimiser le contenu.',
+        'Nord-Est': 'Aïe ! Cette tâche ne nécessite généralement pas de collaboration extensive ou de planification à long terme.'
+                },
+                icon: '10.jfif'
+},
+{
+    name: 'Gérer une urgence logistique',
+    description: 'Résoudre rapidement un problème imprévu dans la chaîne d\'approvisionnement ou de distribution.',
+    correct: 'Nord-Est',
+    feedbacks: {
+        'Nord-Est': 'Parfait ! Cette mission nécessite une réaction immédiate pour maintenir la continuité des opérations.',
+        'Sud-Ouest': 'Proche ! Cette tâche implique une collaboration avec différents acteurs de la chaîne logistique.',
+        'Nord-Ouest': 'Pas loin ! Cette mission demande une analyse rapide pour trouver des solutions alternatives.',
+        'Sud-Est': 'Aïe ! Cette tâche ne nécessite généralement pas de créativité ou d\'innovation.'
+                },
+                icon: '14.jfif'
+},
+{
+    name: 'Réaliser un audit interne',
+    description: 'Évaluer les processus internes pour assurer la conformité et l\'efficacité.',
+    correct: 'Nord-Ouest',
+    feedbacks: {
+        'Nord-Ouest': 'Parfait ! Cette mission nécessite une analyse détaillée et méthodique des processus et documents.',
+        'Sud-Ouest': 'Proche ! Cette tâche implique des vérifications routinières et systématiques.',
+        'Nord-Est': 'Pas loin ! Cette mission peut nécessiter une action rapide en cas de découverte de non-conformités.',
+        'Sud-Est': 'Aïe ! Cette tâche ne nécessite généralement pas de créativité ou d\'innovation.'
+                },
+                icon: '16.jfif'
+}        ];
+
+        let currentCharacterIndex = 0;
+
+        const characterElement = document.getElementById('character');
+        const descriptionElement = document.getElementById('description');
+        const feedbackElement = document.getElementById('feedback');
+        const quadrants = document.querySelectorAll('.quadrant');
+        const backgroundAudio = document.getElementById('background-audio');
+        const startButton = document.getElementById('start-button');
+        const circle = document.getElementById('circle');
+        const characterContainer = document.getElementById('character-container');
+
+        function handleDrop(event) {
+            event.preventDefault();
+            const characterIndex = event.dataTransfer.getData('text/plain');
+            const character = characters[characterIndex];
+            const selectedQuadrant = event.target.dataset.quadrant;
+            
+            showFeedback(character.feedbacks[selectedQuadrant]);
+
+            if (selectedQuadrant === character.correct) {
+                setTimeout(() => {
+                    currentCharacterIndex++;
+                    if (currentCharacterIndex < characters.length) {
+                        loadCharacter();
+                        hideFeedback();
+                    } else {
+                        endGame();
+                    }
+                }, 2000);
+            }
+        }
+
+        function endGame() {
+            circle.innerHTML = '<img src="pantheoncolore.jpg" alt="Panthéon coloré" style="width: 100%; height: 100%; object-fit: cover;">';
+            
+            setTimeout(() => {
+                showFeedback("Félicitations ! Vous avez terminé le jeu !");
+                characterElement.style.display = 'none';
+            }, 1000);
+        }
+
+        function loadCharacter() {
+            const character = characters[currentCharacterIndex];
+            descriptionElement.textContent = character.description;
+            const characterImage = characterElement.querySelector('img');
+            characterImage.src = character.icon;
+            characterImage.alt = character.name;
+        }
+
+        function showFeedback(feedback) {
+            feedbackElement.textContent = feedback;
+            feedbackElement.style.display = 'block';
+        }
+
+        function hideFeedback() {
+            feedbackElement.style.display = 'none';
+        }
+
+        characterElement.addEventListener('dragstart', (event) => {
+            event.dataTransfer.setData('text/plain', currentCharacterIndex);
+        });
+
+        quadrants.forEach(quadrant => {
+            quadrant.addEventListener('dragover', (event) => {
+                event.preventDefault();
+            });
+
+            quadrant.addEventListener('drop', handleDrop);
+        });
+
+        document.addEventListener('click', () => {
+            hideFeedback();
+        });
+
+        startButton.addEventListener('click', () => {
+            backgroundAudio.play();
+            circle.style.display = 'flex';
+            characterContainer.style.display = 'flex';
+            startButton.style.display = 'none';
+            loadCharacter();
+        });
+    </script>
+</body>
+</html>
