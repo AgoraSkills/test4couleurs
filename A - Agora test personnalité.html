@@ -129,17 +129,26 @@
     margin-top: 10px;
   }
 @media print {
+    @page {
+        size: A4;
+        margin: 10mm;
+    }
+
     body {
         margin: 0;
         padding: 0;
-        background: none; /* Supprime l'image de fond */
+        background: none;
+        width: 90%;
+        height: 90%;
     }
 
     .container {
         margin: 0;
-        padding: 20px;
+        padding: 10mm;
         box-shadow: none;
         background-color: #fff;
+        width: calc(100% - 20mm);
+        page-break-inside: avoid;
     }
 
     /* Supprimer le pied de page */
@@ -152,6 +161,9 @@
         page-break-inside: avoid;
         orphans: 3;
         widows: 3;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        hyphens: auto;
     }
 
     /* Éviter que les titres se retrouvent seuls en bas de page */
@@ -160,10 +172,6 @@
     }
 
     /* Configuration de l'en-tête */
-    @page {
-        margin: 20mm;
-    }
-
     header {
         position: fixed;
         top: 0;
@@ -189,6 +197,12 @@
         content: "Date: " attr(data-date);
         float: right;
     }
+
+    /* Gestion des longues lignes de symboles */
+    span {
+        white-space: normal;
+    }
+}
 
     /* Masquer tout sauf le contenu principal pour l'impression */
     body * {
