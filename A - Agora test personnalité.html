@@ -67,13 +67,13 @@
   #answers {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 10px;
   }
   #answers label {
     background-color: #fff;
     border: 1px solid #75c9e3;
     border-radius: 4px;
-    padding: 15px;
+    padding: 10px;
     cursor: pointer;
     transition: background-color 0.3s;
   }
@@ -128,29 +128,26 @@
     text-align: center;
     margin-top: 10px;
   }
-@media print {
-    @page {
+  @media print {
+ @page {
         size: A4;
         margin: 10mm;
     }
-
     body {
-        margin: 0;
+      margin: 0;
         padding: 0;
         background: none;
         width: 90%;
         height: 90%;
     }
-
     .container {
-        margin: 0;
-        padding: 10mm;
-        box-shadow: none;
-        background-color: #fff;
+      margin: 0;
+      padding: 20mm;
+      box-shadow: none;
+      background-color: #fff;
         width: calc(100% - 20mm);
         page-break-inside: avoid;
     }
-
     /* Supprimer le pied de page */
     .no-print, footer, .footer {
         display: none !important;
@@ -170,59 +167,42 @@
     h1, h2, h3, h4, h5, h6 {
         page-break-after: avoid;
     }
-
-    /* Configuration de l'en-tête */
-    header {
-        position: fixed;
-        top: 0;
-        width: 100%;
-        text-align: center;
-        font-size: 12px;
-        padding: 5px 0;
-        border-bottom: 1px solid #ccc;
-    }
-
-    header::before {
-        content: "Page " counter(page) " of " counter(pages);
-        float: left;
-    }
-
-    header::after {
-        content: "Agora Skills Academy";
-        text-align: center;
-        float: none;
-    }
-
-    header .date {
-        content: "Date: " attr(data-date);
-        float: right;
-    }
-
-    /* Gestion des longues lignes de symboles */
-    span {
-        white-space: normal;
-    }
-
-    /* Masquer tout sauf le contenu principal pour l'impression */
     body * {
-        visibility: hidden;
+      visibility: hidden;
     }
-
     #reportContainer, #reportContainer * {
-        visibility: visible;
+      visibility: visible;
     }
-
     #reportContainer {
-        position: static;
-        width: 100%;
-        margin-top: 50px; /* Pour éviter l'overlay de l'en-tête */
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
     }
-
+    .half-width {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .half-width .left,
+    .half-width .right {
+      width: 48%;
+    }
     .page-break {
-        page-break-before: always;
+      page-break-before: always;
     }
-
-
+  }
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.6);
+    z-index: -1;
+  }
   /* Styles spécifiques pour le Markdown */
   #introductionContent h1, #introductionContent h2, #introductionContent h3 {
     color: #003366;
@@ -235,7 +215,6 @@
     margin-left: 20px;
     padding-left: 20px;
   }
-
 </style>
 </head>
 <body>
@@ -271,7 +250,7 @@
   <p id="progressText"></p>
 </div>
 <div id="questionContainer" class="container" style="width: calc(100vw / 3); font-size: 1.8em;">
-  <img id="questionImage" src="" alt="Illustration de la question" style="max-width: 50%; height: auto; display: none; margin: 0 auto; display: block;">
+  <img id="questionImage" src="" alt="Illustration" style="max-width: 40%; height: auto; display: none; margin: 0 auto; display: block;">
   <div id="question"></div>
 </div>
 <ul id="answers" class="container" style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 1.3em;">
@@ -675,9 +654,9 @@ function showNextQuestion() {
 
   currentQuestion.answers.forEach(answer => {
     const li = document.createElement('li');
-    li.textContent = answer.text + '\n';
+    li.textContent = answer.text + '\n' + '\n';
     const separator = document.createElement('li');
-    separator.textContent = '◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉\n';
+    separator.textContent = '____________________________________________________________\n';
     answersElement.appendChild(separator);
     li.addEventListener('click', () => selectAnswer(answer));
     if (selectedAnswer === answer) {
@@ -729,7 +708,7 @@ function showResult() {
 
   displayReport(formattedScore, scores, dominant);
 
-  showScoreChart([scores.Rouge, scores.Jaune, scores.Vert, scores.Bleu]);
+  showScoreChart(scores);
 
   printButton.style.display = 'block';
 }
@@ -817,11 +796,6 @@ function displayReport(formattedScore, scores, dominant) {
       bodyChildren[i].style.display = 'none';
     }
   }
-
-  // Ajouter un délai court avant de lancer l'impression
-  setTimeout(() => {
-    window.print();
-  }, 900);
 }
 
 // Fonction pour récupérer la description du profil dominant à partir des fichiers texte locaux
@@ -832,6 +806,7 @@ function fetchDescription(color) {
     'Vert': 'Dvert.txt',
     'Bleu': 'Dbleu.txt'
   };
+
   const descriptionFile = descriptions[color];
 
   fetch(descriptionFile)
@@ -847,9 +822,6 @@ function fetchDescription(color) {
 // Fonction pour afficher l'introduction formatée en Markdown
 function fetchIntroduction() {
   const introductionMarkdown = `
-.
-.
-
 ## La Méthode des 4 Couleurs : Une Clé pour Déverrouiller le Potentiel Humain
 
 Dans le vaste monde des interactions humaines, la méthode des 4 couleurs se démarque comme un outil puissant et polyvalent. Bien au-delà d'une simple catégorisation, cette approche offre une compréhension profonde des comportements, des motivations et des préférences individuelles, ouvrant ainsi la voie à une communication plus efficace et à des relations plus harmonieuses.
