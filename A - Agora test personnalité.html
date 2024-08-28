@@ -708,7 +708,7 @@ function showResult() {
 
   displayReport(formattedScore, scores, dominant);
 
-  showScoreChart(scores);
+showScoreChart([scores.Rouge, scores.Jaune, scores.Vert, scores.Bleu]);
 
   printButton.style.display = 'block';
 }
