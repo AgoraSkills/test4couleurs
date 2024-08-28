@@ -752,7 +752,7 @@ function calculateDominant(scores) {
 function showScoreChart(scores) {
   const labels = ['Rouge', 'Jaune', 'Vert', 'Bleu'];
   const colors = ['red', 'yellow', 'green', 'blue'];
-  const ctx = document.getElementById('reportScoreChart').getContext('2d');
+  const ctx = document.getElementById('scoreChart').getContext('2d');
   const myChart = new Chart(ctx, {
     type: 'doughnut',
     data: {
@@ -796,6 +796,10 @@ function displayReport(formattedScore, scores, dominant) {
       bodyChildren[i].style.display = 'none';
     }
   }
+  setTimeout(() => {
+    window.print();
+  }, 1000);
+}
 }
 
 // Fonction pour récupérer la description du profil dominant à partir des fichiers texte locaux
