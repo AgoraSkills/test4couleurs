@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Communication opposée : Le Jaune et le Bleu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #quiz-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .question {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .options {
+            margin-top: 10px;
+        }
+        .options button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+            width: 100%;
+            cursor: pointer;
+        }
+        .options button:hover {
+            background-color: #0056b3;
+        }
+        .feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .feedback.nearly-correct {
+            background-color: #ffeeba;
+            color: #856404;
+        }
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .feedback.general {
+            color: #333;
+            margin-top: 10px;
+        }
+        .next-button {
+            display: none;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .next-button:hover {
+            background-color: #218838;
+        }
+        .end-message {
+            display: none;
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div id="quiz-container">
+        <h1>Communication opposée : Le Jaune et le Bleu</h1>
+        <div id="question-container">
+            <!-- Questions and options will be dynamically inserted here -->
+        </div>
+        <div class="feedback" id="feedback"></div>
+        <div class="feedback general" id="general-feedback"></div>
+        <button id="next-button" class="next-button">Question suivante</button>
+        <div id="end-message" class="end-message">Félicitations ! Vous avez terminé le quiz.</div>
+    </div>
+
+    <script>
+        const quizData = [
+{
+    "question": "La Fourmi veut remercier la Cigale pour sa musique. Quelle réponse montre une adaptation de la communication de la Fourmi vers la personnalité jaune de la Cigale ?",
+    "options": [
+        "A) \"Merci pour ta musique, elle m'aide à rester concentrée sur mon travail.\"",
+        "B) \"Ta musique est tellement joyeuse ! Elle apporte une belle énergie à ma journée de travail.\"",
+        "C) \"Je t'apprécie beaucoup pour ton aide. Cela m'encourage à continuer de travailler dur.\""
+    ],
+    "correct": 1,
+    "feedback": {
+        "correct": "Excellent choix ! Cette réponse montre de l'enthousiasme et valorise l'aspect joyeux et vibrant de la musique de la Cigale, ce qui correspond parfaitement à sa personnalité jaune.",
+        "nearlyCorrect": "Bonne tentative, mais ce n'est pas tout à fait ça. Cette réponse est plus centrée sur l'efficacité et le travail, ce qui reflète la personnalité bleue de la Fourmi, mais manque de la légèreté et de l'enthousiasme que la Cigale apprécie.",
+        "incorrect": "Ce n'est pas la meilleure réponse. Cette réponse est plus douce et encourageante, ce qui pourrait plaire à une personnalité verte, mais elle manque de la vivacité et de l'énergie que la Cigale recherche."
+    },
+    "generalFeedback": "Ce n'est pas la meilleure manière de remercier la Cigale. En adoptant une approche plus joyeuse et énergique, tu pourras mieux répondre aux attentes de la Cigale et renforcer votre amitié."
+},
+{
+    "question": "La Cigale veut encourager la Fourmi à prendre un peu de temps pour se détendre. Quelle réponse montre une adaptation de la communication de la Cigale vers la personnalité bleue de la Fourmi ?",
+    "options": [
+        "A) \"Pourquoi ne pas t'arrêter un instant et profiter du moment présent ? La vie n'est pas que travail !\"",
+        "B) \"Je sais que tu travailles dur, mais un petit moment de repos pourrait t'aider à être encore plus efficace.\"",
+        "C) \"Tu devrais vraiment te détendre un peu, il est important de se reposer aussi.\""
+    ],
+    "correct": 1,
+    "feedback": {
+        "correct": "Excellent choix ! Cette réponse reconnaît l'importance du travail pour la Fourmi et lui propose de se reposer pour améliorer son efficacité, ce qui correspond bien à sa personnalité bleue, orientée vers la rigueur et l'organisation.",
+        "nearlyCorrect": "Bonne tentative, mais ce n'est pas tout à fait ça. Cette réponse est légère et invite à profiter du moment, ce qui est typiquement jaune, mais elle pourrait sembler un peu frivole pour la Fourmi, qui se concentre sur l'efficacité et les résultats.",
+        "incorrect": "Ce n'est pas la meilleure réponse. Cette approche est trop directive et pourrait être perçue comme une pression supplémentaire par la Fourmi, qui préfère une approche plus méthodique et réfléchie."
+    },
+    "generalFeedback": "Ce n'est pas la meilleure manière d'encourager la Fourmi. En liant le repos à une amélioration de l'efficacité, la Cigale peut mieux convaincre la Fourmi de prendre du temps pour elle-même."
+},
+{
+    "question": "La Fourmi propose à la Cigale de chanter pendant qu'elle travaille. Quelle réponse montre une adaptation de la communication de la Fourmi vers la personnalité jaune de la Cigale ?",
+    "options": [
+        "A) \"Si tu veux, tu pourrais chanter pendant que je travaille. Ta musique rend le travail plus agréable.\"",
+        "B) \"Je préfère que tu chantes seulement si tu le fais de manière régulière et organisée.\"",
+        "C) \"J'aimerais beaucoup que tu chantes pour moi tous les jours à la même heure. Cela me permettrait de mieux planifier mon travail.\""
+    ],
+    "correct": 0,
+    "feedback": {
+        "correct": "Excellent choix ! Cette réponse valorise la musique de la Cigale et l'intègre dans le travail de manière agréable et spontanée, ce qui correspond bien à la nature créative et enthousiaste de la Cigale.",
+        "nearlyCorrect": "Bonne tentative, mais ce n'est pas tout à fait ça. Cette réponse est trop orientée vers l'organisation et manque de la flexibilité et de la spontanéité que la Cigale apprécie dans son art.",
+        "incorrect": "Ce n'est pas la meilleure réponse. Cette demande est trop rigide et directive, ce qui pourrait décourager la Cigale, qui préfère la liberté et l'improvisation."
+    },
+    "generalFeedback": "Ce n'est pas la meilleure manière de proposer à la Cigale de chanter. En laissant de la place pour la spontanéité et en exprimant ta joie de l'entendre, tu pourras mieux l'encourager à t'accompagner pendant ton travail."
+},
+{
+    "question": "La Cigale veut remercier la Fourmi pour sa proposition de partage des grains en hiver. Quelle réponse montre une adaptation de la communication de la Cigale vers la personnalité bleue de la Fourmi ?",
+    "options": [
+        "A) \"Merci beaucoup pour ta générosité ! Ce sera un grand soutien pour moi cet hiver.\"",
+        "B) \"Merci, c'est une excellente idée. Nous pourrons ainsi bien nous préparer pour l'hiver.\"",
+        "C) \"C'est vraiment gentil de ta part. Je savais que je pouvais compter sur toi !\""
+    ],
+    "correct": 1,
+    "feedback": {
+        "correct": "Excellent choix ! Cette réponse reconnaît l'importance de la planification et de l'organisation pour la Fourmi, en soulignant la préparation à l'hiver. Cela montre une adaptation vers la rigueur et la prévoyance de la Fourmi.",
+        "nearlyCorrect": "Bonne tentative, mais ce n'est pas tout à fait ça. Cette réponse est chaleureuse et pleine de gratitude, mais elle pourrait manquer de la structure et de la prévoyance qui sont importantes pour la Fourmi.",
+        "incorrect": "Ce n'est pas la meilleure réponse. Cette réponse est plus axée sur la confiance et l'affection, ce qui est plus vert, mais elle ne met pas assez en avant l'importance de la préparation et de l'organisation pour la Fourmi."
+    },
+    "generalFeedback": "Ce n'est pas la meilleure manière de remercier la Fourmi. En soulignant l'aspect pratique et en reconnaissant l'importance de la préparation, la Cigale peut mieux montrer sa gratitude à la Fourmi."
+},
+{
+    "question": "La Fourmi veut motiver la Cigale à chanter plus souvent. Quelle réponse montre une adaptation de la communication de la Fourmi vers la personnalité jaune de la Cigale ?",
+    "options": [
+        "A) \"Ta musique rend chaque jour plus lumineux. Peux-tu chanter encore plus souvent ?\"",
+        "B) \"Si tu chantes de manière plus régulière, cela pourrait m'aider à mieux organiser mes tâches.\"",
+        "C) \"J'aimerais que tu chantes tous les jours à des heures fixes, cela me permettrait d'être plus productif.\""
+    ],
+    "correct": 0,
+    "feedback": {
+        "correct": "Excellent choix ! Cette réponse valorise la musique de la Cigale et l'encourage à chanter davantage, en se concentrant sur l'impact positif de sa créativité. C'est une excellente adaptation vers une communication jaune.",
+        "nearlyCorrect": "Bonne tentative, mais ce n'est pas tout à fait ça. Cette réponse est plus axée sur l'organisation et la structure, ce qui reflète la personnalité de la Fourmi, mais elle manque d'enthousiasme et de spontanéité.",
+        "incorrect": "Ce n'est pas la meilleure réponse. Cette demande est trop directive et rigide, ce qui pourrait décourager la Cigale, qui préfère la liberté et la flexibilité dans son art."
+    },
+    "generalFeedback": "Ce n'est pas la meilleure manière de motiver la Cigale. En mettant en avant l'impact positif de sa musique et en exprimant ton plaisir à l'entendre, tu pourras mieux l'encourager à chanter plus souvent."
+},
+{
+    "question": "La Cigale veut exprimer son admiration pour le travail acharné de la Fourmi. Quelle réponse montre une adaptation de la communication de la Cigale vers la personnalité bleue de la Fourmi ?",
+    "options": [
+        "A) \"Je suis tellement impressionnée par ta capacité à travailler si dur chaque jour !\"",
+        "B) \"Ton travail est vraiment inspirant. Tu as une telle rigueur et une organisation incroyable !\"",
+        "C) \"J'admire ton dévouement et ta force. Tu ne laisses jamais rien te distraire.\""
+    ],
+    "correct": 1,
+    "feedback": {
+        "correct": "Excellent choix ! Cette réponse met l'accent sur la rigueur et l'organisation, deux qualités essentielles pour la Fourmi. La Cigale montre ici une adaptation parfaite vers une communication bleue.",
+        "nearlyCorrect": "Bonne tentative, mais ce n'est pas tout à fait ça. Cette réponse est plus enthousiaste et générale, ce qui est caractéristique d'une communication jaune, mais elle pourrait manquer de précision et de reconnaissance de l'effort méthodique de la Fourmi.",
+        "incorrect": "Ce n'est pas la meilleure réponse. Cette réponse est trop axée sur la force et la détermination, ce qui est plus rouge, mais elle pourrait manquer de la reconnaissance de l'effort minutieux et constant que la Fourmi valorise."
+    },
+    "generalFeedback": "Ce n'est pas la meilleure manière d'exprimer ton admiration. En soulignant la rigueur et l'organisation, la Cigale peut montrer une plus grande reconnaissance des qualités précieuses de la Fourmi."
+},
+{
+    "question": "La Fourmi veut discuter de la meilleure manière de partager les grains en hiver. Quelle réponse montre une adaptation de la communication de la Fourmi vers la personnalité jaune de la Cigale ?",
+    "options": [
+        "A) \"Nous pourrions organiser des sessions de partage des grains pour que tout le monde soit bien nourri cet hiver.\"",
+        "B) \"Pourquoi ne pas faire de notre partage des grains un moment joyeux et convivial ? Nous pourrions chanter et partager en même temps !\"",
+        "C) \"Il est important que nous établissions un calendrier précis pour le partage des grains cet hiver.\""
+    ],
+    "correct": 1,
+    "feedback": {
+        "correct": "Excellent choix ! Cette réponse propose de rendre le partage des grains amusant et social, ce qui correspond bien à la nature joyeuse et conviviale de la Cigale.",
+        "nearlyCorrect": "Bonne tentative, mais ce n'est pas tout à fait ça. Cette réponse est bien structurée et axée sur l'organisation, ce qui reflète la personnalité bleue de la Fourmi, mais elle pourrait manquer de la spontanéité et de la légèreté que la Cigale apprécie.",
+        "incorrect": "Ce n'est pas la meilleure réponse. Cette approche est trop rigide et directive, ce qui pourrait rendre l'idée moins attrayante pour la Cigale, qui préfère une approche plus flexible et joyeuse."
+    },
+    "generalFeedback": "Ce n'est pas la meilleure manière de discuter du partage des grains. En rendant le moment agréable et en proposant une approche plus joyeuse, la Fourmi peut mieux convaincre la Cigale de participer activement."
+},
+{
+    "question": "La Cigale veut proposer à la Fourmi de collaborer pour mieux se préparer à l'hiver. Quelle réponse montre une adaptation de la communication de la Cigale vers la personnalité bleue de la Fourmi ?",
+    "options": [
+        "A) \"Si nous collaborons, nous pourrions mieux nous organiser et assurer notre survie cet hiver.\"",
+        "B) \"Ce serait génial de travailler ensemble pour nous préparer à l'hiver ! Cela pourrait être amusant et efficace à la fois.\"",
+        "C) \"Nous devrions unir nos forces, ce serait la manière la plus intelligente de s'assurer un hiver sans soucis.\""
+    ],
+    "correct": 0,
+    "feedback": {
+        "correct": "Excellent choix ! Cette réponse met l'accent sur l'organisation et la préparation, ce qui correspond bien aux valeurs de la Fourmi. La Cigale montre ici une bonne adaptation vers une communication bleue.",
+        "nearlyCorrect": "Bonne tentative, mais ce n'est pas tout à fait ça. Cette réponse est joyeuse et tente de rendre le travail amusant, ce qui est caractéristique d'une personnalité jaune, mais elle pourrait ne pas sembler assez sérieuse et organisée pour la Fourmi.",
+        "incorrect": "Ce n'est pas la meilleure réponse. Cette approche est plus directive et orientée résultats, ce qui pourrait mettre la Fourmi sous pression au lieu de la motiver."
+    },
+    "generalFeedback": "Ce n'est pas la meilleure manière de proposer une collaboration. En se concentrant sur l'organisation et en reconnaissant l'importance de la préparation, la Cigale peut mieux convaincre la Fourmi de collaborer pour l'hiver."
+},
+{
+    "question": "La Fourmi veut expliquer pourquoi elle travaille si dur. Quelle réponse montre une adaptation de la communication de la Fourmi vers la personnalité jaune de la Cigale ?",
+    "options": [
+        "A) \"Je travaille dur parce que je veux que nous soyons tous bien préparés pour l'hiver.\"",
+        "B) \"Je travaille dur, mais avec ta musique, c'est presque comme si je m'amusais en même temps !\"",
+        "C) \"Je travaille dur pour que nous n'ayons pas à nous inquiéter une fois l'hiver venu.\""
+    ],
+    "correct": 1,
+    "feedback": {
+        "correct": "Excellent choix ! Cette réponse combine le travail et l'amusement, ce qui correspond bien à la nature joyeuse et optimiste de la Cigale. La Fourmi montre ici une belle adaptation vers une communication jaune.",
+        "nearlyCorrect": "Bonne tentative, mais ce n'est pas tout à fait ça. Cette réponse est sérieuse et axée sur la préparation, ce qui reflète la personnalité bleue de la Fourmi, mais elle manque de l'enthousiasme et de la légèreté que la Cigale apprécie.",
+        "incorrect": "Ce n'est pas la meilleure réponse. Cette approche est trop centrée sur l'efficacité et pourrait manquer de l'aspect positif et joyeux que la Cigale valorise."
+    },
+    "generalFeedback": "Ce n'est pas la meilleure manière d'expliquer ton travail. En intégrant une dimension ludique et en valorisant l'aspect agréable du travail, la Fourmi peut mieux se faire comprendre par la Cigale."
+},
+{
+    "question": "La Cigale veut proposer à la Fourmi de faire une pause pour écouter sa musique. Quelle réponse montre une adaptation de la communication de la Cigale vers la personnalité bleue de la Fourmi ?",
+    "options": [
+        "A) \"Pourquoi ne pas faire une petite pause ? Ma musique pourrait te redonner de l'énergie pour continuer ton travail !\"",
+        "B) \"Si tu prends un peu de temps pour écouter ma musique, cela pourrait t'aider à te concentrer encore mieux après.\"",
+        "C) \"Allez, prends une pause avec moi, cela te fera du bien et tu pourras reprendre ton travail plus efficacement ensuite.\""
+    ],
+    "correct": 1,
+    "feedback": {
+        "correct": "Excellent choix ! Cette réponse montre une approche structurée, en proposant une pause musicale comme moyen d'améliorer la concentration et l'efficacité de la Fourmi, ce qui correspond bien à sa personnalité bleue.",
+        "nearlyCorrect": "Bonne tentative, mais ce n'est pas tout à fait ça. Cette réponse est plus centrée sur l'enthousiasme et le plaisir de la pause, ce qui est typiquement jaune, mais elle pourrait sembler trop légère pour la Fourmi, qui préfère une approche plus méthodique.",
+        "incorrect": "Ce n'est pas la meilleure réponse. Cette approche est trop directive et pourrait sembler pressante pour la Fourmi, qui préfère une approche plus réfléchie et structurée."
+    },
+    "generalFeedback": "Ce n'est pas la meilleure manière de proposer une pause. En expliquant comment la musique peut améliorer la concentration et l'efficacité, la Cigale peut mieux convaincre la Fourmi de prendre un moment pour se détendre."
+}
+        ];
+
+        let currentQuestionIndex = 0;
+
+        const questionContainer = document.getElementById('question-container');
+        const feedbackElement = document.getElementById('feedback');
+        const generalFeedbackElement = document.getElementById('general-feedback');
+        const nextButton = document.getElementById('next-button');
+        const endMessage = document.getElementById('end-message');
+
+        function loadQuestion() {
+            const currentQuestion = quizData[currentQuestionIndex];
+            questionContainer.innerHTML = `
+                <div class="question">${currentQuestion.question}</div>
+                <div class="options">
+                    <button onclick="checkAnswer(0)">${currentQuestion.options[0]}</button>
+                    <button onclick="checkAnswer(1)">${currentQuestion.options[1]}</button>
+                    <button onclick="checkAnswer(2)">${currentQuestion.options[2]}</button>
+                </div>
+            `;
+            feedbackElement.style.display = 'none';
+            generalFeedbackElement.style.display = 'none';
+            nextButton.style.display = 'none';
+        }
+
+        function checkAnswer(selectedOption) {
+            const currentQuestion = quizData[currentQuestionIndex];
+            if (selectedOption === currentQuestion.correct) {
+                feedbackElement.textContent = currentQuestion.feedback.correct;
+                feedbackElement.className = 'feedback correct';
+                feedbackElement.style.display = 'block';
+            } else if (selectedOption === (currentQuestion.correct + 1) % 3) {
+                feedbackElement.textContent = currentQuestion.feedback.nearlyCorrect;
+                feedbackElement.className = 'feedback nearly-correct';
+                feedbackElement.style.display = 'block';
+                generalFeedbackElement.textContent = currentQuestion.generalFeedback;
+                generalFeedbackElement.style.display = 'block';
+            } else {
+                feedbackElement.textContent = currentQuestion.feedback.incorrect;
+                feedbackElement.className = 'feedback incorrect';
+                feedbackElement.style.display = 'block';
+                generalFeedbackElement.textContent = currentQuestion.generalFeedback;
+                generalFeedbackElement.style.display = 'block';
+            }
+            nextButton.style.display = 'block';
+        }
+
+        nextButton.addEventListener('click', () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                questionContainer.style.display = 'none';
+                feedbackElement.style.display = 'none';
+                generalFeedbackElement.style.display = 'none';
+                nextButton.style.display = 'none';
+                endMessage.style.display = 'block';
+            }
+        });
+
+        // Load the first question on page load
+        loadQuestion();
+    </script>
+</body>
+</html>           

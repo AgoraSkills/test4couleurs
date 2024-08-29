@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Communication opposée : Le Rouge et le Vert</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #quiz-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .question {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .options {
+            margin-top: 10px;
+        }
+        .options button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+            width: 100%;
+            cursor: pointer;
+        }
+        .options button:hover {
+            background-color: #0056b3;
+        }
+        .feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .feedback.nearly-correct {
+            background-color: #ffeeba;
+            color: #856404;
+        }
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .feedback.general {
+            color: #333;
+            margin-top: 10px;
+        }
+        .next-button {
+            display: none;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .next-button:hover {
+            background-color: #218838;
+        }
+        .end-message {
+            display: none;
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div id="quiz-container">
+        <h1>Communication opposée : Le Rouge et le Vert</h1>
+        <div id="question-container">
+            <!-- Questions and options will be dynamically inserted here -->
+        </div>
+        <div class="feedback" id="feedback"></div>
+        <div class="feedback general" id="general-feedback"></div>
+        <button id="next-button" class="next-button">Question suivante</button>
+        <div id="end-message" class="end-message">Félicitations ! Vous avez terminé le quiz.</div>
+    </div>
+
+    <script>
+        const quizData = [
+{
+    "question": "Le Taureau veut demander à l'Agneau pourquoi il ne se défend pas plus souvent. Quelle réponse montre une adaptation de la communication du Taureau vers la personnalité verte de l'Agneau ?",
+    "options": [
+        "A) \"Pourquoi tu ne te défends jamais ? Il faut parfois se battre pour obtenir ce qu'on veut !\"",
+        "B) \"Je me demande pourquoi tu choisis de rester calme dans toutes les situations. Comment fais-tu ?\"",
+        "C) \"Tu devrais vraiment apprendre à te défendre. Le monde est plein de dangers !\""
+    ],
+    "correct": 1,
+    "feedback": {
+        "correct": "Excellent choix ! Cette réponse montre une véritable curiosité et un respect pour l'approche calme de l'Agneau. Le Taureau adapte son style direct pour poser une question plus douce et réfléchie, ce qui correspond à une communication verte.",
+        "nearlyCorrect": "Bonne tentative, mais ce n'est pas tout à fait ça. Cette réponse est plus directe et impulsive, caractéristique de la personnalité rouge, sans chercher à comprendre l'approche de l'Agneau.",
+        "incorrect": "Ce n'est pas la meilleure réponse. Cette approche est critique et prescriptive, ce qui pourrait ne pas convenir à la personnalité de l'Agneau, plus encline à la réflexion tranquille qu'à l'action rapide."
+    },
+    "generalFeedback": "Ce n'est pas la meilleure manière d'aborder la situation avec l'Agneau. Adapter sa communication pour mieux comprendre l'approche de l'autre peut créer un dialogue plus harmonieux et productif."
+},
+{
+    "question": "L'Agneau souhaite encourager le Taureau à être plus patient. Quelle réponse montre une adaptation de la communication de l'Agneau vers la personnalité rouge du Taureau ?",
+    "options": [
+        "A) \"Je pense qu'il serait bien de prendre un peu plus de temps pour réfléchir avant d'agir.\"",
+        "B) \"Tu as une grande force, Taureau, mais si tu peux la contrôler davantage, tu seras encore plus impressionnant !\"",
+        "C) \"Tu devrais vraiment essayer d'être plus patient. Cela te ferait du bien.\""
+    ],
+    "correct": 1,
+    "feedback": {
+        "correct": "Excellent choix ! Cette réponse valorise la force du Taureau tout en lui suggérant subtilement une amélioration. L'Agneau adapte son discours en motivant le Taureau à utiliser sa patience comme une nouvelle forme de puissance.",
+        "nearlyCorrect": "Bonne tentative, mais ce n'est pas tout à fait ça. Cette réponse est douce et reflète la personnalité verte de l'Agneau, mais elle ne s'adapte pas complètement au besoin du Taureau d'entendre des messages qui renforcent sa puissance.",
+        "incorrect": "Ce n'est pas la meilleure approche. Cette suggestion est directive et pourrait être perçue comme une critique, ce qui ne correspond pas à la manière dont le Taureau pourrait réagir positivement."
+    },
+    "generalFeedback": "Ce n'est pas la meilleure manière d'encourager le Taureau. Adapter la communication pour valoriser ses qualités tout en suggérant des améliorations peut être plus efficace."
+},
+{
+    "question": "Le Taureau veut proposer à l'Agneau de s'entraîner à devenir plus fort. Quelle réponse montre une adaptation de sa communication vers la personnalité verte de l'Agneau ?",
+    "options": [
+        "A) \"Il serait peut-être utile pour toi de renforcer un peu ta force. Qu'en penses-tu ?\"",
+        "B) \"Tu dois absolument t'entraîner pour être plus fort. Il faut que tu sois capable de te défendre !\"",
+        "C) \"Je te propose de t'entraîner avec moi pour devenir plus fort. Ça pourrait être amusant et utile pour toi.\""
+    ],
+    "correct": 0,
+    "feedback": {
+        "correct": "Excellent choix ! Cette réponse propose l'idée avec douceur et inclut l'Agneau dans le processus de décision, ce qui montre une adaptation vers la communication plus respectueuse et collaborative de l'Agneau.",
+        "nearlyCorrect": "Bonne tentative, mais ce n'est pas tout à fait ça. Cette réponse est beaucoup plus directive et impose une solution, sans tenir compte de la perspective plus douce de l'Agneau.",
+        "incorrect": "Ce n'est pas la meilleure réponse. Bien qu'elle soit amicale, cette approche pourrait sembler un peu trop légère ou désinvolte pour vraiment résonner avec l'Agneau, qui apprécie une approche plus réfléchie."
+    },
+    "generalFeedback": "Ce n'est pas la meilleure manière de proposer quelque chose à l'Agneau. En adaptant son approche pour inclure l'autre dans la décision, on peut établir une communication plus harmonieuse."
+},
+{
+    "question": "L'Agneau veut demander au Taureau de modérer ses actions. Quelle réponse montre une adaptation de sa communication vers la personnalité rouge du Taureau ?",
+    "options": [
+        "A) \"Et si tu essayais de réfléchir un peu plus avant de passer à l'action ?\"",
+        "B) \"Ta force est impressionnante, mais tu pourrais l'utiliser encore mieux en étant un peu plus calculé dans tes mouvements.\"",
+        "C) \"Tu devrais vraiment apprendre à contrôler tes actions. C'est important pour éviter les erreurs.\""
+    ],
+    "correct": 1,
+    "feedback": {
+        "correct": "Excellent choix ! Cette réponse valorise d'abord la force du Taureau tout en lui suggérant une manière d'optimiser ses actions. Cela montre une adaptation de la communication de l'Agneau, en alignant son discours sur les valeurs du Taureau.",
+        "nearlyCorrect": "Bonne tentative, mais ce n'est pas tout à fait ça. Cette réponse est douce et pleine de bonnes intentions, mais elle peut manquer de l'impact nécessaire pour capter l'attention du Taureau rouge.",
+        "incorrect": "Ce n'est pas la meilleure réponse. Cette suggestion peut sembler trop directive et critique, ce qui pourrait provoquer une réaction défensive de la part du Taureau."
+    },
+    "generalFeedback": "Ce n'est pas la meilleure manière de modérer les actions du Taureau. Adapter la communication pour souligner les avantages pour le Taureau tout en proposant des améliorations peut conduire à une meilleure acceptation."
+},
+{
+    "question": "Le Taureau veut exprimer sa frustration au sujet de sa difficulté à changer. Quelle réponse montre une adaptation vers la personnalité verte de l'Agneau ?",
+    "options": [
+        "A) \"Je vais essayer de ne plus charger sans réfléchir, mais ce ne sera pas facile pour moi.\"",
+        "B) \"Pourquoi devrais-je changer ? Ma force est ce qui me définit, et je n'ai pas besoin de m'adoucir.\"",
+        "C) \"J'aimerais vraiment apprendre à être plus calme, mais c'est difficile pour moi. Pourrais-tu m'aider ?\""
+    ],
+    "correct": 2,
+    "feedback": {
+        "correct": "Excellent choix ! Cette réponse montre une volonté d'apprendre de l'Agneau et de s'adapter à sa manière douce et réfléchie. Le Taureau reconnaît sa difficulté, mais cherche du soutien, ce qui est un grand pas vers l'adaptation.",
+        "nearlyCorrect": "Bonne tentative, mais ce n'est pas tout à fait ça. Cette réponse montre un effort, mais reste encore très centrée sur le Taureau et sa propre difficulté, sans vraiment chercher l'aide de l'Agneau.",
+        "incorrect": "Ce n'est pas la meilleure réponse. Cette approche est défensive et ferme, ce qui n'ouvre pas la porte à une communication plus harmonieuse et à un apprentissage de l'autre."
+    },
+    "generalFeedback": "Ce n'est pas la meilleure manière d'exprimer la frustration du Taureau. En demandant de l'aide et en montrant une volonté d'apprendre, le Taureau peut non seulement progresser, mais aussi renforcer sa relation avec l'Agneau."
+},
+{
+    "question": "L'Agneau propose une solution pour aider le Taureau à canaliser sa force. Quelle réponse montre une adaptation vers la personnalité rouge du Taureau ?",
+    "options": [
+        "A) \"Tu pourrais utiliser ta force pour protéger les autres. Cela te rendrait encore plus fort !\"",
+        "B) \"Il serait bénéfique pour tout le monde si tu canalises ta force de manière plus constructive.\"",
+        "C) \"Tu devrais apprendre à te contrôler, sinon tu risques de blesser quelqu'un.\""
+    ],
+    "correct": 0,
+    "feedback": {
+        "correct": "Excellent choix ! Cette réponse valorise la force du Taureau et lui propose une utilisation qui pourrait renforcer son sentiment de puissance, tout en étant bénéfique pour les autres. C'est une excellente adaptation vers une communication rouge.",
+        "nearlyCorrect": "Bonne tentative, mais ce n'est pas tout à fait ça. Cette réponse est sage et bienveillante, mais elle pourrait manquer de l'élément de valorisation de la force qui pourrait motiver le Taureau.",
+        "incorrect": "Ce n'est pas la meilleure approche. Cette suggestion peut sembler trop critique et manquer de l'aspect positif qui pourrait motiver le Taureau à changer."
+    },
+    "generalFeedback": "Ce n'est pas la meilleure manière d'aider le Taureau. En valorisant ses qualités tout en proposant une nouvelle manière de les utiliser, l'Agneau peut mieux motiver le Taureau à évoluer positivement."
+},
+{
+    "question": "Le Taureau veut exprimer sa reconnaissance envers l'Agneau pour son aide. Quelle réponse montre une adaptation vers la personnalité verte de l'Agneau ?",
+    "options": [
+        "A) \"Merci de m'avoir aidé. Je vais utiliser ce que tu m'as appris pour être plus efficace.\"",
+        "B) \"Je suis vraiment reconnaissant pour ton aide. Ta patience et ta douceur m'ont beaucoup appris.\"",
+        "C) \"Je suppose que ton aide a été utile. Je vais continuer d'essayer, même si ce n'est pas facile.\""
+    ],
+    "correct": 1,
+    "feedback": {
+        "correct": "Excellent choix ! Cette réponse montre une reconnaissance sincère pour les qualités de l'Agneau. Le Taureau adapte sa communication pour exprimer non seulement sa gratitude, mais aussi l'importance des qualités de l'Agneau.",
+        "nearlyCorrect": "Bonne tentative, mais ce n'est pas tout à fait ça. Cette réponse est plus centrée sur l'efficacité et l'action, ce qui est plus caractéristique d'une personnalité rouge, sans vraiment reconnaître l'impact de l'Agneau.",
+        "incorrect": "Ce n'est pas la meilleure réponse. Cette approche est trop réservée et manque de la reconnaissance nécessaire pour vraiment montrer à l'Agneau que son aide est appréciée."
+    },
+    "generalFeedback": "Ce n'est pas la meilleure manière d'exprimer ta reconnaissance. En reconnaissant les qualités de l'autre et en exprimant une gratitude sincère, le Taureau peut renforcer sa relation avec l'Agneau."
+},
+{
+    "question": "L'Agneau veut proposer un changement dans la manière dont ils collaborent. Quelle réponse montre une adaptation vers la personnalité rouge du Taureau ?",
+    "options": [
+        "A) \"Je pense que nous pourrions mieux collaborer si nous prenons plus de temps pour réfléchir.\"",
+        "B) \"Si nous changeons notre manière de collaborer, nous pourrions être encore plus efficaces et atteindre nos objectifs plus rapidement.\"",
+        "C) \"Nous devrions vraiment revoir notre façon de faire, car elle n'est pas assez efficace.\""
+    ],
+    "correct": 1,
+    "feedback": {
+        "correct": "Excellent choix ! Cette réponse met en avant l'efficacité et les résultats, ce qui est un bon moyen de motiver le Taureau à accepter un changement. L'Agneau s'adapte en présentant les bénéfices concrets de la collaboration.",
+        "nearlyCorrect": "Bonne tentative, mais ce n'est pas tout à fait ça. Cette réponse est réfléchie et douce, mais elle peut manquer d'impact pour un Taureau, qui est plus orienté vers l'action rapide et les résultats.",
+        "incorrect": "Ce n'est pas la meilleure approche. Cette suggestion est trop critique et pourrait être perçue comme une attaque, ce qui risquerait de provoquer une réaction défensive de la part du Taureau."
+    },
+    "generalFeedback": "Ce n'est pas la meilleure manière de proposer un changement. En mettant en avant les bénéfices concrets et en alignant la proposition sur les valeurs du Taureau, l'Agneau peut obtenir une meilleure collaboration."
+},
+{
+    "question": "Le Taureau veut montrer qu'il a appris à écouter grâce à l'Agneau. Quelle réponse montre une adaptation vers la personnalité verte de l'Agneau ?",
+    "options": [
+        "A) \"Maintenant que je sais écouter, je vais pouvoir mieux contrôler mes actions.\"",
+        "B) \"Grâce à toi, j'ai appris l'importance de l'écoute et de la patience. Je me sens plus en harmonie avec moi-même.\"",
+        "C) \"J'écoute plus maintenant, et cela m'a permis d'être plus efficace dans mes actions.\""
+    ],
+    "correct": 1,
+    "feedback": {
+        "correct": "Excellent choix ! Cette réponse montre une reconnaissance des qualités de l'Agneau et une prise de conscience profonde. Le Taureau adapte sa communication pour montrer qu'il a intégré les valeurs de l'Agneau.",
+        "nearlyCorrect": "Bonne tentative, mais ce n'est pas tout à fait ça. Cette réponse se concentre davantage sur l'efficacité des actions, ce qui est plus rouge, mais elle manque de la profondeur et de la connexion émotionnelle que l'Agneau apprécierait.",
+        "incorrect": "Ce n'est pas la meilleure réponse. Cette approche est trop focalisée sur les résultats pratiques, sans vraiment montrer l'intégration des valeurs de l'Agneau."
+    },
+    "generalFeedback": "Ce n'est pas la meilleure manière de montrer que tu as appris. En reconnaissant l'impact des qualités de l'autre et en exprimant une harmonie retrouvée, le Taureau peut mieux montrer son évolution."
+},
+{
+    "question": "L'Agneau veut remercier le Taureau pour sa protection. Quelle réponse montre une adaptation vers la personnalité rouge du Taureau ?",
+    "options": [
+        "A) \"Merci de m'avoir protégé. Je me sens en sécurité grâce à toi.\"",
+        "B) \"Je te remercie pour ta protection. Cela montre ta force et ton courage. Je suis impressionné par ton leadership.\"",
+        "C) \"Je suis reconnaissant pour ta protection. Nous devrions continuer à travailler ensemble pour rester en sécurité.\""
+    ],
+    "correct": 1,
+    "feedback": {
+        "correct": "Excellent choix ! Cette réponse valorise la force et le leadership du Taureau, ce qui correspond parfaitement à une communication adaptée à une personnalité rouge. L'Agneau montre qu'il apprécie ces qualités en les soulignant directement.",
+        "nearlyCorrect": "Bonne tentative, mais ce n'est pas tout à fait ça. Cette réponse exprime une reconnaissance sincère, mais elle ne valorise pas suffisamment les qualités rouges du Taureau.",
+        "incorrect": "Ce n'est pas la meilleure réponse. Cette suggestion est plus centrée sur la planification future, ce qui pourrait détourner l'attention du Taureau de l'appréciation immédiate de ses actions."
+    },
+    "generalFeedback": "Ce n'est pas la meilleure manière de remercier le Taureau. En valorisant ses qualités de force et de leadership, l'Agneau peut renforcer le lien de confiance et d'admiration mutuelle entre eux."
+}
+
+        ];
+
+        let currentQuestionIndex = 0;
+
+        const questionContainer = document.getElementById('question-container');
+        const feedbackElement = document.getElementById('feedback');
+        const generalFeedbackElement = document.getElementById('general-feedback');
+        const nextButton = document.getElementById('next-button');
+        const endMessage = document.getElementById('end-message');
+
+        function loadQuestion() {
+            const currentQuestion = quizData[currentQuestionIndex];
+            questionContainer.innerHTML = `
+                <div class="question">${currentQuestion.question}</div>
+                <div class="options">
+                    <button onclick="checkAnswer(0)">${currentQuestion.options[0]}</button>
+                    <button onclick="checkAnswer(1)">${currentQuestion.options[1]}</button>
+                    <button onclick="checkAnswer(2)">${currentQuestion.options[2]}</button>
+                </div>
+            `;
+            feedbackElement.style.display = 'none';
+            generalFeedbackElement.style.display = 'none';
+            nextButton.style.display = 'none';
+        }
+
+        function checkAnswer(selectedOption) {
+            const currentQuestion = quizData[currentQuestionIndex];
+            if (selectedOption === currentQuestion.correct) {
+                feedbackElement.textContent = currentQuestion.feedback.correct;
+                feedbackElement.className = 'feedback correct';
+                feedbackElement.style.display = 'block';
+            } else if (selectedOption === (currentQuestion.correct + 1) % 3) {
+                feedbackElement.textContent = currentQuestion.feedback.nearlyCorrect;
+                feedbackElement.className = 'feedback nearly-correct';
+                feedbackElement.style.display = 'block';
+                generalFeedbackElement.textContent = currentQuestion.generalFeedback;
+                generalFeedbackElement.style.display = 'block';
+            } else {
+                feedbackElement.textContent = currentQuestion.feedback.incorrect;
+                feedbackElement.className = 'feedback incorrect';
+                feedbackElement.style.display = 'block';
+                generalFeedbackElement.textContent = currentQuestion.generalFeedback;
+                generalFeedbackElement.style.display = 'block';
+            }
+            nextButton.style.display = 'block';
+        }
+
+        nextButton.addEventListener('click', () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                questionContainer.style.display = 'none';
+                feedbackElement.style.display = 'none';
+                generalFeedbackElement.style.display = 'none';
+                nextButton.style.display = 'none';
+                endMessage.style.display = 'block';
+            }
+        });
+
+        // Load the first question on page load
+        loadQuestion();
+    </script>
+</body>
+</html>           
