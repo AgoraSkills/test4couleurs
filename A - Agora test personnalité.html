@@ -6,17 +6,6 @@
 <title>Test analyse comportementale couleurs</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<script>
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-    }
-
-    if (getCookie('access') !== 'true') {
-        window.location.href = 'https://test-intelarti-31.systeme.io/2d92c615-098e306b'; // Rediriger vers la page d'achat
-     }
-</script>
 <style>
   body {
     background: url('fondtest.jpg') no-repeat center center fixed;
@@ -129,43 +118,15 @@
     margin-top: 10px;
   }
   @media print {
- @page {
-        size: A4;
-        margin: 10mm;
-    }
     body {
       margin: 0;
-        padding: 0;
-        background: none;
-        width: 90%;
-        height: 90%;
+      padding: 0;
     }
     .container {
       margin: 0;
-      padding: 20mm;
+      padding: 20px;
       box-shadow: none;
       background-color: #fff;
-        width: calc(100% - 20mm);
-        page-break-inside: avoid;
-    }
-    /* Supprimer le pied de page */
-    .no-print, footer, .footer {
-        display: none !important;
-    }
-
-    /* S'assurer que les paragraphes restent sur une seule page */
-    p {
-        page-break-inside: avoid;
-        orphans: 3;
-        widows: 3;
-        overflow-wrap: break-word;
-        word-wrap: break-word;
-        hyphens: auto;
-    }
-
-    /* Éviter que les titres se retrouvent seuls en bas de page */
-    h1, h2, h3, h4, h5, h6 {
-        page-break-after: avoid;
     }
     body * {
       visibility: hidden;
@@ -250,7 +211,7 @@
   <p id="progressText"></p>
 </div>
 <div id="questionContainer" class="container" style="width: calc(100vw / 3); font-size: 1.8em;">
-  <img id="questionImage" src="" alt="Illustration" style="max-width: 40%; height: auto; display: none; margin: 0 auto; display: block;">
+  <img id="questionImage" src="" alt="Illustration de la question" style="max-width: 50%; height: auto; display: none; margin: 0 auto; display: block;">
   <div id="question"></div>
 </div>
 <ul id="answers" class="container" style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 1.3em;">
@@ -277,9 +238,6 @@
     <h2>Résultat et Couleur Dominante</h2>
     <p><span class="bold">Votre résultat final est :</span> <span id="finalScore"></span></p>
     <p><span class="bold">Votre couleur dominante est :</span> <span id="dominantColor"></span></p>
-    <p><span class="bold" style="color: white;">◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉</span></p>
-    <p><span class="bold" style="color: white;">◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉</span></p>
-    <p><span class="bold" style="color: white;">◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉◌◉</span></p>
   </div>
   <div class="section">
     <div id="introductionContent"></div>
@@ -708,7 +666,7 @@ function showResult() {
 
   displayReport(formattedScore, scores, dominant);
 
-showScoreChart([scores.Rouge, scores.Jaune, scores.Vert, scores.Bleu]);
+  showScoreChart(scores);
 
   printButton.style.display = 'block';
 }
@@ -752,7 +710,7 @@ function calculateDominant(scores) {
 function showScoreChart(scores) {
   const labels = ['Rouge', 'Jaune', 'Vert', 'Bleu'];
   const colors = ['red', 'yellow', 'green', 'blue'];
-  const ctx = document.getElementById('scoreChart').getContext('2d');
+  const ctx = document.getElementById('reportScoreChart').getContext('2d');
   const myChart = new Chart(ctx, {
     type: 'doughnut',
     data: {
@@ -796,10 +754,6 @@ function displayReport(formattedScore, scores, dominant) {
       bodyChildren[i].style.display = 'none';
     }
   }
-  setTimeout(() => {
-    window.print();
-  }, 1000);
-}
 }
 
 // Fonction pour récupérer la description du profil dominant à partir des fichiers texte locaux
@@ -810,7 +764,6 @@ function fetchDescription(color) {
     'Vert': 'Dvert.txt',
     'Bleu': 'Dbleu.txt'
   };
-
   const descriptionFile = descriptions[color];
 
   fetch(descriptionFile)
