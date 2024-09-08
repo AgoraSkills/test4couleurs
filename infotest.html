@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vidéo avec Boutons</title>
+    <title>Page infos sur le Test</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -44,6 +44,10 @@
             background-color: #0056b3;
         }
     </style>
+    <script>
+        // Définir un cookie temporaire qui expire à la fermeture du navigateur
+        document.cookie = "access=true; path=/";
+    </script>
 </head>
 <body>
     <div class="video-container">
@@ -56,6 +60,21 @@
         <button onclick="window.location.href='A%20-%20Agora%20test%20personnalité.html'">
             J'ai compris, allons-y !
         </button>
+        <button onclick="changeVideo('Work%20in%20progress.mp4')">
+            Formation 4 couleurs
+        </button>
     </div>
+    <script>
+        // Fonction pour changer la source de la vidéo
+        function changeVideo(src) {
+            const video = document.getElementById('main-video');
+            video.pause();
+            video.src = src;
+            video.currentTime = 0;  // Repartir de zéro
+            video.play();
+            video.style.transform = 'none';  // Annuler toute transformation d'échelle
+            video.style.width = '100%';  // Réinitialiser la largeur à 100% du conteneur
+        }
+    </script>
 </body>
 </html>
