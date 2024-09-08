@@ -572,7 +572,6 @@
   }
 ];
 
-
 let currentQuestionIndex = 0;
 let score = 0;
 let selectedAnswer = null; // Réponse sélectionnée par l'utilisateur
@@ -716,7 +715,7 @@ function showScoreChart(scores) {
     data: {
       labels: labels,
       datasets: [{
-        data: scores,
+        data: [scores.Rouge, scores.Jaune, scores.Vert, scores.Bleu], // Correction ici
         backgroundColor: colors
       }]
     },
